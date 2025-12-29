@@ -1,0 +1,232 @@
+{% extends "base_trn.html" %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+
+<style>
+    /* --- YOUR ORIGINAL CSS RESTORED --- */
+    * { box-sizing: border-box; font-family: "Segoe UI", Tahoma, Arial, sans-serif; }
+    
+    .page-wrapper {
+      max-width: 100%;
+      margin: 0;
+      background: #fff;
+      padding: 10px 0 0 0;
+    }
+
+    .top-row { display: flex; justify-content: space-between; align-items: flex-start; }
+    h1.page-title { font-size: 22px; margin: 0 0 5px; color: #333; }
+    
+    .mandatory-note { font-size: 12px; color: #666; margin-top: 4px; }
+    .mandatory-note::before { content: "● "; color: #e11; }
+
+    .primary-check { margin: 15px 0 8px; font-size: 14px; }
+    .primary-check input { margin-right: 5px; }
+
+    .section-title { font-size: 18px; font-weight: 600; margin: 16px 0 0; display: flex; align-items: center; color: #003366; }
+    .section-title .icon { margin-right: 6px; font-size: 16px; }
+
+    hr.section-divider { border: none; border-top: 1px solid #d0d4db; margin: 4px 0 0; }
+    .section-box { background: #f7f7f7; border-top: 1px solid #e0e0e0; padding: 18px 18px 12px; margin-top: 5px; }
+
+    .form-row { display: flex; gap: 20px; margin-bottom: 12px; }
+    .form-group { flex: 1; display: flex; flex-direction: column; font-size: 13px; }
+    .form-group.small { max-width: 240px; }
+
+    label { margin-bottom: 3px; color: #333; }
+    .required::after { content: " *"; color: #e11; }
+
+    input[type="text"], input[type="email"], input[type="tel"], select {
+      border: 1px solid #c0c4cc; padding: 6px 8px; border-radius: 0; font-size: 13px; min-height: 32px; width: 100%;
+    }
+    input[disabled] { background: #f4f4f4; color: #888; }
+
+    .date-wrapper, .phone-wrapper, .std-wrapper { display: flex; align-items: center; border: 1px solid #c0c4cc; min-height: 32px; }
+    .date-wrapper input, .phone-wrapper input, .std-wrapper input { border: none; flex: 1; padding: 6px 8px; outline:none; }
+    .date-wrapper .icon-btn { border-left: 1px solid #c0c4cc; padding: 0 8px; cursor: pointer; font-size: 16px; }
+    .phone-wrapper .code { border-right: 1px solid #c0c4cc; padding: 0 10px; font-size: 13px; white-space: nowrap; }
+    .std-wrapper .std-label { padding: 0 10px; font-size: 13px; border-right: 1px solid #c0c4cc; white-space: nowrap; }
+
+    .gender-options { display: flex; align-items: center; gap: 25px; margin-top: 6px; }
+    .radio-inline { display: inline-flex; align-items: center; gap: 4px; }
+
+    .toggle-wrapper { display: flex; align-items: center; gap: 10px; margin-top: 4px; }
+    .toggle { width: 56px; height: 28px; background: #e0e0e0; border-radius: 14px; position: relative; cursor: pointer; }
+    .toggle::before { content: ""; position: absolute; top: 3px; left: 3px; width: 22px; height: 22px; border-radius: 50%; background: #fff; box-shadow: 0 0 2px rgba(0,0,0,0.3); transition: all 0.2s ease; }
+    .toggle.on { background: #2cab3d; }
+    .toggle.on::before { left: 31px; }
+
+    .info-text { font-size: 12px; color: #555; margin-top: 4px; }
+    .yellow-note { margin-top: 10px; padding: 14px 18px; background: #fff7df; border: 1px solid #f2e2b3; font-size: 13px; line-height: 1.5; font-style: italic; color: #555; }
+    #map { width: 100%; height: 260px; border: 1px solid #c0c4cc; margin-top: 12px; }
+
+    .upload-container { display: flex; margin-top: 10px; border: 1px solid #d0d4db; padding: 18px 20px; align-items: center; background: #f7f7f7; }
+    .upload-left, .upload-right { flex: 1; text-align: left; }
+    .upload-center { width: 40px; text-align: center; font-weight: 600; font-size: 14px; }
+
+    .btn { padding: 8px 18px; border-radius: 2px; border: none; cursor: pointer; font-size: 13px; }
+    .btn-file { padding: 4px 12px; font-size: 12px; border-radius: 3px; border: 1px solid #ccc; background: #f5f5f5; cursor: pointer; }
+    .btn-primary { background: #5b76a8; color: #fff; }
+    .btn-secondary { background: #e4e7ed; color: #333; border: 1px solid #c0c4cc; text-decoration: none; display: inline-block; }
+    .btn-blue { background: #5b76a8; color: #fff; }
+    .btn-green { background: #235f9f; color: #fff; }
+    .btn-reset { background: #235f9f; color: #fff; padding: 8px 26px; }
+    .reset-wrapper { text-align: center; margin: 16px 0 4px; }
+
+    .btn-bar { margin-top: 28px; display: flex; justify-content: flex-end; gap: 10px; }
+    @media (max-width: 900px) { .form-row { flex-direction: column; } .upload-container { flex-direction: column; } }
+</style>
+
+<form method="POST">
+{% csrf_token %}
+<div class="page-wrapper">
+
+  <div class="top-row">
+    <h1 class="page-title">Details of Authorized Signatory</h1>
+    <div class="mandatory-note">indicates mandatory fields</div>
+  </div>
+
+  <div class="primary-check">
+    <label><input type="checkbox" name="is_primary"> Primary Authorized Signatory</label>
+  </div>
+
+  <div class="section-title">
+    <span class="icon">👤</span> Personal Information
+  </div>
+  <hr class="section-divider">
+
+  <div class="section-box">
+    <div class="form-group"><label>Name of Person</label></div>
+    <div class="form-row">
+      <div class="form-group"><label class="required">First Name</label><input type="text" name="name" value="{{ signatory.name }}"></div>
+      <div class="form-group"><label>Middle Name</label><input type="text" name="middle_name"></div>
+      <div class="form-group"><label>Last Name</label><input type="text" name="last_name"></div>
+    </div>
+
+    <div class="form-group" style="margin-top:4px;"><label>Name of Father</label></div>
+    <div class="form-row">
+      <div class="form-group"><label class="required">First Name</label><input type="text" name="father_name"></div>
+      <div class="form-group"><label>Middle Name</label><input type="text"></div>
+      <div class="form-group"><label>Last Name</label><input type="text"></div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group"><label class="required">Date of Birth</label><div class="date-wrapper"><input type="text" placeholder="--/--/----" name="dob"><div class="icon-btn">✕</div><div class="icon-btn">📅</div></div></div>
+      <div class="form-group"><label class="required">Mobile Number</label><div class="phone-wrapper"><div class="code">+91</div><input type="tel" name="mobile" value="{{ signatory.mobile }}"></div></div>
+      <div class="form-group"><label class="required">Email Address</label><input type="email" name="email" value="{{ signatory.email }}"></div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label class="required">Gender</label>
+        <div class="gender-options">
+          <label class="radio-inline"><input type="radio" name="gender" value="Male"> Male</label>
+          <label class="radio-inline"><input type="radio" name="gender" value="Female"> Female</label>
+          <label class="radio-inline"><input type="radio" name="gender" value="Other"> Others</label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Telephone Number (with STD Code)</label>
+        <div class="form-row">
+          <div class="form-group small"><div class="std-wrapper"><span class="std-label">STD</span><input type="text"></div></div>
+          <div class="form-group"><input type="text" placeholder="Enter Telephone Number"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title">
+    <span class="icon">🆔</span> Identity Information
+  </div>
+  <hr class="section-divider">
+
+  <div class="section-box">
+    <div class="form-row">
+      <div class="form-group"><label class="required">Designation / Status</label><input type="text" name="designation"></div>
+      <div class="form-group"><label>Director Identification Number</label><input type="text"></div>
+      <div class="form-group"><label>Are you citizen of India?</label><div class="toggle-wrapper"><div class="toggle on"></div></div></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="required">Permanent Account Number (PAN)</label><input type="text" name="pan"></div>
+      <div class="form-group"><label>Passport Number (In case of Foreigner)</label><input type="text"></div>
+      <div class="form-group"><label>Aadhaar Number</label><input type="text" disabled></div>
+    </div>
+  </div>
+
+  <div class="section-title">
+    <span class="icon">✉</span> Residential Address
+  </div>
+  <hr class="section-divider">
+
+  <div class="section-box">
+    <div class="yellow-note">i. Please be aware that the GST system incorporates mandatory address validations...</div>
+    <div id="map"></div>
+    <div style="margin-top:18px;">
+      <div class="form-row">
+        <div class="form-group"><label class="required">Country</label><select name="country"><option>India</option></select></div>
+        <div class="form-group"><label class="required">Pin Code</label><input type="text" name="pincode" value="{{ signatory.pincode }}"></div>
+        <div class="form-group"><label class="required">State</label><input type="text" name="state" value="{{ signatory.state }}"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="required">District</label><input type="text" name="district"></div>
+        <div class="form-group"><label class="required">City / Town / Village</label><input type="text" name="city" value="{{ signatory.city }}"></div>
+        <div class="form-group"><label>Locality / Sub Locality</label><input type="text" name="locality"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="required">Road / Street</label><input type="text" name="street"></div>
+        <div class="form-group"><label>Name of the Premises / Building</label><input type="text" name="premises"></div>
+        <div class="form-group"><label class="required">Building No. / Flat No.</label><input type="text" name="building"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Floor Number</label><input type="text" name="floor_no"></div>
+        <div class="form-group"><label>Nearby Landmark</label><input type="text"></div>
+        <div class="form-group"></div>
+      </div>
+      <div class="reset-wrapper"><button type="button" class="btn btn-reset">⟳ RESET ADDRESS</button></div>
+    </div>
+  </div>
+
+  <div class="section-title">
+    <span class="icon">📤</span> Document Upload
+  </div>
+  <hr class="section-divider">
+
+  <div class="section-box" style="background:#fff;">
+    <div class="form-group"><label class="required">Proof of details of authorized signatory</label><select><option>Select</option></select></div>
+    <div class="info-text" style="margin-top:10px;">ⓘ File with PDF or JPEG format is only allowed</div>
+    <div style="margin-top:8px;"><button type="button" class="btn-file">Choose File</button><span style="font-size:12px;"> No file chosen</span></div>
+
+    <div style="margin-top:26px;">
+      <div class="form-group"><label class="required">Upload Photograph</label></div>
+      <div class="upload-container">
+        <div class="upload-left">
+          <div class="info-text">ⓘ Only JPEG file format is allowed</div>
+          <div style="margin-top:10px;"><button type="button" class="btn-file">Choose File</button><span style="font-size:12px;"> No file chosen</span></div>
+        </div>
+        <div class="upload-center">OR</div>
+        <div class="upload-right" style="text-align:center;">
+          <button type="button" class="btn btn-primary">📷 TAKE PICTURE</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="btn-bar">
+    <a href="{{ nav.promoter }}" class="btn btn-secondary">BACK</a>
+    <button type="button" class="btn btn-secondary">SHOW LIST</button>
+    <button type="button" class="btn btn-blue">ADD NEW</button>
+    <button type="submit" class="btn btn-green">SAVE & CONTINUE</button>
+  </div>
+</div>
+</form>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script>
+  // Simple map init if container exists
+  if(document.getElementById('map')) {
+      var map = L.map('map').setView([23.2599, 77.4126], 6);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '© OpenStreetMap' }).addTo(map);
+  }
+</script>
+{% endblock %}

@@ -1,0 +1,13 @@
+{% extends "trn/_base.html" %}
+{% block content %}
+  <h2>{{ title }}</h2>
+  <form method="post">
+    {% csrf_token %}
+    <label>Demo field(s)</label>
+    <textarea name="places" rows="6" placeholder="Enter details here...">{{ app.additional_places }}</textarea>
+    <div class="actions">
+      <button class="btn" type="button" onclick="history.back()">Back</button>
+      <button class="btn primary">Save & Continue</button>
+    </div>
+  </form>
+{% endblock %}

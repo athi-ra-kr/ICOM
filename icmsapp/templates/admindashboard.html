@@ -1,0 +1,291 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="icon" type="image/png" href="{% static 'media/favicon.png' %}">
+  <meta charset="UTF-8">
+  <title>Admin Dashboard</title>
+  {% load static %}
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      display: flex;
+      flex-direction: column;
+      font-family: "Segoe UI", sans-serif;
+      background-color: #f9f9f9;
+      color: #111;
+    }
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 40px;
+      background: white;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+    .header-left {
+      display: flex;
+      align-items: center;
+    }
+    header img {
+      height: 40px;
+      margin-right: 12px;
+    }
+    header h1 {
+      font-size: 22px;
+      font-weight: 700;
+      color: #111;
+      margin: 0;
+    }
+    header h1 span {
+      color: #2563eb;
+    }
+    .logout-link {
+      text-decoration: none;
+      color: #333;
+      display: flex;
+      align-items: center;
+      padding: 8px;
+      border-radius: 8px;
+      transition: background 0.2s;
+    }
+    .logout-link:hover {
+      background: #f3f4f6;
+    }
+    .logout-link svg {
+      width: 24px;
+      height: 24px;
+    }
+    h2 {
+      font-size: 24px;
+      font-weight: 600;
+      margin: 30px 0 20px;
+    }
+    .container {
+      padding: 0 40px 40px;
+      flex: 1;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+    .card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      text-decoration: none;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+    }
+    .icon {
+      font-size: 22px;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 10px;
+    }
+    .icon-blue { background-color: #dbeafe; color: #2563eb; }
+    .icon-green { background-color: #dcfce7; color: #16a34a; }
+    .card h3 {
+      margin: 12px 0 6px;
+      font-size: 18px;
+      color: #222;
+    }
+    .card p { color: #666; font-size: 14px; margin: 4px 0; }
+    .notification-box {
+      background: white;
+      border-radius: 16px;
+      padding: 40px;
+      text-align: center;
+      color: #555;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+    }
+    .notification-box .icon {
+      font-size: 40px;
+      margin-bottom: 10px;
+    }
+    .notification-box h3 {
+      font-size: 18px;
+      font-weight: 600;
+      margin: 10px 0;
+    }
+    .notification-box p { font-size: 14px; color: #888; }
+    .form-popup {
+      display: none;
+      position: fixed;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      border-radius: 12px;
+      background: white;
+      padding: 30px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+      z-index: 1000;
+      width: 400px;
+      max-width: 90%;
+    }
+    .form-popup h2 {
+      text-align: center;
+      margin-top: 0;
+      margin-bottom: 20px;
+      color: #333;
+    }
+    .form-popup label {
+      display: block;
+      margin: 10px 0 5px;
+      font-weight: 600;
+      color: #555;
+    }
+    .form-popup input[type="text"],
+    .form-popup input[type="email"],
+    .form-popup input[type="password"],
+    .form-popup input[type="number"],
+    .form-popup input[type="date"] {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      box-sizing: border-box;
+      font-size: 14px;
+    }
+    .form-popup button {
+      width: 100%;
+      padding: 12px;
+      background-color: #2563eb;
+      color: white;
+      font-size: 16px;
+      border: none;
+      border-radius: 6px;
+      margin-top: 20px;
+      cursor: pointer;
+    }
+    .form-popup button:hover { background-color: #1e40af; }
+    .form-popup .cancel-btn {
+      background-color: #e5e7eb;
+      color: #111;
+    }
+    .form-popup .cancel-btn:hover { background-color: #d1d5db; }
+    .overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.4);
+      z-index: 999;
+    }
+    .footer {
+      text-align: center;
+      padding: 20px;
+      background-color: #f1f1f1;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header with Logo and Logout Icon -->
+  <header>
+    <div class="header-left">
+      <img src="{% static 'media/logo.png' %}" alt="Logo">
+    </div>
+    <a href="{% url 'logout' %}" class="logout-link" title="Logout">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" 
+           viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 
+                 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h6a2 
+                 2 0 012 2v1" />
+      </svg>
+    </a>
+  </header>
+
+{% block content %}
+  <div class="container">
+    <h2>Welcome Admin</h2>
+    <div class="grid">
+      <!-- Link to List Page -->
+      <a href="{% url 'institution_list' %}" class="card">
+        <div class="icon icon-blue">🏫</div>
+        <h3>List Institute</h3>
+        <p><span id="institution-count">0</span> Institutes</p>
+      </a>
+      <!-- Add Institute Card -->
+      <div class="card" onclick="showForm()">
+        <div class="icon icon-green">➕</div>
+        <h3>Add Institute</h3>
+        <p>Click to add new</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Overlay -->
+  <div class="overlay" id="overlay" onclick="hideForm()"></div>
+
+  <!-- Popup Form -->
+  <div class="form-popup" id="formPopup">
+    <h2>{% if institution %}Edit{% else %}Add{% endif %} Institution</h2>
+    <form method="post" action="{% if institution %}{% url 'edit_institution' institution.id %}{% else %}{% url 'add_institution' %}{% endif %}">
+      {% csrf_token %}
+      <label>Name:</label>
+      <input type="text" name="name" value="{{ institution.name|default_if_none:'' }}" required>
+      <label>Email:</label>
+      <input type="email" name="email" value="{{ institution.email|default_if_none:'' }}" required>
+      <label>Password:</label>
+      {% if institution %}
+        <input type="text" name="password" value="{{ institution.password }}" required>
+      {% else %}
+        <input type="password" name="password" required>
+      {% endif %}
+      <label>Student Limit:</label>
+      <input type="number" name="student_limit" value="{{ institution.student_limit|default_if_none:'' }}" required>
+      <label>Validity:</label>
+      <input type="date" name="validity" value="{{ institution.validity|default_if_none:'' }}" required>
+      <button type="submit">Save</button>
+      <button type="button" class="cancel-btn" onclick="hideForm()">Cancel</button>
+    </form>
+  </div>
+{% endblock %}
+
+  <!-- Footer -->
+  <div class="footer">
+    <span>All Rights Reserved © IcomVidya</span>
+  </div>
+
+  <!-- Scripts -->
+  <script>
+    function showForm() {
+      document.getElementById('formPopup').style.display = 'block';
+      document.getElementById('overlay').style.display = 'block';
+    }
+    function hideForm() {
+      document.getElementById('formPopup').style.display = 'none';
+      document.getElementById('overlay').style.display = 'none';
+    }
+    async function loadInstitutionCount() {
+      try {
+        const response = await fetch('/api/institutes/count/');
+        const data = await response.json();
+        document.getElementById('institution-count').innerText = data.count;
+      } catch (error) {
+        console.error('Failed to load institution count:', error);
+      }
+    }
+    window.addEventListener('DOMContentLoaded', loadInstitutionCount);
+  </script>
+</body>
+</html>

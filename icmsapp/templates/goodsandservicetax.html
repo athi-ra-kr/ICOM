@@ -1,0 +1,219 @@
+{% extends 'studentdashboard.html' %}
+{% block title %}Goods and Service Tax{% endblock %}
+
+{% block content %}
+<style>
+  /* -----------------------------
+     PAGE BASE
+  ----------------------------- */
+  body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f4f6f8;
+  }
+
+  /* -----------------------------
+     NAV BAR
+  ----------------------------- */
+  .nav-bar {
+    display: flex;
+    align-items: center;
+    margin: 12px 30px 0 30px;
+  }
+
+  .nav-link {
+    padding: 8px 14px;
+    background-color: #eef2ff;
+    border-radius: 8px;
+    font-weight: 600;
+    color: #1e3a8a;
+    font-size: 15px;
+    text-decoration: none;
+    border: 1px solid #e5e7eb;
+    transition: background-color 0.2s ease;
+  }
+
+  .nav-link:hover {
+    background-color: #e0e7ff;
+  }
+
+  /* -----------------------------
+     GST WRAPPER
+  ----------------------------- */
+  .gst-wrapper {
+    padding: 20px 30px;
+  }
+
+  .gst-wrapper h3 {
+    font-size: 26px;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 26px;
+  }
+
+  /* -----------------------------
+     CATEGORY CARD
+  ----------------------------- */
+  .category-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    background-color: #ffffff;
+    padding: 22px 28px;
+    border-radius: 12px;
+    margin-bottom: 18px;
+
+    border: 1px solid #e5e7eb;
+    text-decoration: none;
+    color: #1f2937;
+
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .category-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+  }
+
+  /* -----------------------------
+     TASK INFO
+  ----------------------------- */
+  .task-info {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+  }
+
+  .circle-number {
+    width: 46px;
+    height: 46px;
+    background-color: #e0e7ff;
+    color: #1e40af;
+    border-radius: 50%;
+    font-weight: 700;
+    font-size: 17px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .task-details strong {
+    font-size: 17px;
+    font-weight: 600;
+    color: #111827;
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .task-details small {
+    font-size: 14px;
+    color: #6b7280;
+  }
+
+  /* -----------------------------
+     ACTION TEXT
+  ----------------------------- */
+  .task-action {
+    font-size: 14px;
+    font-weight: 600;
+    color: #2563eb;
+    white-space: nowrap;
+  }
+
+  /* -----------------------------
+     RESPONSIVE
+  ----------------------------- */
+  @media (max-width: 768px) {
+    .category-card {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 14px;
+    }
+
+    .task-action {
+      align-self: flex-end;
+    }
+  }
+</style>
+
+<!-- NAV -->
+<div class="nav-bar">
+  <a href="/studentdashboard/" class="nav-link">🏠 Home</a>
+</div>
+
+<!-- CONTENT -->
+<div class="gst-wrapper">
+  <h3>Goods and Service Tax</h3>
+
+  <a href="/course/" class="category-card">
+    <div class="task-info">
+      <div class="circle-number">1</div>
+      <div class="task-details">
+        <strong>Registration – GSTIN</strong>
+        <small>25 Learning Tasks</small>
+      </div>
+    </div>
+    <div class="task-action">View Module →</div>
+  </a>
+
+  <a href="#" class="category-card">
+    <div class="task-info">
+      <div class="circle-number">2</div>
+      <div class="task-details">
+        <strong>E-Way Bill (Electronic Waybill)</strong>
+        <small>13 Learning Tasks</small>
+      </div>
+    </div>
+    <div class="task-action">View Module →</div>
+  </a>
+
+  <a href="/course1/" class="category-card">
+    <div class="task-info">
+      <div class="circle-number">3</div>
+      <div class="task-details">
+        <strong>NIL Return Filing</strong>
+        <small>6 Learning Tasks</small>
+      </div>
+    </div>
+    <div class="task-action">View Module →</div>
+  </a>
+
+  <a href="/course2/" class="category-card">
+    <div class="task-info">
+      <div class="circle-number">4</div>
+      <div class="task-details">
+        <strong>E-Filing of GSTR-1</strong>
+        <small>12 Learning Tasks</small>
+      </div>
+    </div>
+    <div class="task-action">View Module →</div>
+  </a>
+
+  <a href="#" class="category-card">
+    <div class="task-info">
+      <div class="circle-number">5</div>
+      <div class="task-details">
+        <strong>E-Filing of GSTR-3B</strong>
+        <small>14 Learning Tasks</small>
+      </div>
+    </div>
+    <div class="task-action">View Module →</div>
+  </a>
+
+  <a href="#" class="category-card">
+    <div class="task-info">
+      <div class="circle-number">6</div>
+      <div class="task-details">
+        <strong>E-Filing of GSTR CMP-08</strong>
+        <small>12 Learning Tasks</small>
+      </div>
+    </div>
+    <div class="task-action">View Module →</div>
+  </a>
+
+</div>
+
+{% endblock %}

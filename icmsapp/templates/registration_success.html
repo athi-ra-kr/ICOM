@@ -1,0 +1,333 @@
+<!-- {% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }} - GST Portal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 20px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 0 20px;
+        }
+
+        .success-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            overflow: hidden;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .success-header {
+            background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        .success-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+
+        .success-header h2 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .success-header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .success-body {
+            padding: 40px 30px;
+        }
+
+        .info-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 5px;
+            margin-bottom: 25px;
+            border-left: 4px solid #27ae60;
+        }
+
+        .info-row {
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .info-value {
+            color: #555;
+        }
+
+        .trn-highlight {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            padding: 20px;
+            border-radius: 5px;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .trn-highlight strong {
+            display: block;
+            font-size: 24px;
+            color: #856404;
+            margin-top: 5px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #2a5298 0%, #1e3c72 100%);
+            color: white;
+            flex: 1;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+            flex: 1;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .btn-success {
+            background: #27ae60;
+            color: white;
+            flex: 1;
+        }
+
+        .btn-success:hover {
+            background: #229954;
+        }
+
+        .next-steps {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 25px;
+        }
+
+        .next-steps h3 {
+            color: #1976d2;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .next-steps ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .next-steps li {
+            padding: 8px 0;
+            padding-left: 25px;
+            position: relative;
+        }
+
+        .next-steps li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #27ae60;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .info-row {
+                grid-template-columns: 1fr;
+                gap: 5px;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <h1>🇮🇳 GST Portal</h1>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="success-card">
+            <div class="success-header">
+                <div class="success-icon">✅</div>
+                <h2>Registration Submitted Successfully!</h2>
+                <p>Your GST registration application has been saved</p>
+            </div>
+
+            <div class="success-body">
+                <div class="trn-highlight">
+                    <div style="font-size: 14px; color: #856404;">Your Temporary Reference Number</div>
+                    <strong>{{ registration.trn }}</strong>
+                </div>
+
+                <div class="info-section">
+                    <h3 style="margin-bottom: 20px; color: #2c3e50;">📋 Application Summary</h3>
+                    
+                    <div class="info-row">
+                        <div class="info-label">Status:</div>
+                        <div class="info-value">
+                            <span style="background: #ffc107; color: #856404; padding: 4px 12px; border-radius: 3px; font-weight: 600;">
+                                {{ registration.get_status_display }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="info-row">
+                        <div class="info-label">Proprietor Name:</div>
+                        <div class="info-value">{{ registration.proprietor_name }}</div>
+                    </div>
+
+                    <div class="info-row">
+                        <div class="info-label">PAN Number:</div>
+                        <div class="info-value">{{ registration.pan_number }}</div>
+                    </div>
+
+                    <div class="info-row">
+                        <div class="info-label">Mobile Number:</div>
+                        <div class="info-value">{{ registration.mobile_number }}</div>
+                    </div>
+
+                    <div class="info-row">
+                        <div class="info-label">Email:</div>
+                        <div class="info-value">{{ registration.email }}</div>
+                    </div>
+
+                    <div class="info-row">
+                        <div class="info-label">Business Address:</div>
+                        <div class="info-value">
+                            {{ registration.bus_flat_no }}, {{ registration.bus_building }},<br>
+                            {{ registration.bus_street }}, {{ registration.bus_city }},<br>
+                            {{ registration.get_bus_state_display }} - {{ registration.bus_pincode }}
+                        </div>
+                    </div>
+
+                    <div class="info-row">
+                        <div class="info-label">Filing Frequency:</div>
+                        <div class="info-value">{{ registration.get_filing_frequency_display }}</div>
+                    </div>
+
+                    <div class="info-row">
+                        <div class="info-label">Submitted On:</div>
+                        <div class="info-value">{{ registration.created_at|date:"d M Y, h:i A" }}</div>
+                    </div>
+                </div>
+
+                <div class="next-steps">
+                    <h3>📌 Next Steps</h3>
+                    <ul>
+                        <li>Your application is currently in <strong>Draft</strong> status</li>
+                        <li>Please review all the details carefully</li>
+                        <li>Upload required documents (PAN card, Aadhaar, Address proof)</li>
+                        <li>Submit the application for final processing</li>
+                        <li>You will receive GSTIN within 7 working days after approval</li>
+                        <li>Check your email for updates on application status</li>
+                    </ul>
+                </div>
+
+                <div class="action-buttons">
+                    <a href="{% url 'gst_registration_detail' registration.pk %}" class="btn btn-primary">
+                        📄 View Full Details
+                    </a>
+                    <a href="{% url 'gst_registration_edit' registration.pk %}" class="btn btn-secondary">
+                        ✏️ Edit Application
+                    </a>
+                    <a href="{% url 'gst_registration_list' %}" class="btn btn-success">
+                        📋 View All Applications
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html> -->

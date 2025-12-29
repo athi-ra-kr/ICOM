@@ -1,0 +1,644 @@
+{% extends "base_trn.html" %}
+{% load static %}
+
+{% block content %}
+
+<style>
+    /* ============================
+       PAGE BACKGROUND
+       ============================ */
+    body {
+        background: #e4e8eb;  /* close to GST */
+    }
+
+    .biz-wrapper {
+        padding: 18px 0 40px;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        min-height: calc(100vh - 60px);
+    }
+
+    /* form container – full width inside base layout */
+    .biz-card {
+        position: relative;
+        background: #ffffff;
+        border: 1px solid #d3d3d3;
+        border-radius: 0;
+        padding: 18px 26px 26px;
+        box-shadow: none;
+    }
+
+    /* ============================
+       HEADER
+       ============================ */
+    .biz-title {
+        font-size: 14px;
+        color: #004a80;
+        font-weight: 600;
+        margin: 0 0 10px;
+    }
+
+    .biz-mand-note {
+        position: absolute;
+        top: 10px;
+        right: 26px;
+        font-size: 11px;
+        color: #555;
+    }
+
+    .biz-mand-note span {
+        color: #ff0000;
+        font-size: 14px;
+        font-weight: 700;
+        margin-right: 3px;
+    }
+
+    /* ============================
+       ROW / COL LAYOUT
+       ============================ */
+    .biz-row {
+        display: flex;
+        flex-wrap: wrap;
+        column-gap: 34px;
+        row-gap: 10px;
+        margin-bottom: 12px;
+    }
+
+    .biz-col {
+        flex: 1;
+        min-width: 260px;
+        position: relative;
+    }
+
+    /* grey strip rows (Legal Name/PAN, State/District, Composition) */
+    .biz-strip {
+        background: #f3f3f3;
+        margin: 0 -26px 12px;
+        padding: 10px 26px;
+        border-top: 1px solid #e2e2e2;
+        border-bottom: 1px solid #e2e2e2;
+    }
+
+    .biz-strip .biz-row {
+        margin-bottom: 0;
+    }
+
+    /* ============================
+       LABEL + VALUE
+       ============================ */
+    .biz-label {
+        font-size: 11px;
+        color: #555;
+        margin-bottom: 3px;
+        display: block;
+        font-family: inherit;
+    }
+
+    .biz-label .req-dot {
+        color: #ff0000;
+        margin-left: 2px;
+        font-size: 13px;
+    }
+
+    .biz-value {
+        font-size: 12px;
+        font-weight: 600;
+        color: #000;
+        padding-top: 3px;
+        font-family: inherit;
+    }
+
+    .biz-error {
+        font-size: 10px;
+        color: #ff0000;
+        margin-top: 2px;
+        display: block;
+        font-family: inherit;
+    }
+
+    /* ============================
+       INPUTS / SELECTS
+       ============================ */
+    .biz-input,
+    .biz-select {
+        width: 100%;
+        border: 1px solid #c9c9c9;
+        border-radius: 0;
+        padding: 4px 8px;
+        font-size: 12px;
+        color: #333;
+        height: 30px;
+        box-sizing: border-box;
+        background-color: #fff;
+        outline: none;
+        transition: border-color .2s, box-shadow .2s;
+        font-family: inherit;  /* same font everywhere */
+    }
+
+    .biz-input:focus,
+    .biz-select:focus {
+        border-color: #4c9cff;
+        box-shadow: 0 0 0 2px rgba(76,156,255,0.2);
+    }
+
+    .biz-input::placeholder {
+        color: #bcbcbc;
+        font-size: 11px;
+    }
+
+    select.biz-select {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23333%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+        background-repeat: no-repeat;
+        background-position: right 8px center;
+        background-size: 9px;
+    }
+
+    /* ============================
+       DATE INPUTS
+       ============================ */
+    .biz-date-wrap {
+        position: relative;
+        width: 100%;
+    }
+
+    .biz-date {
+        width: 100%;
+        padding-right: 55px;
+    }
+
+    .biz-date-prefix {
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 52px;
+        background: #f3f3f3;
+        border-right: 1px solid #dedede;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        color: #555;
+        font-family: inherit;
+    }
+
+    .biz-date.has-prefix {
+        padding-left: 56px;
+    }
+
+    .biz-date-clear,
+    .biz-date-cal {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        border: none;
+        background: transparent;
+        cursor: pointer;
+        padding: 0 6px;
+        font-size: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #777;
+    }
+
+    .biz-date-clear { right: 28px; }
+    .biz-date-cal {
+        right: 3px;
+        border-left: 1px solid #dedede;
+    }
+
+    .biz-date-clear:hover,
+    .biz-date-cal:hover {
+        color: #333;
+    }
+
+    /* ============================
+       TOGGLE SWITCHES
+       ============================ */
+    .biz-toggle-wrap { margin-top: 6px; }
+
+    .biz-switch {
+        position: relative;
+        display: inline-block;
+        width: 40px;
+        height: 22px;
+    }
+
+    .biz-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    .biz-slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background-color: #c7c7c7;
+        transition: .3s;
+        border-radius: 34px;
+    }
+
+    .biz-slider:before {
+        position: absolute;
+        content: "";
+        height: 16px;
+        width: 16px;
+        left: 4px;
+        bottom: 3px;
+        background-color: #ffffff;
+        transition: .3s;
+        border-radius: 50%;
+        box-shadow: 0 0 2px rgba(0,0,0,0.2);
+    }
+
+    .biz-switch input:checked + .biz-slider {
+        background-color: #666666;
+    }
+
+    .biz-switch input:checked + .biz-slider:before {
+        transform: translateX(16px);
+    }
+
+    /* ============================
+       EXISTING REGISTRATIONS
+       ============================ */
+    .biz-sub-heading {
+        font-size: 13px;
+        color: #004a80;
+        margin: 18px 0 10px;
+        font-weight: 600;
+    }
+
+    .biz-inline-actions {
+        display: flex;
+        align-items: flex-end;
+        gap: 10px;
+    }
+
+    .biz-btn-add {
+        background: #1f3b70;
+        color: #fff;
+        border: none;
+        border-radius: 0;
+        padding: 7px 20px;
+        font-size: 11px;
+        font-weight: 600;
+        cursor: pointer;
+        text-transform: uppercase;
+    }
+
+    .biz-btn-cancel {
+        background: #ffffff;
+        color: #333;
+        border: 1px solid #d2d2d2;
+        border-radius: 0;
+        padding: 7px 18px;
+        font-size: 11px;
+        font-weight: 600;
+        cursor: pointer;
+        text-transform: uppercase;
+    }
+
+    /* ============================
+       BOTTOM ACTION BUTTONS
+       ============================ */
+    .biz-actions {
+        display: flex;
+        justify-content: flex-end;   /* both buttons on right */
+        align-items: center;
+        gap: 14px;
+        margin-top: 26px;
+        border-top: 1px solid #e2e2e2;
+        padding-top: 14px;
+    }
+
+    .biz-btn-back {
+        background: #ffffff;
+        border: 1px solid transparent;
+        color: #666;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        text-transform: uppercase;
+        padding: 8px 22px;
+        font-family: inherit;
+    }
+
+    .biz-btn-back:hover {
+        text-decoration: underline;
+    }
+
+    .biz-btn-save {
+        background: #1f3b70;
+        color: #fff;
+        border: none;
+        border-radius: 0;
+        padding: 9px 26px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        text-transform: uppercase;
+        box-shadow: 0 2px 3px rgba(0,0,0,0.25);
+        font-family: inherit;
+    }
+
+    .biz-btn-save:hover { background: #162a52; }
+
+    /* ============================
+       RESPONSIVE
+       ============================ */
+    @media (max-width: 900px) {
+        .biz-card {
+            padding: 16px;
+            margin: 0 8px;
+        }
+        .biz-row {
+            flex-direction: column;
+            column-gap: 0;
+        }
+        .biz-mand-note {
+        position: static;
+        text-align: right;
+        margin-bottom: 8px;
+        }
+        .biz-strip {
+            margin-left: -16px;
+            margin-right: -16px;
+            padding-left: 16px;
+            padding-right: 16px;
+        }
+        .biz-actions {
+            justify-content: flex-end;
+        }
+    }
+</style>
+
+<div class="biz-wrapper">
+  <div class="biz-card">
+
+    <h2 class="biz-title">Details of your Business</h2>
+    <p class="biz-mand-note"><span>•</span> indicates mandatory fields</p>
+
+    <form method="post">
+      {% csrf_token %}
+
+      <!-- LEGAL NAME + PAN STRIP -->
+      <div class="biz-strip">
+        <div class="biz-row">
+          <div class="biz-col">
+            <label class="biz-label">Legal Name of the Business</label>
+            <div class="biz-value">{{ business.legal_name }}</div>
+          </div>
+          <div class="biz-col">
+            <label class="biz-label">Permanent Account Number (PAN)</label>
+            <div class="biz-value">{{ business.pan }}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TRADE NAME + CONSTITUTION -->
+      <div class="biz-row">
+        <div class="biz-col">
+          <label class="biz-label">Trade Name</label>
+          <input type="text" name="trade_name"
+                 class="biz-input"
+                 placeholder="Enter Legal Name of Business"
+                 value="{{ business.trade_name|default_if_none:'' }}">
+        </div>
+
+        <div class="biz-col">
+          <label class="biz-label">
+            Constitution of Business (Select Appropriate)
+            <span class="req-dot">•</span>
+          </label>
+          <select name="constitution" class="biz-select">
+            <option value="">Select</option>
+            {% with business.constitution as cur %}
+              <option value="Foreign Company" {% if cur == "Foreign Company" %}selected{% endif %}>Foreign Company</option>
+              <option value="Foreign Limited Liability Partnership" {% if cur == "Foreign Limited Liability Partnership" %}selected{% endif %}>Foreign Limited Liability Partnership</option>
+              <option value="Government Department" {% if cur == "Government Department" %}selected{% endif %}>Government Department</option>
+              <option value="Hindu Undivided Family" {% if cur == "Hindu Undivided Family" %}selected{% endif %}>Hindu Undivided Family</option>
+              <option value="Limited Liability Partnership" {% if cur == "Limited Liability Partnership" %}selected{% endif %}>Limited Liability Partnership</option>
+              <option value="Local Authority" {% if cur == "Local Authority" %}selected{% endif %}>Local Authority</option>
+              <option value="Others" {% if cur == "Others" %}selected{% endif %}>Others</option>
+              <option value="Partnership" {% if cur == "Partnership" %}selected{% endif %}>Partnership</option>
+              <option value="Private Limited Company" {% if cur == "Private Limited Company" %}selected{% endif %}>Private Limited Company</option>
+              <option value="Proprietorship" {% if cur == "Proprietorship" %}selected{% endif %}>Proprietorship</option>
+              <option value="Public Limited Company" {% if cur == "Public Limited Company" %}selected{% endif %}>Public Limited Company</option>
+              <option value="Public Sector Undertaking" {% if cur == "Public Sector Undertaking" %}selected{% endif %}>Public Sector Undertaking</option>
+              <option value="Society/ Club/ Trust/ AOP" {% if cur == "Society/ Club/ Trust/ AOP" %}selected{% endif %}>Society/ Club/ Trust/ AOP</option>
+              <option value="Statutory Body" {% if cur == "Statutory Body" %}selected{% endif %}>Statutory Body</option>
+              <option value="Unlimited Company" {% if cur == "Unlimited Company" %}selected{% endif %}>Unlimited Company</option>
+            {% endwith %}
+          </select>
+        </div>
+      </div>
+
+      <!-- STATE + DISTRICT STRIP -->
+      <div class="biz-strip">
+        <div class="biz-row">
+          <div class="biz-col">
+            <label class="biz-label">Name of the State</label>
+            <div class="biz-value">{{ business.state }}</div>
+          </div>
+          <div class="biz-col">
+            <label class="biz-label">District</label>
+            <div class="biz-value">{{ business.district }}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CASUAL TAXABLE TOGGLE -->
+      <div class="biz-row" style="margin-bottom:8px;">
+        <div class="biz-col">
+          <label class="biz-label">
+            Are you applying for registration as a casual taxable person?
+          </label>
+          <div class="biz-toggle-wrap">
+            <label class="biz-switch">
+              <input type="checkbox" name="casual_taxable"
+                     {% if business.casual_taxable == "Yes" %}checked{% endif %}>
+              <span class="biz-slider"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- OPTION FOR COMPOSITION STRIP -->
+      <div class="biz-strip" style="margin-top:6px;">
+        <div class="biz-row">
+          <div class="biz-col">
+            <label class="biz-label">Option For Composition</label>
+            <div class="biz-toggle-wrap">
+              <label class="biz-switch">
+                <input type="checkbox" name="composition_opt"
+                       {% if business.composition_opt == "Yes" %}checked{% endif %}>
+                <span class="biz-slider"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- REASON + DATES -->
+      <div class="biz-row">
+        <div class="biz-col">
+          <label class="biz-label">
+            Reason to obtain registration
+            <span class="req-dot">•</span>
+          </label>
+          <!-- ALWAYS start with Select; no pre-selected value -->
+          <select name="reason" class="biz-select">
+              <option value="">Select</option>
+              <option value="Crossing the Threshold">Crossing the Threshold</option>
+              <option value="Inter-State supply">Inter-State supply</option>
+              <option value="Liability to pay as recipient of goods or services">Liability to pay as recipient of goods or services</option>
+              <option value="Transfer / Succession of business">Transfer / Succession of business</option>
+              <option value="Death of the Proprietor">Death of the Proprietor</option>
+              <option value="De-merger">De-merger</option>
+              <option value="Change in constitution of business">Change in constitution of business</option>
+              <option value="Merger /Amalgamation">Merger /Amalgamation</option>
+              <option value="E-Commerce Operator">E-Commerce Operator</option>
+              <option value="Selling through e-Commerce portal">Selling through e-Commerce portal</option>
+              <option value="Voluntary Basis">Voluntary Basis</option>
+              <option value="Input Service Distributor only">Input Service Distributor only</option>
+              <option value="Supplies on behalf of other taxable Person">Supplies on behalf of other taxable Person</option>
+              <option value="SEZ Unit">SEZ Unit</option>
+              <option value="SEZ Developer">SEZ Developer</option>
+              <option value="Others">Others</option>
+              <option value="Corporate Debtor under CIRP with IRP/RP">Corporate Debtor undergoing the Corporate Insolvency Resolution Process with IRP/RP</option>
+          </select>
+        </div>
+
+        <div class="biz-col">
+          <label class="biz-label">
+            Date of commencement of Business
+            <span class="req-dot">•</span>
+          </label>
+          <div class="biz-date-wrap">
+            <span class="biz-date-prefix">From</span>
+            <input type="date" name="comm_date"
+                   class="biz-input biz-date has-prefix"
+                   value="{{ business.comm_date|default_if_none:'' }}">
+            <button type="button" class="biz-date-clear" data-target="comm_date">✕</button>
+            <button type="button" class="biz-date-cal" data-target="comm_date"></button>
+          </div>
+          <span class="biz-error">from date is required</span>
+        </div>
+
+        <div class="biz-col">
+          <label class="biz-label">
+            Date on which liability to register arises
+            <span class="req-dot">•</span>
+          </label>
+          <div class="biz-date-wrap">
+            <input type="date" name="liability_date"
+                   class="biz-input biz-date"
+                   value="{{ business.liability_date|default_if_none:'' }}">
+            <button type="button" class="biz-date-clear" data-target="liability_date">✕</button>
+            <button type="button" class="biz-date-cal" data-target="liability_date"></button>
+          </div>
+          <span class="biz-error">date is required</span>
+        </div>
+      </div>
+
+      <!-- INDICATE EXISTING REGISTRATIONS -->
+      <h3 class="biz-sub-heading">Indicate Existing Registrations</h3>
+
+      <div class="biz-row">
+        <div class="biz-col">
+          <label class="biz-label">Type of Registration</label>
+          <select name="existing_reg_type" class="biz-select">
+            {% with business.existing_reg_type as t %}
+              <option value="">Select</option>
+              <option value="GSTIN" {% if t == "GSTIN" %}selected{% endif %}>GSTIN</option>
+              <option value="Temporary ID" {% if t == "Temporary ID" %}selected{% endif %}>Temporary ID</option>
+              <option value="Registration Number under Value Added Tax (TIN)" {% if t == "Registration Number under Value Added Tax (TIN)" %}selected{% endif %}>Registration Number under Value Added Tax (TIN)</option>
+              <option value="Central Sales Tax Registration Number" {% if t == "Central Sales Tax Registration Number" %}selected{% endif %}>Central Sales Tax Registration Number</option>
+              <option value="Central Excise Registration Number" {% if t == "Central Excise Registration Number" %}selected{% endif %}>Central Excise Registration Number</option>
+              <option value="Service Tax Registration Number" {% if t == "Service Tax Registration Number" %}selected{% endif %}>Service Tax Registration Number</option>
+              <option value="Importer/Exporter Code Number" {% if t == "Importer/Exporter Code Number" %}selected{% endif %}>Importer/Exporter Code Number</option>
+              <option value="Entry Tax Registration Number" {% if t == "Entry Tax Registration Number" %}selected{% endif %}>Entry Tax Registration Number</option>
+              <option value="Entertainment Tax Registration Number" {% if t == "Entertainment Tax Registration Number" %}selected{% endif %}>Entertainment Tax Registration Number</option>
+              <option value="Hotel And Luxury Tax Registration Number" {% if t == "Hotel And Luxury Tax Registration Number" %}selected{% endif %}>Hotel And Luxury Tax Registration Number</option>
+              <option value="Corporate Identity Number / Foreign Company Registration Number" {% if t == "Corporate Identity Number / Foreign Company Registration Number" %}selected{% endif %}>Corporate Identity Number / Foreign Company Registration Number</option>
+              <option value="Limited Liability Partnership / Foreign Limited Liability Partnership Identification Number" {% if t == "Limited Liability Partnership / Foreign Limited Liability Partnership Identification Number" %}selected{% endif %}>Limited Liability Partnership / Foreign Limited Liability Partnership Identification Number</option>
+              <option value="Registration number under Medicinal and Toilet Preparations (Excise Duties) Act" {% if t == "Registration number under Medicinal and Toilet Preparations (Excise Duties) Act" %}selected{% endif %}>Registration number under Medicinal and Toilet Preparations (Excise Duties) Act</option>
+              <option value="Registration under Shops and Establishment Act" {% if t == "Registration under Shops and Establishment Act" %}selected{% endif %}>Registration under Shops and Establishment Act</option>
+              <option value="Others (Please specify)" {% if t == "Others (Please specify)" %}selected{% endif %}>Others (Please specify)</option>
+            {% endwith %}
+          </select>
+        </div>
+
+        <div class="biz-col">
+          <label class="biz-label">
+            Registration No.
+            <span class="req-dot">•</span>
+          </label>
+          <input type="text" name="existing_reg_no"
+                 class="biz-input"
+                 value="{{ business.existing_reg_no|default_if_none:'' }}">
+        </div>
+
+        <div class="biz-col">
+          <label class="biz-label">
+            Date of Registration
+            <span class="req-dot">•</span>
+          </label>
+          <div class="biz-date-wrap">
+            <input type="date" name="existing_reg_date"
+                   class="biz-input biz-date"
+                   value="{{ business.existing_reg_date|default_if_none:'' }}">
+            <button type="button" class="biz-date-clear" data-target="existing_reg_date">✕</button>
+            <button type="button" class="biz-date-cal" data-target="existing_reg_date"></button>
+          </div>
+        </div>
+
+        <div class="biz-inline-actions">
+          <button type="button" class="biz-btn-add">+ ADD</button>
+          <button type="button" class="biz-btn-cancel">✕ CANCEL</button>
+        </div>
+      </div>
+
+      <!-- BOTTOM BUTTONS -->
+      <div class="biz-actions">
+        <button type="button" class="biz-btn-back" onclick="history.back()">BACK</button>
+        <button type="submit" class="biz-btn-save">SAVE &amp; CONTINUE</button>
+      </div>
+
+    </form>
+  </div>
+</div>
+
+<script>
+  // clear date + open native calendar like GST portal
+  document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.biz-date-clear').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var name = this.getAttribute('data-target');
+        var input = document.querySelector('input[name="' + name + '"]');
+        if (input) input.value = '';
+      });
+    });
+
+    document.querySelectorAll('.biz-date-cal').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var name = this.getAttribute('data-target');
+        var input = document.querySelector('input[name="' + name + '"]');
+        if (!input) return;
+        if (typeof input.showPicker === 'function') {
+          input.showPicker();
+        } else {
+          input.focus();
+        }
+      });
+    });
+  });
+</script>
+
+{% endblock %}
+

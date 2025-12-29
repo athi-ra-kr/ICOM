@@ -1,0 +1,233 @@
+{% extends 'gov.html' %}
+
+{% block title %}TRN Login{% endblock %}
+
+{% block content %}
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Promoter / Partners</title>
+<style>
+  :root{--ink:#2b3443;--muted:#6b7280;--bg:#eef2f7;--panel:#fff;--line:#d8e0ea;--accent:#294e80}
+  *{box-sizing:border-box} body{margin:0;background:#e9edf2;font-family:system-ui,Segoe UI,Roboto}
+  .wrap{max-width:1180px;margin:auto;padding:0 16px}
+  .tabs{display:grid;grid-template-columns:repeat(9,1fr);gap:10px;padding:16px 0}
+  .tab{background:#fff;border:1px solid var(--line);border-radius:8px;text-align:center;padding:14px;opacity:.8}
+  .tab.active{background:#294e80;color:#fff;opacity:1}
+  .ico{font-size:24px;display:block}
+  .lbl{font-size:13px;font-weight:600;line-height:1.1}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px;margin:14px 0}
+  h3{margin:0 0 12px}
+  label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
+  input[type=text],input[type=date],select{width:100%;padding:10px;border:1px solid #cbd5e1;border-radius:6px;background:#fff}
+  .g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+  .row{margin-bottom:12px}
+  .inline{display:flex;align-items:center;gap:8px}
+  .actions{display:flex;gap:10px;justify-content:flex-end}
+  .btn{padding:10px 16px;border-radius:8px;border:1px solid var(--line);background:#fff;font-weight:600;cursor:pointer}
+  .btn.primary{background:#1f4f91;border-color:#1f4f91;color:#fff}
+  .radius{border-radius:6px}
+  /* toggle */
+  .tog{--h:30px;--w:60px;width:var(--w);height:var(--h);border-radius:999px;background:#cbd5e1;border:1px solid #94a3b8;position:relative;display:inline-block}
+  .tog input{display:none}
+  .tog .k{position:absolute;top:2px;left:2px;width:26px;height:26px;border-radius:50%;background:#fff;transition:left .2s}
+  .tog input:checked + .k{left:32px}
+  .tog input:checked ~ .bg{background:#22c55e}
+  .tog .bg{position:absolute;inset:0;border-radius:999px;transition:background .2s}
+  .muted{color:#6b7280}
+  @media(max-width:960px){.tabs{grid-template-columns:1fr 1fr}.g2,.g3{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="tabs">
+    <div class="tab"><span class="ico">💼</span><div class="lbl">Business<br>Details</div></div>
+    <div class="tab active"><span class="ico">🧍</span><div class="lbl">Promoter<br>Partners</div></div>
+    <div class="tab"><span class="ico">✍️</span><div class="lbl">Authorized<br>Signatory</div></div>
+    <div class="tab"><span class="ico">🧑‍⚖️</span><div class="lbl">Authorized<br>Representative</div></div>
+    <div class="tab"><span class="ico">📍</span><div class="lbl">Principal Place<br>of Business</div></div>
+    <div class="tab"><span class="ico">📍+</span><div class="lbl">Additional Places<br>of Business</div></div>
+    <div class="tab"><span class="ico">🛒</span><div class="lbl">Goods And<br>Services</div></div>
+    <div class="tab"><span class="ico">🧾</span><div class="lbl">State Specific<br>Information</div></div>
+    <div class="tab"><span class="ico">🆔</span><div class="lbl">Aadhaar<br>Authentication</div></div>
+  </div>
+
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <div class="card">
+      <h3>Details of Proprietor</h3>
+      <h4 class="muted" style="margin:0 0 6px">Personal Information</h4>
+
+      <div class="row g3">
+        <div>
+          <label>First Name <span style="color:#b91c1c">*</span></label>
+          <input type="text" name="first_name" value="{{ reg.first_name }}">
+        </div>
+        <div>
+          <label>Middle Name</label>
+          <input type="text" name="middle_name" value="{{ reg.middle_name }}">
+        </div>
+        <div>
+          <label>Last Name</label>
+          <input type="text" name="last_name" value="{{ reg.last_name }}">
+        </div>
+      </div>
+
+      <div class="row g3">
+        <div>
+          <label>First Name (Father)</label>
+          <input type="text" name="father_first" value="{{ reg.father_first }}">
+        </div>
+        <div>
+          <label>Middle Name (Father)</label>
+          <input type="text" name="father_middle" value="{{ reg.father_middle }}">
+        </div>
+        <div>
+          <label>Last Name (Father)</label>
+          <input type="text" name="father_last" value="{{ reg.father_last }}">
+        </div>
+      </div>
+
+      <div class="row g3">
+        <div>
+          <label>Date of Birth <span style="color:#b91c1c">*</span></label>
+          <input type="date" name="dob" value="{{ reg.dob|date:'Y-m-d' }}">
+        </div>
+        <div>
+          <label>Mobile Number <span style="color:#b91c1c">*</span></label>
+          <input type="text" name="mobile" value="{{ reg.mobile }}" placeholder="+91">
+        </div>
+        <div>
+          <label>Email Address <span style="color:#b91c1c">*</span></label>
+          <input type="text" name="email" value="{{ reg.email }}">
+        </div>
+      </div>
+
+      <div class="row g3">
+        <div>
+          <label>Designation / Status <span style="color:#b91c1c">*</span></label>
+          <input type="text" name="designation" value="{{ reg.designation }}">
+        </div>
+        <div>
+          <label>Director Identification Number</label>
+          <input type="text" name="din" value="{{ reg.din }}">
+        </div>
+        <div>
+          <label>Are you citizen of India?</label><br>
+          <span class="tog">
+            <input type="checkbox" name="citizen" {% if reg.citizen %}checked{% endif %}><span class="k"></span><span class="bg"></span>
+          </span>
+        </div>
+      </div>
+
+      <div class="row g3">
+        <div>
+          <label>Permanent Account Number (PAN) <span style="color:#b91c1c">*</span></label>
+          <input type="text" name="pan_promoter" value="{{ reg.pan_promoter }}">
+        </div>
+        <div>
+          <label>Passport Number (in case of Foreigner)</label>
+          <input type="text" name="passport_no" value="{{ reg.passport_no }}">
+        </div>
+        <div>
+          <label>Aadhaar Number</label>
+          <input type="text" name="aadhaar_no" value="{{ reg.aadhaar_no }}">
+        </div>
+      </div>
+
+      <div class="row">
+        <label>Gender <span style="color:#b91c1c">*</span></label>
+        <div class="inline">
+          <label class="inline"><input type="radio" name="gender" value="Male" {% if reg.gender == 'Male' %}checked{% endif %}> Male</label>
+          <label class="inline"><input type="radio" name="gender" value="Female" {% if reg.gender == 'Female' %}checked{% endif %}> Female</label>
+          <label class="inline"><input type="radio" name="gender" value="Others" {% if reg.gender == 'Others' %}checked{% endif %}> Others</label>
+        </div>
+      </div>
+
+      <div class="row g2">
+        <div>
+          <label>Telephone Number (with STD Code)</label>
+          <div class="g2">
+            <input type="text" name="tel_std" placeholder="STD" value="{{ reg.tel_std }}">
+            <input type="text" name="tel_no" placeholder="Enter Telephone Number" value="{{ reg.tel_no }}">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3><span style="margin-right:6px">✉️</span>Residential Address</h3>
+      <div class="row g3">
+        <div>
+          <label>Building No. / Flat No. <span style="color:#b91c1c">*</span></label>
+          <input type="text" name="res_building" value="{{ reg.res_building }}">
+        </div>
+        <div>
+          <label>Floor Number</label>
+          <input type="text" name="res_floor" value="{{ reg.res_floor }}">
+        </div>
+        <div>
+          <label>Name of the Premises / Building</label>
+          <input type="text" name="res_premises" value="{{ reg.res_premises }}">
+        </div>
+      </div>
+      <div class="row g3">
+        <div>
+          <label>Road / Street <span style="color:#b91c1c">*</span></label>
+          <input type="text" name="res_road" value="{{ reg.res_road }}">
+        </div>
+        <div>
+          <label>City / Town / Locality / Village <span style="color:#b91c1c">*</span></label>
+          <input type="text" name="res_locality" value="{{ reg.res_locality }}">
+        </div>
+        <div>
+          <label>Country <span style="color:#b91c1c">*</span></label>
+          <select name="res_country">
+            <option value="">Select</option>
+            <option value="India" {% if reg.res_country == 'India' %}selected{% endif %}>India</option>
+          </select>
+        </div>
+      </div>
+      <div class="row g3">
+        <div><label>State <span style="color:#b91c1c">*</span></label><input type="text" name="res_state_name" value="{{ reg.res_state_name }}"></div>
+        <div><label>District <span style="color:#b91c1c">*</span></label><input type="text" name="res_district_name" value="{{ reg.res_district_name }}"></div>
+        <div><label>Pin Code <span style="color:#b91c1c">*</span></label><input type="text" name="res_pincode" value="{{ reg.res_pincode }}"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>📁 Document Upload</h3>
+      <p class="muted" style="margin-top:-6px">Only JPEG format. Max size 100 KB (demo text).</p>
+      <div class="row g2">
+        <div>
+          <label>Upload Photograph (of person whose information has been given above) <span style="color:#b91c1c">*</span></label>
+          <input class="radius" type="file" name="photo" accept=".jpg,.jpeg">
+          {% if reg.photo_name %}<p class="muted" style="margin-top:6px">Current: {{ reg.photo_name }}</p>{% endif %}
+        </div>
+        <div style="display:flex;align-items:flex-end;justify-content:center">
+          <button class="btn" type="button">📷 TAKE PICTURE</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Other Information</h3>
+      <div class="row">
+        <label>Also Authorized Signatory</label><br>
+        <span class="tog">
+          <input type="checkbox" name="also_sign" {% if reg.also_authorized_signatory %}checked{% endif %}><span class="k"></span><span class="bg"></span>
+        </span>
+      </div>
+
+      <div class="actions">
+        <a class="btn" href="{% url 'gst_business' trn %}">BACK</a>
+        <button class="btn" type="button">SHOW LIST</button>
+        <button class="btn" type="button">ADD NEW</button>
+        <button class="btn primary" type="submit">SAVE & CONTINUE</button>
+      </div>
+    </div>
+  </form>
+</div>
+{% endblock %}
+
+

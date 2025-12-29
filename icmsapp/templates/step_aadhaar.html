@@ -1,0 +1,161 @@
+{% extends "base_trn.html" %}
+{% load static %}
+
+{% block content %}
+<style>
+    /* --- YOUR ORIGINAL CSS --- */
+    * { box-sizing: border-box; font-family: "Segoe UI", Tahoma, Arial, sans-serif; }
+
+    .page-wrapper {
+      max-width: 1200px;
+      margin: 0 auto 60px;
+      background: #fff;
+      border: 1px solid #d0d4db;
+      box-shadow: 0 0 3px rgba(0,0,0,0.08);
+      /* Removed duplicate border logic from base conflict */
+      padding: 0; 
+    }
+
+    .top-bar-local { height: 16px; background: #23497a; }
+
+    .content { padding: 24px 40px 35px; }
+
+    .heading-row { display: flex; justify-content: space-between; align-items: baseline; }
+
+    h1.title { font-size: 22px; margin: 0 0 16px; color: #003366; }
+
+    .mandatory-note { font-size: 12px; color: #666; }
+    .mandatory-note::before { content: "● "; color: #e11; }
+
+    hr.section-divider { border: none; border-top: 1px solid #d0d4db; margin: 0 0 18px; }
+
+    .question-box { background: #f7f7f7; border-top: 1px solid #e0e0e0; padding: 18px 22px 18px; font-size: 15px; display: block; margin-bottom: 16px; }
+
+    .question-text { font-weight: 600; margin-bottom: 12px; }
+    .question-text .required { color: #e11; }
+
+    /* Custom Toggle Switch */
+    .toggle-wrapper { position: relative; display: inline-block; width: 70px; height: 36px; }
+    .toggle-input { display: none; }
+    .toggle-slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #999; border-radius: 18px; transition: .4s; }
+    .toggle-slider:before { position: absolute; content: ""; height: 28px; width: 28px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; box-shadow: 0 0 3px rgba(0,0,0,0.4); }
+    .toggle-input:checked + .toggle-slider { background-color: #2cab3d; }
+    .toggle-input:checked + .toggle-slider:before { transform: translateX(34px); }
+
+    .instructions { font-size: 14px; margin: 4px 0 18px; padding-left: 18px; }
+    .instructions li { margin: 2px 0; line-height: 1.4; }
+
+    .table-wrapper { background: #f7f7f7; border-top: 1px solid #e0e0e0; padding: 14px 18px 14px; margin-bottom: 26px; overflow-x: auto; }
+
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    thead tr { background: #f0f0f0; }
+    th, td { border: 1px solid #dddddd; padding: 8px 6px; text-align: left; }
+    th { font-weight: 600; }
+
+    .note-row { font-size: 12px; border-top: none; }
+    .note-row td { border-top: none; background: #f7f7f7; }
+
+    .btn-bar { margin-top: 10px; display: flex; justify-content: flex-end; gap: 10px; }
+    .btn { padding: 10px 26px; border-radius: 2px; border: none; cursor: pointer; font-size: 14px; text-decoration: none; display: inline-block; }
+    .btn-text { background: transparent; color: #444; border: 1px solid #ccc; }
+    .btn-primary { background: #244f86; color: #fff; }
+
+    @media (max-width: 900px) {
+      .content { padding: 18px 16px 24px; }
+      table { font-size: 12px; }
+    }
+</style>
+
+<form method="POST">
+{% csrf_token %}
+
+<input type="hidden" name="otp" value="123456">
+<input type="hidden" name="aadhaar_no" value="999999999999"> <div class="page-wrapper">
+  <div class="top-bar-local"></div>
+
+  <div class="content">
+    <div class="heading-row">
+      <h1 class="title">Aadhaar Authentication</h1>
+      <div class="mandatory-note">indicates mandatory fields</div>
+    </div>
+
+    <hr class="section-divider">
+
+    <div class="question-box">
+      <div class="question-text">
+        Do you want to opt for Aadhaar Authentication of details of Promoter/Partner,
+        Primary Authorized Signatory added by you?
+        <span class="required">●</span>
+      </div>
+      
+      <label class="toggle-wrapper">
+        <input type="checkbox" class="toggle-input" checked>
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+
+    <ol class="instructions">
+      <li>
+        Authentication request shall be shared on mobile number, email upon submission of application of
+        Promoter/Partner, and Primary Authorized Signatory which are selected.
+      </li>
+      <li>
+        ARN would be generated once Aadhaar Authentication exercise is completed for all applicable persons
+        whose name are selected in this table.
+      </li>
+      <li>
+        Kindly select at least one person from Promotor/Partner for Aadhaar Authentication.
+      </li>
+    </ol>
+
+    <div class="table-wrapper">
+      <table>
+        <thead>
+        <tr>
+          <th style="width: 60px;">Select</th>
+          <th style="width: 60px;">Sl No</th>
+          <th>Name</th>
+          <th>Citizen/Resident of India</th>
+          <th>Promoter/ Partner</th>
+          <th>Primary Authorized Signatory</th>
+          <th>Designation</th>
+          <th>Email Address</th>
+          <th>Mobile Number</th>
+          <th>Status</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+          <td style="text-align:center;"><input type="checkbox" checked></td>
+          <td>1</td>
+          <td>{{ saved.name|default:"VIJAY KUMAR" }}</td>
+          <td>Yes</td>
+          <td>Yes</td>
+          <td>Yes</td>
+          <td>Proprietor</td>
+          <td>{{ saved.email|default:"example@email.com" }}</td>
+          <td>{{ saved.mobile|default:"9876543210" }}</td>
+          <td><span style="color:green;">Authenticated</span></td>
+        </tr>
+        </tbody>
+        <tfoot>
+        <tr class="note-row">
+          <td colspan="10">
+            Note: Please make sure that email and mobile number of Promoters/Partners, Primary Authorized
+            Signatory provided by you are correct. The Aadhaar validation links shall be forwarded on the
+            emails/Mobile No.s provided by you.
+          </td>
+        </tr>
+        </tfoot>
+      </table>
+    </div>
+
+    <div class="btn-bar">
+      <a href="{{ nav.state }}" class="btn btn-text">BACK</a>
+      
+      <button type="submit" class="btn btn-primary">SAVE & CONTINUE</button>
+    </div>
+  </div>
+</div>
+</form>
+{% endblock %}

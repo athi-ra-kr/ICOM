@@ -1,0 +1,92 @@
+{% extends 'gov.html' %}
+{% block title %}Registration Successful{% endblock %}
+
+{% block content %}
+<style>
+    body { background-color: #f5f5f5; }
+    .container { max-width: 600px; margin: 60px auto; padding: 0 20px; }
+    .success-container { background-color: white; padding: 60px 40px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); text-align: center; }
+    .success-icon { width: 80px; height: 80px; background-color: #4caf50; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 30px; font-size: 40px; color: white; }
+    .success-title { font-size: 28px; color: #333; margin-bottom: 20px; font-weight: bold; }
+    .success-message { font-size: 16px; color: #666; margin-bottom: 40px; line-height: 1.6; }
+    .home-btn { padding: 15px 40px; background-color: #3f51b5; color: white; border: none; border-radius: 4px; font-size: 16px; font-weight: bold; cursor: pointer; text-decoration: none; display: inline-block; }
+    .home-btn:hover { background-color: #303f9f; color: white; text-decoration: none; }
+</style>
+
+<div class="container">
+    <div class="success-container">
+        <div class="success-icon">✓</div>
+        <h1 class="success-title">Registration Successful!</h1>
+        <p class="success-message">
+            Your registration has been completed successfully. You can now proceed to continue.
+        </p>
+        <a href="#" class="home-btn" id="backHome">Go to Home</a>
+    </div>
+</div>
+
+<script>
+/*
+On clicking "Go to Home":
+- Determine the topic id:
+    1) Prefer the current_task_topic from localStorage (set when student clicked Do Task)
+    2) Fallback to topic_id in querystring (if present)
+- Mark the per-student+topic storage entry as done
+- Redirect to course topic page with ?task_completed=true so the course page knows to refresh UI immediately
+*/
+(function() {
+    const back = document.getElementById('backHome');
+
+    // helper: get querystring param
+    function getQueryParam(name) {
+        const params = new URLSearchParams(window.location.search);
+        return params.get(name);
+    }
+
+    back.addEventListener('click', function(e) {
+        e.preventDefault();
+
+        // try to read topic id from localStorage (set by course page when Do Task is clicked)
+        let topicId = null;
+        try {
+            topicId = localStorage.getItem('current_task_topic');
+        } catch (err) {
+            console.warn('localStorage read fail', err);
+        }
+
+        // fallback to query param
+        if (!topicId) {
+            topicId = getQueryParam('topic_id');
+        }
+
+        // get the student (to make storage per-student)
+        let studentEmail = null;
+        try {
+            studentEmail = localStorage.getItem('current_task_student') || '{{ request.session.email|default:"guest" }}';
+        } catch (e) {
+            studentEmail = '{{ request.session.email|default:"guest" }}';
+        }
+        studentEmail = (studentEmail || 'guest').replace(/\s+/g,'_');
+
+        if (topicId) {
+            // mark per-student/topic as done in localStorage
+            try {
+                const key = `task_done_${studentEmail}_${topicId}`;
+                localStorage.setItem(key, 'done');
+
+                // optional: clear current_task_topic/current_task_student so next flows won't reuse accidentally
+                localStorage.removeItem('current_task_topic');
+                localStorage.removeItem('current_task_student');
+            } catch (err) {
+                console.warn('localStorage write failed', err);
+            }
+
+            // finally redirect to the course topic page with the completion flag
+            window.location.href = '/course/topic/' + topicId + '/?task_completed=true';
+        } else {
+            // fallback: go to course overview (no topic)
+            window.location.href = '/course/';
+        }
+    });
+})();
+</script>
+{% endblock %}

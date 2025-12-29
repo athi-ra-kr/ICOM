@@ -1,0 +1,67 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <link rel="icon" type="image/png" href="{% static 'media/favicon.png' %}">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>{% if student %}Edit{% else %}Add{% endif %} Student</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.0.4/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+
+  <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
+    <h2 class="text-2xl font-semibold text-center text-gray-800 mb-6">
+      {% if student %}Edit{% else %}Add{% endif %} Student
+    </h2>
+
+    <form method="post" class="space-y-4">
+      {% csrf_token %}
+
+      <!-- Name -->
+      <div>
+        <label class="block text-sm text-gray-700 mb-1">Name</label>
+        <input type="text" name="name" value="{{ student.name|default:'' }}" required
+               class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
+      </div>
+
+      <!-- Email -->
+      <div>
+        <label class="block text-sm text-gray-700 mb-1">Email</label>
+        <input type="email" name="email" value="{{ student.email|default:'' }}" required
+               class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
+      </div>
+
+      <!-- Student ID -->
+      <div>
+        <label class="block text-sm text-gray-700 mb-1">Student ID</label>
+        <input type="text" name="student_id" value="{{ student.student_id|default:'' }}" required
+               class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
+      </div>
+
+      <!-- Password -->
+      <div>
+        <label class="block text-sm text-gray-700 mb-1">Password</label>
+        {% if student %}
+          <input type="text" name="password" value="{{ student.password }}" required
+                 class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
+        {% else %}
+          <input type="password" name="password" required
+                 class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
+        {% endif %}
+      </div>
+
+      <!-- Buttons -->
+      <div class="flex justify-between items-center pt-4">
+        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+          Save
+        </button>
+        <a href="{% url 'student_list' %}" class="text-blue-600 text-sm hover:underline">
+          Cancel
+        </a>
+      </div>
+    </form>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,97 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <link rel="icon" type="image/png" href="{% static 'media/favicon.png' %}">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% if institution %}Edit{% else %}Add{% endif %} Institution</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.0.4/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+
+  <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
+    <h2 class="text-2xl font-semibold text-center text-gray-800 mb-6">
+      {% if institution %}Edit{% else %}Add{% endif %} Institution
+    </h2>
+
+    <!-- Success Message (hidden by default) -->
+    <div id="successMessage" class="hidden p-3 mb-4 rounded bg-green-100 text-green-700 text-sm"></div>
+
+    <form id="institutionForm" method="post" class="space-y-4">
+      {% if error %}
+        <p class="text-red-600 text-sm mb-2">{{ error }}</p>
+      {% endif %}
+
+      {% csrf_token %}
+
+      <!-- Name -->
+      <div>
+        <label class="block text-sm text-gray-700 mb-1">Name</label>
+        <input type="text" name="name" value="{{ institution.name|default_if_none:'' }}" required
+               class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
+      </div>
+
+      <!-- Email -->
+      <div>
+        <label class="block text-sm text-gray-700 mb-1">Email</label>
+        <input type="email" name="email" value="{{ institution.email|default_if_none:'' }}" required
+               class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
+      </div>
+
+      <!-- Password -->
+      <div>
+        <label class="block text-sm text-gray-700 mb-1">Password</label>
+        <input type="password" name="password" 
+               {% if not institution %}required{% endif %}
+               class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
+        {% if institution %}
+          <p class="text-xs text-gray-500 mt-1">Leave blank if you don’t want to change the password.</p>
+        {% endif %}
+      </div>
+
+      <!-- Student Limit -->
+      <div>
+        <label class="block text-sm text-gray-700 mb-1">Student Limit</label>
+        <input type="number" name="student_limit" value="{{ institution.student_limit|default_if_none:'' }}" required
+               class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
+      </div>
+
+      <!-- Validity -->
+      <div>
+        <label class="block text-sm text-gray-700 mb-1">Validity</label>
+        <input type="date" name="validity" value="{{ institution.validity|default_if_none:'' }}" required
+               class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
+      </div>
+
+      <!-- Buttons -->
+      <div class="flex justify-between items-center pt-4">
+        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+          Save
+        </button>
+        <a href="{% url 'institution_list' %}" class="text-blue-600 text-sm hover:underline">
+          Cancel
+        </a>
+      </div>
+    </form>
+  </div>
+
+  <!-- JavaScript for showing success message -->
+  <script>
+    document.getElementById("institutionForm").addEventListener("submit", function(event) {
+      event.preventDefault(); // stop normal form submit (remove this if you want backend save)
+
+      // ✅ Show success message
+      const msg = document.getElementById("successMessage");
+      msg.textContent = "Institution saved successfully ✅";
+      msg.classList.remove("hidden");
+
+      // Auto hide after 3 seconds
+      setTimeout(() => {
+        msg.classList.add("hidden");
+      }, 3000);
+    });
+  </script>
+
+</body>
+</html>

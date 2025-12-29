@@ -1,0 +1,262 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="icon" type="image/png" href="{% static 'media/favicon-icms.png' %}">
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>IcomVidya Login</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body, html {
+      height: 100%;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #fff;
+    }
+
+    /* MAIN LAYOUT */
+    .container {
+      display: flex;
+      height: 100vh;
+      flex-direction: row;
+    }
+
+    .left {
+      flex: 1;
+      background-color: #fff;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 40px;
+    }
+
+    .form-wrapper {
+      width: 100%;
+      max-width: 400px;
+      margin-top: auto;
+      margin-bottom: auto;
+    }
+
+    .left h2 {
+      margin-bottom: 20px;
+      font-size: 28px;
+      color: #007e83;
+      text-align: center;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: #333;
+    }
+
+    input[type="email"],
+    input[type="password"] {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      transition: border-color 0.3s ease;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      color: #fff;
+      background: linear-gradient(90deg, #007e83, #005f61);
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background: linear-gradient(90deg, #005f61, #007e83);
+    }
+
+    .right {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .right img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .footer {
+      width: 100%;
+      font-size: 12px;
+      color: #000;
+      background: none;
+      text-align: left;
+      padding: 10px 20px;
+    }
+
+    .footer a {
+      margin: 0 5px;
+      text-decoration: none;
+      color: #000;
+    }
+
+    .logo {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+    }
+
+    .logo img {
+      height: 50px;
+    }
+
+    /* DROPDOWN */
+    .dropdown-container {
+      position: relative;
+      width: 100%;
+    }
+
+    select {
+      width: 50%;
+      padding: 14px 20px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      background-color: #f9f9f9;
+      color: #333;
+      appearance: none;
+      cursor: pointer;
+      background-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"%3E%3Cpath fill="none" stroke="%23007e83" stroke-width="2" d="M4 5l4 4 4-4"%3E%3C/path%3E%3C/svg%3E');
+      background-position: right 10px center;
+      background-repeat: no-repeat;
+      background-size: 16px;
+    }
+
+    /* MOBILE BLOCKING */
+    @media (max-width: 767px) {
+      .container,
+      .footer,
+      .logo {
+        display: none !important;
+      }
+
+      .mobile-message {
+        display: flex !important;
+      }
+    }
+
+    /* DEFAULT HIDE MOBILE MESSAGE */
+    .mobile-message {
+      display: none;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      text-align: center;
+      padding: 20px;
+      font-size: 18px;
+      color: #333;
+      background-color: #fff;
+      font-weight: bold;
+    }
+
+    .message {
+      color: red;
+      font-size: 14px;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="logo">
+    <img src="{% static 'media/logo.png' %}" alt="IcomVidya Logo">
+  </div>
+
+  <div class="container">
+    <div class="left">
+      <div class="form-wrapper">
+        <!-- LOGIN FORM -->
+        <form method="POST" action="">
+          {% csrf_token %}
+
+          {% if messages %}
+            {% for message in messages %}
+              <div class="message">{{ message }}</div>
+            {% endfor %}
+          {% endif %}
+
+          <div class="form-group">
+            <label for="loginType">Login As</label>
+            <div class="dropdown-container">
+              <select id="loginType" name="loginType" required>
+                <option value="administrator">👨‍💻 Administrator</option>
+                <option value="institute">🏫 Institution</option>
+                <option value="student">🎓 Student</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" name="email" placeholder="example@domain.com" required />
+          </div>
+
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" placeholder="Enter your password" required />
+          </div>
+
+          <button type="submit">Login</button>
+        </form>
+      </div>
+      <div class="footer">
+        <span>All Rights Reserved © IcomVidya</span>
+      </div>
+    </div>
+
+    <div class="right">
+      <img src="{% static 'media/homebanner.png' %}" alt="Illustration">
+    </div>
+  </div>
+
+  <!-- MOBILE MESSAGE -->
+  <div class="mobile-message">
+    🚫 This application is not available on mobile devices.<br><br>
+    <!-- Please use a <strong>desktop or laptop</strong> to log in. -->
+  </div>
+
+  <script>
+    // JS Fallback: hide if resized
+    function checkScreenSize() {
+      if (window.innerWidth <= 767) {
+        document.querySelector(".container").style.display = "none";
+        document.querySelector(".logo").style.display = "none";
+        document.querySelector(".mobile-message").style.display = "flex";
+      } else {
+        document.querySelector(".container").style.display = "flex";
+        document.querySelector(".logo").style.display = "block";
+        document.querySelector(".mobile-message").style.display = "none";
+      }
+    }
+
+    window.addEventListener("load", checkScreenSize);
+    window.addEventListener("resize", checkScreenSize);
+  </script>
+</body>
+</html>

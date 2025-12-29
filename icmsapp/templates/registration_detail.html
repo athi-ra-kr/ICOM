@@ -1,0 +1,471 @@
+<!-- {% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }} - GST Portal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 20px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .breadcrumb {
+            background: white;
+            padding: 12px 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .breadcrumb a {
+            color: #2a5298;
+            text-decoration: none;
+        }
+
+        .page-header {
+            background: white;
+            padding: 25px 30px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .page-title {
+            flex: 1;
+        }
+
+        .page-title h2 {
+            color: #2c3e50;
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .page-title .trn {
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+
+        .status-badge {
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .status-draft {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .details-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        .details-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .card-header {
+            background: linear-gradient(90deg, #f39c12 0%, #f1c40f 100%);
+            color: white;
+            padding: 15px 25px;
+            font-size: 16px;
+            font-weight: 600;
+            border-left: 5px solid #e67e22;
+        }
+
+        .card-body {
+            padding: 25px;
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .detail-label {
+            font-size: 13px;
+            color: #7f8c8d;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .detail-value {
+            font-size: 15px;
+            color: #2c3e50;
+            font-weight: 500;
+        }
+
+        .detail-value.highlight {
+            color: #2a5298;
+            font-weight: 600;
+        }
+
+        .address-box {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 3px solid #2a5298;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #f5f5f5;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #2a5298 0%, #1e3c72 100%);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #ff9800;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-back {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .timeline {
+            margin-top: 20px;
+        }
+
+        .timeline-item {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .timeline-dot {
+            width: 12px;
+            height: 12px;
+            background: #27ae60;
+            border-radius: 50%;
+            margin-top: 5px;
+        }
+
+        .timeline-content {
+            flex: 1;
+        }
+
+        .timeline-date {
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+
+        .timeline-text {
+            font-size: 14px;
+            color: #2c3e50;
+            margin-top: 2px;
+        }
+
+        @media print {
+            .action-buttons,
+            .header,
+            .breadcrumb {
+                display: none;
+            }
+
+            body {
+                background: white;
+            }
+
+            .details-card {
+                box-shadow: none;
+                border: 1px solid #ddd;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .page-header {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .detail-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <h1>🇮🇳 GST Portal</h1>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="/">Home</a> / 
+            <a href="{% url 'gst_registration_list' %}">Registrations</a> / 
+            <strong>{{ registration.trn }}</strong>
+        </div>
+
+        <div class="page-header">
+            <div class="page-title">
+                <h2>Registration Details</h2>
+                <div class="trn">TRN: {{ registration.trn }}</div>
+            </div>
+            <span class="status-badge status-{{ registration.status }}">
+                {{ registration.get_status_display }}
+            </span>
+        </div>
+
+        <div class="details-container">
+            <!-- Basic Information -->
+            <div class="details-card">
+                <div class="card-header">📄 Basic Information</div>
+                <div class="card-body">
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <div class="detail-label">Registration Reason</div>
+                            <div class="detail-value">{{ registration.get_registration_reason_display }}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Commencement Date</div>
+                            <div class="detail-value">{{ registration.commencement_date|date:"d M Y" }}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Filing Frequency</div>
+                            <div class="detail-value">{{ registration.get_filing_frequency_display }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Proprietor Details -->
+            <div class="details-card">
+                <div class="card-header">👤 Proprietor Details</div>
+                <div class="card-body">
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <div class="detail-label">Proprietor Name</div>
+                            <div class="detail-value highlight">{{ registration.proprietor_name }}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Father's Name</div>
+                            <div class="detail-value">{{ registration.father_name }}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">PAN Number</div>
+                            <div class="detail-value highlight">{{ registration.pan_number }}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Aadhaar Number</div>
+                            <div class="detail-value">{{ registration.aadhaar_number }}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Date of Birth</div>
+                            <div class="detail-value">{{ registration.dob|date:"d M Y" }}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Mobile Number</div>
+                            <div class="detail-value">{{ registration.mobile_number }}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Email Address</div>
+                            <div class="detail-value">{{ registration.email }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Residential Address -->
+            <div class="details-card">
+                <div class="card-header">🏠 Residential Address</div>
+                <div class="card-body">
+                    <div class="address-box">
+                        {{ registration.res_flat_no }}{% if registration.res_floor %}, {{ registration.res_floor }} Floor{% endif %},<br>
+                        {{ registration.res_building }},<br>
+                        {{ registration.res_street }},<br>
+                        {% if registration.res_area %}{{ registration.res_area }},<br>{% endif %}
+                        {{ registration.res_city }}, {% if registration.res_district %}{{ registration.res_district }},<br>{% endif %}
+                        {{ registration.get_res_state_display }} - {{ registration.res_pincode }}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Business Address -->
+            <div class="details-card">
+                <div class="card-header">🏢 Business Address</div>
+                <div class="card-body">
+                    <div class="address-box">
+                        {{ registration.bus_flat_no }}{% if registration.bus_floor %}, {{ registration.bus_floor }} Floor{% endif %},<br>
+                        {{ registration.bus_building }},<br>
+                        {{ registration.bus_street }},<br>
+                        {% if registration.bus_area %}{{ registration.bus_area }},<br>{% endif %}
+                        {{ registration.bus_city }}, {% if registration.bus_district %}{{ registration.bus_district }},<br>{% endif %}
+                        {{ registration.get_bus_state_display }} - {{ registration.bus_pincode }}
+                    </div>
+                    <div style="margin-top: 15px;">
+                        <div class="detail-item">
+                            <div class="detail-label">Business Email</div>
+                            <div class="detail-value">{{ registration.bus_email }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Jurisdiction Details -->
+            <div class="details-card">
+                <div class="card-header">🏛️ Jurisdiction Details</div>
+                <div class="card-body">
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <div class="detail-label">Commissionerate</div>
+                            <div class="detail-value">{{ registration.commissionerate }}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Division</div>
+                            <div class="detail-value">{{ registration.division }}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Range</div>
+                            <div class="detail-value">{{ registration.range_office }}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Ward</div>
+                            <div class="detail-value">{{ registration.ward }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Business Details -->
+            <div class="details-card">
+                <div class="card-header">📦 Business Details</div>
+                <div class="card-body">
+                    <div class="detail-item">
+                        <div class="detail-label">HSN Codes</div>
+                        <div class="detail-value">{{ registration.hsn_codes }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Timeline -->
+            <div class="details-card">
+                <div class="card-header">📅 Timeline</div>
+                <div class="card-body">
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-content">
+                                <div class="timeline-date">{{ registration.created_at|date:"d M Y, h:i A" }}</div>
+                                <div class="timeline-text"><strong>Application Created</strong></div>
+                            </div>
+                        </div>
+                        {% if registration.updated_at != registration.created_at %}
+                        <div class="timeline-item">
+                            <div class="timeline-dot" style="background: #f39c12;"></div>
+                            <div class="timeline-content">
+                                <div class="timeline-date">{{ registration.updated_at|date:"d M Y, h:i A" }}</div>
+                                <div class="timeline-text"><strong>Last Modified</strong></div>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <a href="{% url 'gst_registration_edit' registration.pk %}" class="btn btn-secondary">
+                ✏️ Edit Application
+            </a>
+            <button onclick="window.print()" class="btn btn-primary">
+                🖨️ Print
+            </button>
+            <a href="{% url 'gst_registration_list' %}" class="btn btn-back">
+                ⬅️ Back to List
+            </a>
+        </div>
+    </div>
+</body>
+</html> -->

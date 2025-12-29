@@ -1,0 +1,385 @@
+<!-- {% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }} - GST Portal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 20px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .page-header {
+            background: white;
+            padding: 25px 30px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .page-header h2 {
+            color: #2c3e50;
+            font-size: 22px;
+        }
+
+        .btn {
+            padding: 10px 25px;
+            border: none;
+            border-radius: 5px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(39, 174, 96, 0.3);
+        }
+
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-left: 4px solid;
+        }
+
+        .stat-card.draft {
+            border-color: #ffc107;
+        }
+
+        .stat-card.submitted {
+            border-color: #2196f3;
+        }
+
+        .stat-card.approved {
+            border-color: #27ae60;
+        }
+
+        .stat-card.rejected {
+            border-color: #e74c3c;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: #7f8c8d;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+
+        .table-container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .table-header {
+            background: linear-gradient(135deg, #2a5298 0%, #1e3c72 100%);
+            color: white;
+            padding: 20px 25px;
+        }
+
+        .table-header h3 {
+            font-size: 18px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: #f8f9fa;
+        }
+
+        th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: #2c3e50;
+            border-bottom: 2px solid #dee2e6;
+            font-size: 14px;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #dee2e6;
+            font-size: 14px;
+        }
+
+        tbody tr {
+            transition: background-color 0.2s;
+        }
+
+        tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .status-draft {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-submitted {
+            background: #cfe2ff;
+            color: #084298;
+        }
+
+        .status-approved {
+            background: #d1e7dd;
+            color: #0f5132;
+        }
+
+        .status-rejected {
+            background: #f8d7da;
+            color: #842029;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 12px;
+            border-radius: 4px;
+        }
+
+        .btn-view {
+            background: #2196f3;
+            color: white;
+        }
+
+        .btn-edit {
+            background: #ff9800;
+            color: white;
+        }
+
+        .btn-view:hover {
+            background: #1976d2;
+        }
+
+        .btn-edit:hover {
+            background: #f57c00;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #7f8c8d;
+        }
+
+        .empty-state-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .empty-state h3 {
+            font-size: 20px;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+
+        @media (max-width: 1200px) {
+            table {
+                font-size: 13px;
+            }
+
+            th, td {
+                padding: 12px 10px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .page-header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .stats-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            table {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <h1>🇮🇳 GST Portal</h1>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="page-header">
+            <h2>📋 GST Registration Applications</h2>
+            <a href="{% url 'gst_registration_form' %}" class="btn btn-primary">
+                ➕ New Registration
+            </a>
+        </div>
+
+        <!-- Statistics -->
+        <div class="stats-container">
+            <div class="stat-card draft">
+                <div class="stat-label">Draft Applications</div>
+                <div class="stat-value">{{ registrations|length }}</div>
+            </div>
+            <div class="stat-card submitted">
+                <div class="stat-label">Submitted</div>
+                <div class="stat-value">0</div>
+            </div>
+            <div class="stat-card approved">
+                <div class="stat-label">Approved</div>
+                <div class="stat-value">0</div>
+            </div>
+            <div class="stat-card rejected">
+                <div class="stat-label">Rejected</div>
+                <div class="stat-value">0</div>
+            </div>
+        </div>
+
+        <!-- Table -->
+        <div class="table-container">
+            <div class="table-header">
+                <h3>All Registration Applications</h3>
+            </div>
+
+            {% if registrations %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>TRN</th>
+                            <th>Proprietor Name</th>
+                            <th>PAN Number</th>
+                            <th>Mobile</th>
+                            <th>Business City</th>
+                            <th>Status</th>
+                            <th>Submitted On</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for reg in registrations %}
+                        <tr>
+                            <td><strong>{{ reg.trn }}</strong></td>
+                            <td>{{ reg.proprietor_name }}</td>
+                            <td>{{ reg.pan_number }}</td>
+                            <td>{{ reg.mobile_number }}</td>
+                            <td>{{ reg.bus_city }}, {{ reg.get_bus_state_display }}</td>
+                            <td>
+                                <span class="status-badge status-{{ reg.status }}">
+                                    {{ reg.get_status_display }}
+                                </span>
+                            </td>
+                            <td>{{ reg.created_at|date:"d M Y" }}</td>
+                            <td>
+                                <div class="action-buttons">
+                                    <a href="{% url 'gst_registration_detail' reg.pk %}" 
+                                       class="btn btn-sm btn-view">
+                                        View
+                                    </a>
+                                    <a href="{% url 'gst_registration_edit' reg.pk %}" 
+                                       class="btn btn-sm btn-edit">
+                                        Edit
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <div class="empty-state">
+                    <div class="empty-state-icon">📄</div>
+                    <h3>No Registrations Found</h3>
+                    <p>You haven't created any GST registration applications yet.</p>
+                    <br>
+                    <a href="{% url 'gst_registration_form' %}" class="btn btn-primary">
+                        Create Your First Registration
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html> -->

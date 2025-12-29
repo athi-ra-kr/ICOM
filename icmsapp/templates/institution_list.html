@@ -1,0 +1,396 @@
+{% extends "admindashboard.html" %}
+
+{% block title %}Institution List{% endblock %}
+
+{% block content %}
+<!-- Bootstrap CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f9fa;
+    color: #212529;
+  }
+
+  .card {
+    border: none;
+    border-radius: 16px;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+    margin-bottom: 32px;
+  }
+
+  .card-header {
+    background-color: #fff;
+    border-bottom: 1px solid #dee2e6;
+    padding: 1.25rem 1.5rem;
+  }
+
+  .table thead th {
+    background-color: #e9ecef;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.875rem;
+    vertical-align: middle;
+  }
+
+  .table td {
+    vertical-align: middle;
+  }
+
+  .table tbody tr:hover {
+    background-color: #f1f3f5;
+    cursor: pointer;
+  }
+
+  /* Buttons styling */
+  .btn-back {
+    background-color: #6c757d; /* gray */
+    color: white;
+    font-weight: 500;
+  }
+  .btn-back:hover {
+    background-color: #5a6268;
+    color: white;
+  }
+
+  .btn-add {
+    border-radius: 50%;
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #0d6efd; /* blue */
+    color: white;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s;
+  }
+  .btn-add:hover {
+    background-color: #0b5ed7;
+    transform: scale(1.05);
+  }
+
+  .btn-edit {
+    background-color: #198754; /* green */
+    color: white;
+    font-size: 0.85rem;
+    padding: 0.35rem 0.6rem;
+    margin-right: 4px;
+    border-radius: 6px;
+    font-weight: 500;
+    transition: all 0.2s ease-in-out;
+  }
+  .btn-edit:hover {
+    background-color: #157347;
+  }
+
+  .btn-delete {
+    background-color: #dc3545; /* red */
+    color: white;
+    font-size: 0.85rem;
+    padding: 0.35rem 0.6rem;
+    margin-right: 4px;
+    border-radius: 6px;
+    font-weight: 500;
+    transition: all 0.2s ease-in-out;
+  }
+  .btn-delete:hover {
+    background-color: #b02a37;
+  }
+
+  .form-popup {
+    box-shadow: 0 10px 32px rgba(0, 0, 0, 0.2);
+    border-radius: 16px;
+    padding: 2rem;
+    width: 100%;
+    max-width: 500px;
+    background-color: white;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+    display: none;
+    animation: slideIn 0.3s ease-out;
+  }
+
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translate(-50%, -60%);
+    }
+    to {
+      opacity: 1;
+      transform: translate(-50%, -50%);
+    }
+  }
+
+  .form-popup h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 1.25rem;
+  }
+
+  .form-group label {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    display: block;
+  }
+
+  .form-control:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.15rem rgba(13, 110, 253, 0.25);
+  }
+
+  .overlay {
+    backdrop-filter: blur(5px);
+    background-color: rgba(0, 0, 0, 0.4);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 999;
+    display: none;
+  }
+
+  .pagination {
+    margin-top: 1rem;
+  }
+
+  .pagination a {
+    color: #0d6efd;
+    font-weight: 500;
+    text-decoration: none;
+    margin: 0 8px;
+  }
+
+  .pagination span {
+    font-weight: 500;
+  }
+
+  .pagination a[aria-disabled="true"] {
+    color: #adb5bd;
+    pointer-events: none;
+    cursor: not-allowed;
+  }
+
+  @media (max-width: 576px) {
+    .card-header h2 {
+      font-size: 1.25rem;
+    }
+
+    .btn-add {
+      width: 36px;
+      height: 36px;
+      font-size: 0.9rem;
+    }
+
+    .btn-edit, .btn-delete {
+      font-size: 0.75rem;
+      padding: 0.3rem 0.5rem;
+    }
+
+    .form-popup {
+      padding: 1.5rem;
+    }
+  }
+</style>
+
+<div class="container py-4">
+  <!-- Back Button -->
+  <button class="btn btn-back mb-3" onclick="window.history.back()">
+    <i class="fas fa-arrow-left"></i> Back
+  </button>
+
+  <div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <h2 class="h4 mb-0">Institutions</h2>
+      <button onclick="showForm()" title="Add Institution" class="btn btn-add" data-bs-toggle="tooltip">
+        <i class="fas fa-plus"></i>
+      </button>
+    </div>
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover mb-0">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Password</th>
+              <th>Student Limit</th>
+              <th>Validity</th>
+              <th class="text-center">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for inst in page_obj %}
+            <tr>
+              <td>{{ inst.name }}</td>
+              <td>{{ inst.email }}</td>
+              <td>{{ inst.masked_password }}</td>
+              <td>{{ inst.student_limit }}</td>
+              <td>{{ inst.validity }}</td>
+              <td class="text-center">
+                <button class="btn btn-edit btn-sm"
+                        data-id="{{ inst.id }}"
+                        data-name="{{ inst.name }}"
+                        data-email="{{ inst.email }}"
+                        data-password="{{ inst.password }}"
+                        data-limit="{{ inst.student_limit }}"
+                        data-validity="{{ inst.validity|date:'Y-m-d' }}"
+                        title="Edit {{ inst.name }}"
+                        data-bs-toggle="tooltip">
+                  <i class="fas fa-edit"></i> Edit
+                </button>
+                <form action="{% url 'delete_institution' inst.pk %}" method="post" style="display:inline;">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-delete btn-sm"
+                          onclick="return confirm('Are you sure you want to delete {{ inst.name }}?');"
+                          title="Delete {{ inst.name }}">
+                    <i class="fas fa-trash"></i> Delete
+                  </button>
+                </form>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="pagination text-center py-3">
+      {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}">« Previous</a>
+      {% else %}
+        <a href="#" aria-disabled="true">« Previous</a>
+      {% endif %}
+      <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+      {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}">Next »</a>
+      {% else %}
+        <a href="#" aria-disabled="true">Next »</a>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="overlay" onclick="hideForm()"></div>
+
+<div class="form-popup" id="formPopup">
+  <h2 id="formTitle">Add Institution</h2>
+  <form id="institutionForm">
+    {% csrf_token %}
+    <input type="hidden" id="instId" value="">
+    <div class="form-group mb-3">
+      <label for="nameInput">Name</label>
+      <input type="text" class="form-control" id="nameInput" required>
+    </div>
+    <div class="form-group mb-3">
+      <label for="emailInput">Email</label>
+      <input type="email" class="form-control" id="emailInput" required>
+    </div>
+    <div class="form-group mb-3">
+      <label for="passwordInput">Password</label>
+      <input type="text" class="form-control" id="passwordInput" required>
+    </div>
+    <div class="form-group mb-3">
+      <label for="limitInput">Student Limit</label>
+      <input type="number" class="form-control" id="limitInput" required>
+    </div>
+    <div class="form-group mb-3">
+      <label for="validityInput">Validity</label>
+      <input type="date" class="form-control" id="validityInput" required>
+    </div>
+    <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+      <button type="button" class="btn btn-outline-secondary me-md-2" onclick="hideForm()">Cancel</button>
+      <button type="submit" class="btn btn-primary">Save</button>
+    </div>
+  </form>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+  let currentAction = "{% url 'add_institution' %}";
+
+  function showForm() {
+    currentAction = "{% url 'add_institution' %}";
+    document.getElementById("formTitle").innerText = "Add Institution";
+    document.getElementById("institutionForm").reset();
+    document.getElementById("instId").value = "";
+    document.getElementById("formPopup").style.display = "block";
+    document.getElementById("overlay").style.display = "block";
+  }
+
+  function hideForm() {
+    document.getElementById("formPopup").style.display = "none";
+    document.getElementById("overlay").style.display = "none";
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.map(function (tooltipTriggerEl) {
+      return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+
+    document.querySelectorAll('.btn-edit').forEach(button => {
+      button.addEventListener('click', function () {
+        const id = this.dataset.id;
+        const name = this.dataset.name;
+        const email = this.dataset.email;
+        const password = this.dataset.password;
+        const student_limit = this.dataset.limit;
+        const validity = this.dataset.validity;
+
+        currentAction = `/edit_institution/${id}/`;
+        document.getElementById("formTitle").innerText = "Edit Institution";
+        document.getElementById("nameInput").value = name;
+        document.getElementById("emailInput").value = email;
+        document.getElementById("passwordInput").value = password;
+        document.getElementById("limitInput").value = student_limit;
+        document.getElementById("validityInput").value = validity;
+        document.getElementById("formPopup").style.display = "block";
+        document.getElementById("overlay").style.display = "block";
+      });
+    });
+  });
+
+  document.getElementById("institutionForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+    const formData = new FormData();
+    formData.append('name', document.getElementById("nameInput").value);
+    formData.append('email', document.getElementById("emailInput").value);
+    formData.append('password', document.getElementById("passwordInput").value);
+    formData.append('student_limit', document.getElementById("limitInput").value);
+    formData.append('validity', document.getElementById("validityInput").value);
+
+    fetch(currentAction, {
+      method: 'POST',
+      headers: {
+        'X-CSRFToken': csrfToken,
+        'X-Requested-With': 'XMLHttpRequest'
+      },
+      body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        location.reload();
+      } else {
+        alert(data.error || 'An error occurred.');
+      }
+    })
+    .catch(err => {
+      console.error('Request failed', err);
+      alert('An unexpected error occurred.');
+    });
+  });
+</script>
+{% endblock %}

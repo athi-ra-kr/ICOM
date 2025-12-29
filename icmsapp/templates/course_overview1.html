@@ -1,0 +1,347 @@
+{% extends 'studentdashboard.html' %}
+{% block title %}Course Viewer{% endblock %}
+
+{% block content %}
+<style>
+    body {
+        background-color: #f7f9fc;
+        margin: 0;
+        padding: 0;
+    }
+
+    .container {
+        display: flex;
+        flex-direction: row;
+        min-height: 100vh;
+        border-radius: 20px;
+        overflow: hidden;
+    }
+
+    .sidebar {
+        width: 320px;
+        background: white;
+        border-right: 1px solid #e0e0e0;
+        overflow-y: scroll;
+        padding: 20px;
+        box-sizing: border-box;
+        scrollbar-width: thin;
+        -ms-overflow-style: auto;
+    }
+
+    .sidebar::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .sidebar::-webkit-scrollbar-thumb {
+        background-color: #cbd5e1;
+        border-radius: 10px;
+    }
+
+    .nav-bar {
+        display: flex;
+        margin-bottom: 15px;
+    }
+
+    .nav-bar a {
+        font-size: 14px;
+        text-decoration: none;
+        color: #2563eb;
+        font-weight: 600;
+        display: inline-block;
+        margin-right: 0;
+        padding-right: 10px;
+    }
+
+    .sidebar h2 {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 5px;
+    }
+
+    .sidebar .subheading {
+        font-size: 14px;
+        color: #6b7280;
+        margin-bottom: 15px;
+    }
+
+    .course-topic {
+        background: #f4fdf7;
+        border-radius: 12px;
+        padding: 12px 18px;
+        margin-bottom: 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        text-decoration: none;
+        color: black;
+        font-weight: 500;
+        border: 2px solid transparent;
+        transition: background 0.2s;
+    }
+
+    .course-topic.active {
+        background: #eaf2ff;
+        border-color: #2563eb;
+    }
+
+    .course-topic:hover {
+        background: #eef3ff;
+    }
+
+    .topic-index {
+        background: #34d399;
+        color: white;
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 14px;
+        flex-shrink: 0;
+    }
+
+    .topic-content {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex: 1;
+        overflow: hidden;
+    }
+
+    .topic-text {
+        flex: 1;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .topic-type {
+        font-size: 12px;
+        color: #666;
+        flex-shrink: 0;
+        margin-left: 8px;
+    }
+
+    .content-area {
+        flex: 1;
+        padding: 15px 40px 40px 40px;
+        overflow-y: auto;
+        background-color: white;
+        border-radius: 20px 0 0 20px;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+
+    .content-header h1,
+    .content-header h3 {
+        margin: 0 0 5px 0;
+    }
+
+    .video-frame iframe {
+        width: 100%;
+        height: 400px;
+        border-radius: 12px;
+        margin-top: 20px;
+        border: none;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .pdf-link {
+        display: inline-block;
+        padding: 10px 14px;
+        background: #eaf6ff;
+        border-radius: 10px;
+        color: #2563eb;
+        text-decoration: none;
+        margin-top: 20px;
+        font-weight: 500;
+    }
+
+    .task-info {
+        background: #f9f9f9;
+        padding: 20px;
+        border-radius: 12px;
+        margin-top: 20px;
+        font-size: 16px;
+        white-space: pre-wrap;
+    }
+
+    .task-buttons {
+        margin-top: 20px;
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .task-buttons a {
+        padding: 10px 16px;
+        border-radius: 10px;
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 15px;
+        transition: background 0.2s;
+    }
+
+    .do-btn {
+        background: #dbeafe;
+        color: #1d4ed8;
+    }
+
+    .do-btn:hover {
+        background: #bfdbfe;
+    }
+
+    .redo-btn {
+        background: #fef3c7;
+        color: #b45309;
+    }
+
+    .redo-btn:hover {
+        background: #fde68a;
+    }
+
+    .done-label {
+        font-weight: 600;
+        color: green;
+        font-size: 15px;
+    }
+
+    @media (max-width: 768px) {
+        .container {
+            flex-direction: column;
+        }
+
+        .sidebar {
+            width: 100%;
+            max-height: 300px;
+            border-right: none;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .content-area {
+            padding: 20px;
+            border-radius: 0 0 20px 20px;
+        }
+
+        .task-buttons {
+            flex-direction: column;
+            align-items: stretch;
+        }
+    }
+</style>
+
+<div class="container">
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="nav-bar">
+            <a href="/studentdashboard/" class="nav-link">🏚️ Home</a>
+            <a href="/course1/" class="nav-link">⬅️ Back</a>
+        </div>
+        <h2>NIL_Return_Filing</h2>
+        <div class="subheading">Courses</div>
+        <div>
+            {% for topic in topics %}
+                <a href="{% url 'course_topic_detail1' topic.id %}"
+                   class="course-topic {% if topic.id == selected_topic.id %}active{% endif %}">
+                    <div class="topic-content">
+                        <span class="topic-index">{{ topic.order }}</span>
+                        <span class="topic-text">{{ topic.title }}</span>
+                    </div>
+                    <small class="topic-type">{{ topic.topic_type }}</small>
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content-area">
+        {% if selected_topic %}
+            <div class="content-header">
+                <h1>{{ selected_topic.title }}</h1>
+                <h3>{{ selected_topic.topic_type }}</h3>
+            </div>
+
+            {% if content.pdf_file %}
+                <a href="{{ content.pdf_file.url }}" class="pdf-link" target="_blank">
+                    📄 {{ content.pdf_filename }}
+                </a>
+            {% endif %}
+
+            {% if content.video_url %}
+                <div class="video-frame">
+                    <iframe src="{{ content.get_embed_url }}" frameborder="0" allowfullscreen></iframe>
+                </div>
+            {% endif %}
+
+            {% if content.task_info %}
+                <div class="task-info">
+                    {{ content.task_info|linebreaks }}
+                    <div class="task-buttons" id="taskButtons"></div>
+                </div>
+            {% endif %}
+        {% else %}
+            <p>No topic selected.</p>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const topicId = '{{ selected_topic.id }}';
+    const studentEmail = '{{ request.session.email|default:"anonymous" }}'; // Fallback to 'anonymous' if email is missing
+    const taskKey = `task_completed1_${studentEmail}_${topicId}`; // Unique key per student and topic
+    const taskButtons = document.getElementById('taskButtons');
+    const govUrl = "{% url 'gov1' %}?topic_id=" + topicId;
+
+    // Check for success query parameter in URL
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('success') === 'true') {
+        localStorage.setItem(taskKey, 'done');
+    }
+
+    function markRedo() {
+        localStorage.setItem(taskKey, 'redo');
+        renderButtons();
+    }
+
+    function renderButtons() {
+        taskButtons.innerHTML = '';
+        const state = localStorage.getItem(taskKey) || 'not_started';
+
+        if (state === 'done' || state === 'redo') {
+            const redoBtn = document.createElement('a');
+            redoBtn.href = govUrl;
+            redoBtn.className = 'redo-btn';
+            redoBtn.innerText = '🔄 Redo Task';
+            redoBtn.target = '_blank';
+            redoBtn.rel = 'noopener noreferrer';
+            redoBtn.onclick = function () {
+                markRedo();
+            };
+
+            const doneText = document.createElement('span');
+            doneText.className = 'done-label';
+            doneText.innerText = '✅ Task Completed';
+
+            taskButtons.appendChild(redoBtn);
+            taskButtons.appendChild(doneText);
+        } else {
+            const doBtn = document.createElement('a');
+            doBtn.href = govUrl;
+            doBtn.className = 'do-btn';
+            doBtn.innerText = 'Do Task';
+            doBtn.target = '_blank';
+            doBtn.rel = 'noopener noreferrer';
+            // No onclick to mark as done; status changes only on redirect
+
+            taskButtons.appendChild(doBtn);
+        }
+    }
+
+    renderButtons();
+});
+</script>
+{% endblock %}

@@ -1,0 +1,105 @@
+{% extends 'gov.html' %}
+{% block title %}TRN Login{% endblock %}
+{% block content %}
+{% load static %}
+<style>
+    body { font-family: Arial, sans-serif; }
+    .container {
+        max-width: 600px; margin: 40px auto; padding: 30px; background-color: #fff;
+        border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,.1);
+    }
+
+    /* Stepper */
+    .progress-bar { display: flex; align-items: center; justify-content: center; margin-bottom: 30px; }
+    .step { display: flex; flex-direction: column; align-items: center; }
+    .step-number {
+        width: 30px; height: 30px; border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        font-weight: bold; font-size: 14px; color: #fff;
+    }
+    .step-label { margin-top: 6px; font-size: 14px; text-align: center; color: #333; }
+    .step.active .step-number { background-color: orange; }
+    .step.inactive .step-number { background-color: #999; }
+    .step-connector { width: 40px; height: 2px; background-color: #999; margin: 0 12px; }
+
+    /* Form */
+    .form-title { font-size: 20px; font-weight: bold; margin-bottom: 15px; color: #222; }
+    .mandatory-note { font-size: 14px; color: #444; margin-bottom: 25px; }
+    .asterisk { color: red; }
+
+    .form-group { margin-bottom: 20px; }
+    label { display: block; font-size: 15px; margin-bottom: 6px; color: #222; }
+    .form-control {
+        width: 100%; padding: 10px; border: 1.5px solid green; border-radius: 4px; font-size: 15px;
+        transition: border .3s ease;
+    }
+    .form-control:focus { border-color: #0a7e07; outline: none; }
+
+    .captcha-container { margin-bottom: 10px; }
+    #captcha-image {
+        width: 100%; max-width: 220px; height: auto; border: 1px solid #ccc; display: block;
+    }
+
+    .proceed-btn {
+        width: 100%; padding: 12px; background-color: #264a84; color: #fff;
+        font-weight: bold; font-size: 16px; border: none; border-radius: 6px; cursor: pointer;
+        transition: background-color .3s ease;
+    }
+    .proceed-btn:hover { background-color: #1d3a6d; }
+
+    .message { margin-bottom: 15px; color: red; font-size: 14px; }
+</style>
+
+<div class="container">
+    <!-- Stepper -->
+    <div class="progress-bar">
+        <div class="step active">
+            <div class="step-number">1</div>
+            <div class="step-label">User Credentials</div>
+        </div>
+        <div class="step-connector"></div>
+        <div class="step inactive">
+            <div class="step-number">2</div>
+            <div class="step-label">OTP Verification</div>
+        </div>
+    </div>
+
+    <!-- Form -->
+    <div class="form-container">
+        <div class="form-title">Temporary Reference Number (TRN)</div>
+        <div class="mandatory-note">
+            <span class="asterisk">*</span> indicates mandatory fields
+        </div>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="message">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+
+        <form method="post" id="trnForm">
+            {% csrf_token %}
+
+            {# Hidden qid/content_id so if someone links as /trn/?qid=3, we carry it #}
+            <input type="hidden" name="qid" value="{{ qid|default:'' }}"/>
+
+            <div class="form-group">
+                <label for="trn">Temporary Reference Number (TRN) <span class="asterisk">*</span></label>
+                <input type="text" id="trn" name="trn" class="form-control"
+                       placeholder="Temporary Reference Number (TRN)" required>
+            </div>
+
+            <div class="form-group">
+                <label for="captcha">Type the characters you see in the image below <span class="asterisk">*</span></label>
+                <div class="captcha-container">
+                    <img src="{% static 'media/dummy-captcha.png' %}" alt="CAPTCHA" id="captcha-image">
+                </div>
+                <input type="text" id="captcha" name="captcha" class="form-control"
+                       placeholder="Enter characters as displayed in the CAPTCHA image" required>
+            </div>
+
+            <button type="submit" class="proceed-btn">PROCEED</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,282 @@
+{% extends "institutedashboard.html" %}
+{% block title %}Student List{% endblock %}
+{% block content %}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+<style>
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f9fa;
+    color: #212529;
+  }
+
+  .card {
+    border: none;
+    border-radius: 16px;
+    box-shadow: 0 12px 24px rgba(0,0,0,0.08);
+    margin-bottom: 32px;
+  }
+
+  .card-header {
+    background-color: #fff;
+    border-bottom: 1px solid #dee2e6;
+    padding: 1.25rem 1.5rem;
+  }
+
+  .table thead th {
+    background-color: #e9ecef;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.875rem;
+    vertical-align: middle;
+  }
+
+  .table td {
+    vertical-align: middle;
+  }
+
+  .table tbody tr:hover {
+    background-color: #f1f3f5;
+    cursor: pointer;
+  }
+
+  /* Buttons */
+  .btn-back {
+    background-color: #6c757d;
+    color: white;
+    font-weight: 500;
+    margin-bottom: 1rem;
+  }
+  .btn-back:hover {
+    background-color: #5a6268;
+  }
+
+  .btn-edit {
+    background-color: #0d6efd;
+    color: white;
+    font-size: 0.85rem;
+    padding: 0.35rem 0.6rem;
+    margin-right: 4px;
+    border-radius: 6px;
+    font-weight: 500;
+    transition: all 0.2s ease-in-out;
+  }
+  .btn-edit:hover {
+    background-color: #0b5ed7;
+  }
+
+  .form-popup {
+    box-shadow: 0 10px 32px rgba(0,0,0,0.2);
+    border-radius: 16px;
+    padding: 2rem;
+    width: 100%;
+    max-width: 500px;
+    background-color: white;
+    position: fixed;
+    top:50%;
+    left:50%;
+    transform: translate(-50%,-50%);
+    z-index:1000;
+    display:none;
+    animation: slideIn 0.3s ease-out;
+  }
+
+  @keyframes slideIn {
+    from { opacity:0; transform: translate(-50%, -60%); }
+    to { opacity:1; transform: translate(-50%, -50%); }
+  }
+
+  .overlay {
+    backdrop-filter: blur(5px);
+    background-color: rgba(0,0,0,0.4);
+    position: fixed;
+    top:0; left:0;
+    width:100%; height:100%;
+    z-index:999;
+    display:none;
+  }
+
+  .pagination {
+    margin-top: 1rem;
+  }
+
+  .pagination a {
+    color: #0d6efd;
+    font-weight: 500;
+    text-decoration: none;
+    margin: 0 8px;
+  }
+
+  .pagination span {
+    font-weight: 500;
+    margin: 0 8px;
+  }
+
+  .pagination a[aria-disabled="true"] {
+    color: #adb5bd;
+    pointer-events: none;
+    cursor: not-allowed;
+  }
+
+  @media (max-width:576px) {
+    .card-header h4 { font-size:1.25rem; }
+    .btn-edit { font-size:0.75rem; padding:0.3rem 0.5rem; }
+    .form-popup { padding:1.5rem; }
+  }
+</style>
+
+<div class="container py-4">
+  <!-- Back Button -->
+  <button class="btn btn-back" onclick="window.history.back()">
+    <i class="fas fa-arrow-left"></i> Back
+  </button>
+
+  <div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <h4 class="mb-0">Students</h4>
+      <!-- Optional Add Student Button -->
+      <!-- <button class="btn btn-add"><i class="fas fa-plus"></i></button> -->
+    </div>
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover mb-0">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Student ID</th>
+              <th>Password</th>
+              <th class="text-center">Edit</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for student in students %}
+            <tr>
+              <td>{{ student.name }}</td>
+              <td>{{ student.email }}</td>
+              <td>{{ student.student_id }}</td>
+              <td>{{ student.masked_password }}</td>
+              <td class="text-center">
+                <button class="btn btn-edit btn-sm edit-btn"
+                        data-pk="{{ student.pk }}"
+                        data-password="{{ student.password }}"
+                        title="Edit Password">
+                  <i class="fas fa-edit"></i> Edit
+                </button>
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="5" class="text-center">No students found.</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="pagination text-center py-3">
+        {% if students.has_previous %}
+          <a href="?page={{ students.previous_page_number }}">&laquo; Previous</a>
+        {% else %}
+          <a aria-disabled="true">&laquo; Previous</a>
+        {% endif %}
+        <span>Page {{ students.number }} of {{ students.paginator.num_pages }}</span>
+        {% if students.has_next %}
+          <a href="?page={{ students.next_page_number }}">Next &raquo;</a>
+        {% else %}
+          <a aria-disabled="true">Next &raquo;</a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="overlay" onclick="hideForm()"></div>
+
+<div class="form-popup" id="formPopup">
+  <h4 id="formTitle" class="text-center mb-4">Edit Password</h4>
+  <form id="passwordForm" novalidate>
+    {% csrf_token %}
+    <input type="hidden" name="pk" id="hiddenPk">
+    <div class="form-group mb-3">
+      <label for="passwordInput">Password</label>
+      <input type="text" class="form-control" id="passwordInput" name="password" required>
+    </div>
+    <div class="d-flex justify-content-end mt-4">
+      <button type="button" class="btn btn-outline-secondary me-2" onclick="hideForm()">Cancel</button>
+      <button type="submit" class="btn btn-primary" id="saveBtn">
+        Save <span class="spinner-border spinner-border-sm d-none" role="status" id="loadingSpinner"></span>
+      </button>
+    </div>
+  </form>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+let currentActionUrl = "";
+
+function showForm() {
+  document.getElementById("formPopup").style.display = "block";
+  document.getElementById("overlay").style.display = "block";
+  document.getElementById("passwordInput").focus();
+}
+
+function hideForm() {
+  document.getElementById("formPopup").style.display = "none";
+  document.getElementById("overlay").style.display = "none";
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.edit-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const pk = btn.dataset.pk;
+      const password = btn.dataset.password;
+      document.getElementById("hiddenPk").value = pk;
+      document.getElementById("passwordInput").value = password;
+      currentActionUrl = `/students/edit-password/${pk}/`;
+      showForm();
+    });
+  });
+
+  document.getElementById("passwordForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+    const form = this;
+    if (!form.checkValidity()) {
+      form.classList.add("was-validated");
+      return;
+    }
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    const saveBtn = document.getElementById("saveBtn");
+    const spinner = document.getElementById("loadingSpinner");
+    saveBtn.disabled = true;
+    spinner.classList.remove("d-none");
+
+    const formData = new FormData(form);
+
+    fetch(currentActionUrl, {
+      method: "POST",
+      headers: {
+        "X-CSRFToken": csrfToken,
+        "X-Requested-With": "XMLHttpRequest"
+      },
+      credentials: "same-origin",
+      body: formData
+    })
+    .then(resp => resp.json())
+    .then(data => {
+      if (data.success) location.reload();
+      else alert("Error: " + (data.error || "Unknown error"));
+    })
+    .catch(err => {
+      console.error("Error:", err);
+      alert("Something went wrong.");
+    })
+    .finally(() => {
+      saveBtn.disabled = false;
+      spinner.classList.add("d-none");
+    });
+  });
+});
+</script>
+{% endblock %}

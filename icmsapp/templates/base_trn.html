@@ -1,0 +1,510 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Register for Goods and Services Tax (GST) - Government of India portal." />
+  <title>GST TRN Registration - Simulator</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #eef2f7;
+      color: #333;
+    }
+
+    /* ============================================================
+       TOP BAR & HEADER
+       ============================================================ */
+    .top-bar {
+      background: #051547;
+      color: white;
+      font-size: 14px;
+      text-align: center;
+      padding: 10px 0;
+    }
+
+    header {
+      background: #0b1f52;
+      color: white;
+    }
+
+    .header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 22px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .logo-section span {
+      font-size: 32px;
+      font-weight: 600;
+      display: block;
+    }
+
+    .logo-section p {
+      font-size: 16px;
+      margin: 0;
+    }
+
+    .action-buttons button {
+      background-color: white;
+      color: #0b1f52;
+      padding: 8px 18px;
+      border: none;
+      border-radius: 4px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-left: 10px;
+    }
+
+    .action-buttons button:hover {
+      background-color: #2c4e86;
+      color: white;
+    }
+
+    /* ============================================================
+       NAVIGATION
+       ============================================================ */
+    nav {
+      background: #2c4e86;
+    }
+
+    .nav-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    nav ul {
+      display: flex;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      flex-wrap: wrap;
+    }
+
+    nav ul li a {
+      color: white;
+      text-decoration: none;
+      padding: 12px 18px;
+      display: block;
+      font-size: 15px;
+    }
+
+    nav ul li a:hover,
+    nav ul li a.active {
+      background: #1d335c;
+    }
+
+    /* ============================================================
+       NOTIFICATIONS & SUMMARY
+       ============================================================ */
+    .lang-strip {
+      max-width: 1200px;
+      margin: 8px auto 0;
+      text-align: right;
+      font-size: 14px;
+    }
+
+    .notify-bar {
+      max-width: 1200px;
+      margin: 6px auto 0;
+      background: #fff8e1;
+      border: 1px solid #ffe0b3;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      padding: 0 10px;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+
+    .notify-icon {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #c40000;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 8px;
+    }
+
+    .notify-track {
+      overflow: hidden;
+      flex: 1;
+      white-space: nowrap;
+    }
+
+    .notify-inner {
+      display: inline-block;
+      white-space: nowrap;
+      animation: marquee 35s linear infinite;
+      color: #c40000;
+      font-size: 14px;
+      line-height: 30px;
+    }
+
+    @keyframes marquee {
+      0% { transform: translateX(100%); }
+      100% { transform: translateX(-180%); }
+    }
+
+    .summary-strip {
+      max-width: 1200px;
+      margin: 8px auto;
+      background: #ffe870;
+      padding: 15px 20px;
+      box-sizing: border-box;
+    }
+
+    .summary-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+    }
+
+    .summary-row > div {
+      flex: 0 0 25%;
+      max-width: 25%;
+      box-sizing: border-box;
+    }
+
+    .summary-label {
+      font-size: 16px;
+      color: #333;
+    }
+
+    .summary-value {
+      font-size: 22px;
+      font-weight: 700;
+      color: #111;
+    }
+
+    /* ============================================================
+       STEP TILES (10 IN SINGLE LINE)
+       ============================================================ */
+    .steps-strip {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: #e1e7f0;
+      border: 1px solid #cbd3e3;
+      border-top: none;
+      box-sizing: border-box;
+    }
+
+    .steps-row {
+      display: flex;
+      width: 100%;
+    }
+
+    /* --- BASE CARD STYLE (Pending State) --- */
+    .step-card {
+      flex: 0 0 10%;
+      max-width: 10%;
+      box-sizing: border-box;
+      height: 130px;
+      padding: 16px 6px;
+      text-align: center;
+      text-decoration: none;
+      background: #f4f6fb; /* Light Grey/Blue for Pending */
+      border-right: 1px solid #d0d7e5;
+      border-top: 1px solid #d0d7e5;
+      font-size: 14px;
+      position: relative;
+      color: #555; 
+      
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+    }
+
+    .steps-row .step-card:last-child {
+      border-right: none;
+    }
+
+    .step-icon {
+      font-size: 28px;
+      margin-bottom: 6px;
+      color: #888; /* Grey Icon for Pending */
+    }
+
+    /* --- ACTIVE STATE (Blue Outline) --- */
+    .step-card.active {
+      background: #fff;
+      box-shadow: inset 0 0 0 3px #1246a4; /* Thick Blue Border */
+      color: #1246a4;
+      font-weight: bold;
+      z-index: 1; /* Brings outline to top */
+    }
+    .step-card.active .step-icon {
+      color: #1246a4; /* Blue Icon */
+    }
+
+    /* --- COMPLETED STATE (Solid Blue) --- */
+    .step-card.done {
+      background: #1246a4; /* Solid Blue Background */
+      color: white;
+      border-color: #0b2f86;
+    }
+    .step-card.done .step-icon {
+      color: white; /* White Icon */
+    }
+
+    /* The Checkmark Circle */
+    .step-check {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      width: 18px;
+      height: 18px;
+      border: 2px solid #fff;
+      background: #0b2f86;
+      border-radius: 50%;
+      font-size: 11px;
+      color: #fff;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Show checkmark only when done */
+    .step-card.done .step-check {
+      display: flex;
+      background: #fff; /* White circle */
+      color: #1246a4;   /* Blue tick inside */
+    }
+
+    /* ============================================================
+       MAIN CONTENT
+       ============================================================ */
+    .trn-container {
+      max-width: 1200px;
+      margin: 0 auto 40px;
+      background: #fff;
+      padding: 25px 30px;
+      border-left: 1px solid #cbd3e3;
+      border-right: 1px solid #cbd3e3;
+      border-bottom: 1px solid #cbd3e3;
+      box-sizing: border-box;
+    }
+
+    /* ============================================================
+       FOOTER
+       ============================================================ */
+    .footer {
+      background: #0b1f52;
+      color: white;
+      padding: 30px 20px;
+      font-size: 16px;
+    }
+    .footer-columns {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+    .footer-columns h4 {
+      color: #1abc9c;
+      font-size: 18px;
+      margin-bottom: 6px;
+    }
+    .footer-columns p {
+      margin: 4px 0;
+      font-size: 15px;
+    }
+
+    /* ============================================================
+       RESPONSIVE
+       ============================================================ */
+    @media (max-width: 900px) {
+      .summary-row > div { flex: 0 0 50%; max-width: 50%; margin-bottom: 10px; }
+      .step-card { font-size: 12px; }
+    }
+    @media (max-width: 600px) {
+      .header-inner { flex-direction: column; align-items: flex-start; gap: 10px; }
+      .action-buttons { width: 100%; display: flex; justify-content: flex-start; flex-wrap: wrap; }
+      .summary-row > div { flex: 0 0 100%; max-width: 100%; }
+      .steps-row { flex-wrap: wrap; }
+      .step-card { flex: 0 0 50%; max-width: 50%; border-right: 1px solid #d0d7e5; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="top-bar">Simulator website - For Educational Purpose Only</div>
+
+  <header>
+    <div class="header-inner">
+      <div class="logo-section">
+        <span>Goods and Services Tax</span>
+        <p>Government of India, States and Union Territories</p>
+      </div>
+      <div class="action-buttons">
+        <button>REGISTER</button>
+        <button>LOGIN</button>
+      </div>
+    </div>
+  </header>
+
+  <nav>
+    <div class="nav-inner">
+      <ul>
+        <li><a href="#" class="active">Home</a></li>
+        <li><a href="#">Services</a></li>
+        <li><a href="#">Dashboard</a></li>
+        <li><a href="#">GST Law</a></li>
+        <li><a href="#">Downloads</a></li>
+        <li><a href="#">Search Taxpayer</a></li>
+        <li><a href="#">Help & Facilities</a></li>
+        <li><a href="#">e-Invoice</a></li>
+        <li><a href="#">News</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="lang-strip">🌐 English</div>
+
+  <div class="notify-bar">
+    <div class="notify-icon"><span>!</span></div>
+    <div class="notify-track">
+      <div class="notify-inner">
+        Mobile number/e-mail id linked with Aadhaar can be verified at
+        <a href="https://resident.uidai.gov.in/verify-email-mobile" target="_blank">
+          https://resident.uidai.gov.in/verify-email-mobile
+        </a>
+        Please wait 45 seconds before regenerating the OTP for Aadhaar authentication on GST portal.
+      </div>
+    </div>
+  </div>
+
+  <div class="summary-strip">
+    <div class="summary-row">
+      <div>
+        <div class="summary-label">Application Type</div>
+        <div class="summary-value">{{ application_type }}</div>
+      </div>
+      <div>
+        <div class="summary-label">Due Date to Complete</div>
+        <div class="summary-value">{{ due_date }}</div>
+      </div>
+      <div>
+        <div class="summary-label">Last Modified</div>
+        <div class="summary-value">{{ last_modified }}</div>
+      </div>
+      <div>
+        <div class="summary-label">Profile</div>
+        <div class="summary-value">{{ profile_percent }}%</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="steps-strip">
+    <div class="steps-row">
+
+      <a href="{{ nav.business }}" class="step-card {% if step_status.business == 'active' %}active{% endif %}{% if step_status.business == 'completed' %} done{% endif %}">
+        <div class="step-icon"><i class="fa-solid fa-briefcase"></i></div>
+        <div>Business Details</div>
+        <div class="step-check">&#10003;</div>
+      </a>
+
+      <a href="{{ nav.promoter }}" class="step-card {% if step_status.promoter == 'active' %}active{% endif %}{% if step_status.promoter == 'completed' %} done{% endif %}">
+        <div class="step-icon"><i class="fa-solid fa-user-tie"></i></div>
+        <div>Promoter / Partners</div>
+        <div class="step-check">&#10003;</div>
+      </a>
+
+      <a href="{{ nav.signatory }}" class="step-card {% if step_status.signatory == 'active' %}active{% endif %}{% if step_status.signatory == 'completed' %} done{% endif %}">
+        <div class="step-icon"><i class="fa-solid fa-user-plus"></i></div>
+        <div>Authorized Signatory</div>
+        <div class="step-check">&#10003;</div>
+      </a>
+
+      <a href="{{ nav.rep }}" class="step-card {% if step_status.rep == 'active' %}active{% endif %}{% if step_status.rep == 'completed' %} done{% endif %}">
+        <div class="step-icon"><i class="fa-solid fa-user-gear"></i></div>
+        <div>Authorized Representative</div>
+        <div class="step-check">&#10003;</div>
+      </a>
+
+      <a href="{{ nav.ppob }}" class="step-card {% if step_status.ppob == 'active' %}active{% endif %}{% if step_status.ppob == 'completed' %} done{% endif %}">
+        <div class="step-icon"><i class="fa-solid fa-location-dot"></i></div>
+        <div>Principal Place of Business</div>
+        <div class="step-check">&#10003;</div>
+      </a>
+
+      <a href="{{ nav.apob }}" class="step-card {% if step_status.apob == 'active' %}active{% endif %}{% if step_status.apob == 'completed' %} done{% endif %}">
+        <div class="step-icon"><i class="fa-solid fa-location-dot"></i></div>
+        <div>Additional<BR> Places</div>
+        <div class="step-check">&#10003;</div>
+      </a>
+
+      <a href="{{ nav.goods }}" class="step-card {% if step_status.goods == 'active' %}active{% endif %}{% if step_status.goods == 'completed' %} done{% endif %}">
+        <div class="step-icon"><i class="fa-solid fa-cart-shopping"></i></div>
+        <div>Goods &amp; Services</div>
+        <div class="step-check">&#10003;</div>
+      </a>
+
+      <a href="{{ nav.state }}" class="step-card {% if step_status.state == 'active' %}active{% endif %}{% if step_status.state == 'completed' %} done{% endif %}">
+        <div class="step-icon"><i class="fa-solid fa-file-lines"></i></div>
+        <div>State Info</div>
+        <div class="step-check">&#10003;</div>
+      </a>
+
+      <a href="{{ nav.aadhaar }}" class="step-card {% if step_status.aadhaar == 'active' %}active{% endif %}{% if step_status.aadhaar == 'completed' %} done{% endif %}">
+        <div class="step-icon"><i class="fa-solid fa-fingerprint"></i></div>
+        <div>Aadhaar Authentication</div>
+        <div class="step-check">&#10003;</div>
+      </a>
+
+      <a href="{{ nav.verify }}" class="step-card {% if step_status.verify == 'active' %}active{% endif %}{% if step_status.verify == 'completed' %} done{% endif %}">
+        <div class="step-icon"><i class="fa-solid fa-circle-check"></i></div>
+        <div>Verification</div>
+        <div class="step-check">&#10003;</div>
+      </a>
+
+    </div>
+  </div>
+
+  <div class="trn-container">
+    {% block content %}
+    {% endblock %}
+  </div>
+
+  <footer class="footer">
+    <div class="footer-columns">
+      <div>
+        <h4>About GST</h4>
+        <p>GST Council Structure</p>
+        <p>GST History</p>
+        <p>Benefits of GST</p>
+      </div>
+      <div>
+        <h4>Website Policies</h4>
+        <p>Terms &amp; Conditions</p>
+        <p>Privacy Policy</p>
+        <p>Accessibility Statement</p>
+      </div>
+      <div>
+        <h4>Contact Us</h4>
+        <p>GST Helpdesk: 1800-XXX-XXX</p>
+        <p>Email: helpdesk@xxx.xxx.in</p>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

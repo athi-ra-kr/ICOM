@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>{{ content.heading }}</title>
+  <style>
+    body { font-family: Arial; background: #f4f6f9; }
+    .container { max-width: 800px; margin: 40px auto; background: white; border-radius: 10px; padding: 30px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+    input, textarea { width: 100%; padding: 10px; margin: 8px 0; border: 1px solid #ccc; border-radius: 5px; }
+    label { font-weight: bold; }
+    .btn { background: #004aad; color: white; padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>{{ content.heading }}</h2>
+    <p>{{ content.task_info }}</p>
+
+    <form method="POST">
+      {% csrf_token %}
+      <label>Legal Name of Business</label>
+      <input type="text" name="legal_name" value="{{ task.data.legal_name|default_if_none:'' }}">
+
+      <label>Trade Name</label>
+      <input type="text" name="trade_name" value="{{ task.data.trade_name|default_if_none:'' }}">
+
+      <label>PAN Number</label>
+      <input type="text" name="pan_number" value="{{ task.data.pan_number|default_if_none:'' }}">
+
+      <label>Business Address</label>
+      <textarea name="business_address">{{ task.data.business_address|default_if_none:'' }}</textarea>
+
+      <label>Nature of Business</label>
+      <input type="text" name="nature_of_business" value="{{ task.data.nature_of_business|default_if_none:'' }}">
+
+      <button type="submit" class="btn">Submit Registration</button>
+    </form>
+  </div>
+</body>
+</html>

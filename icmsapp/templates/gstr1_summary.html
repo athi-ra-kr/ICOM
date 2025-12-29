@@ -1,0 +1,431 @@
+{% extends 'gov1.html' %}
+{% block title %}GSTR-1 / IFF{% endblock %}
+{% block content %}
+<style>
+:root{
+  --page-bg:#e9eff4; --ink:#333b48; --muted:#5f6b79;
+  --teal:#15b4a7;
+  --accent:#294e80; --accent-hover:#2c5288;
+  --soft:#6f86a7; --soft-hover:#607797;
+  --panel:#ffffff; --border:#cfd9e6;
+  --tile-h:#2b4f83; --ok:#1db954;
+  --note-blue:#0038e6;
+  --tooltip-bg:#1f1f1f; --tooltip-ink:#fff;
+}
+body.nil-on{ --accent:#1f3e73; --accent-hover:#1b3868; }
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+@font-face{font-family:'Roboto';font-style:normal;font-weight:400;font-display:swap;
+  src:local('Roboto'),local('Roboto-Regular');}
+body{background:var(--page-bg);color:var(--ink);font-family:Roboto,system-ui,-apple-system,Segoe UI,Helvetica,Arial,"Noto Sans","Liberation Sans",sans-serif;font-size:14px;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+.wrap{max-width:1240px;margin:0 auto}
+
+.crumbs{height:44px;display:flex;align-items:center;font-size:13px;color:#2d3b4a;padding:0 24px}
+.crumbs a{color:#2d3b4a;text-decoration:none}.crumbs .sep{padding:0 6px;opacity:.65}
+
+.ribbon-box{background:var(--teal);color:#fff;margin:0 24px;border-radius:2px;border-bottom-left-radius:0;border-bottom-right-radius:0}
+.ribbon-inner{display:flex;align-items:center;justify-content:space-between;min-height:64px;padding:0 16px;gap:12px}
+.rtitle{margin-right:auto;font-weight:700;font-size:22px;line-height:1.15;color:#fff}
+.r-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.pill{background:var(--accent);color:#fff;border:1px solid rgba(0,0,0,.05);height:36px;padding:0 14px;border-radius:3px;display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:600;text-decoration:none}
+.pill svg{width:16px;height:16px;fill:currentColor;opacity:.95}
+.pill:hover{background:var(--accent-hover)}
+
+.meta{background:var(--panel);border:1px solid var(--border);border-top:none;margin:0 24px 0}
+.meta-inner{padding:16px 18px}
+.grid{display:grid;grid-template-columns:repeat(4,minmax(240px,1fr));gap:10px 18px}
+.k{color:#506175;font-weight:700;font-size:13px;margin-bottom:2px}
+.v{color:#0f2036;font-size:14px}
+.req{display:flex;align-items:center;justify-content:flex-end;color:#cc1e1e;font-weight:600;font-size:13px}
+.req .dot{width:7px;height:7px;border-radius:50%;background:#cc1e1e;margin-right:6px}
+
+.bar{background:var(--accent);color:#fff;border-radius:2px;margin:22px 0 0}
+.bar-inner{display:flex;align-items:center;justify-content:space-between;min-height:42px;padding:0 16px}
+.bar-title{font-weight:700;font-size:14px}
+.bar-caret svg{width:18px;height:18px;fill:#fff;opacity:.9}
+
+.panel{background:transparent;border:none;margin:12px 24px 22px}
+.flagline{display:flex;align-items:center;gap:10px;font-size:16px;padding:0 0 12px}
+.flagline input{width:18px;height:18px}
+
+.nil-box{border:1px solid var(--border);margin:10px 0 16px;border-radius:3px;background:#fff}
+.nil-title{font-weight:800;color:var(--note-blue);padding:12px 16px;font-size:15px}
+.nil-ul{padding:0 24px 16px 42px;margin:0;font-size:14px;line-height:22px}
+.nil-ul li{margin:6px 0;color:var(--note-blue);font-weight:600}
+
+.note{margin:16px 0;background:#d9eefb;border:1px solid #bfe1f7;border-radius:4px;color:#345e84;padding:12px 14px;font-size:14px;line-height:20px;display:flex;gap:10px;align-items:flex-start}
+.note svg{width:18px;height:18px;fill:#2f6ea4;flex:0 0 auto;margin-top:2px}
+
+/* ---------- GREEN SUCCESS BANNER (like portal) ---------- */
+.alert{margin:16px 24px;background:#e6f4ea;border:1px solid #c7e6cf;border-radius:4px;color:#1e4620;padding:12px 14px;font-size:14px;line-height:20px;display:flex;gap:10px;align-items:flex-start}
+.alert svg{width:18px;height:18px;fill:#1e4620;flex:0 0 auto;margin-top:2px}
+.hidden{display:none!important}
+
+.actions{padding:14px 0 0;display:flex;flex-wrap:wrap;justify-content:flex-end;gap:12px}
+.btn{display:inline-flex;align-items:center;justify-content:center;height:40px;padding:0 18px;border-radius:3px;border:1px solid transparent;font-weight:700;font-size:14px;letter-spacing:.2px;text-transform:uppercase;text-decoration:none;box-shadow:0 1px 0 rgba(0,0,0,.06),0 2px 8px rgba(0,0,0,.05)}
+.btn:hover{filter:brightness(1.04)}
+.btn.outline{background:#fff;color:#1b2f4f;border-color:#a9bfdc}
+.btn.primary,.btn.reset{background:var(--accent);color:#fff}
+.btn.primary:hover,.btn.reset:hover{background:var(--accent-hover)}
+.btn.reset{background:var(--accent)!important;color:#fff!important;border-color:transparent!important}
+.btn.soft{background:var(--soft);color:#fff}.btn.soft:hover{background:var(--soft-hover)}
+.btn.disabled{opacity:.65;pointer-events:none}
+
+.tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:22px;padding:22px 0;position:relative}
+.tile{border-radius:16px;overflow:visible;border:1px solid var(--border);background:#fff;box-shadow:0 6px 18px rgba(0,0,0,.12)}
+.tile-link{display:block;color:inherit;text-decoration:none;position:relative;cursor:pointer;z-index:1}
+.tile-link *{text-decoration:none!important}
+.tile-head{background:var(--tile-h);color:#fff;min-height:76px;display:flex;align-items:center;justify-content:center;text-align:center;padding:14px 12px;font-weight:800;font-size:16px;line-height:1.25;border-top-left-radius:16px;border-top-right-radius:16px}
+.tile-body{background:#fff;padding:24px;text-align:center;border-top:1px solid rgba(0,0,0,.06);border-bottom-left-radius:16px;border-bottom-right-radius:16px}
+.ok{display:inline-flex;align-items:center;gap:10px;color:var(--ok);font-size:28px;font-weight:800}
+.ok svg{width:28px;height:28px;fill:var(--ok);opacity:.95}
+.ok .count{border-bottom:none}
+
+.tile-link[data-tip]::before{
+  content:attr(data-tip);
+  position:absolute; left:50%; transform:translateX(-50%);
+  bottom:calc(100% + 12px);
+  background:var(--tooltip-bg); color:var(--tooltip-ink);
+  padding:10px 14px; border-radius:4px; font-weight:800; text-align:center;
+  max-width:340px; width:max-content; white-space:normal; line-height:1.2;
+  box-shadow:0 6px 18px rgba(0,0,0,.3);
+  opacity:0; pointer-events:none; transition:opacity .15s ease, bottom .15s ease;
+  z-index:60;
+}
+.tile-link[data-tip]::after{
+  content:""; position:absolute; left:50%; transform:translateX(-50%);
+  bottom:100%;
+  border-width:8px; border-style:solid;
+  border-color:var(--tooltip-bg) transparent transparent transparent;
+  opacity:0; transition:opacity .15s ease; z-index:59;
+}
+.tile-link:hover, .tile-link:focus-visible{z-index:80}
+.tile-link:hover::before, .tile-link:focus-visible::before{opacity:1;bottom:calc(100% + 14px)}
+.tile-link:hover::after,  .tile-link:focus-visible::after{opacity:1}
+
+@media (max-width:1260px){.wrap{padding:0 12px}}
+@media (max-width:1200px){.grid{grid-template-columns:repeat(2,minmax(240px,1fr))}.tiles{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:640px){.tiles{grid-template-columns:1fr}}
+</style>
+
+<div class="wrap">
+  <div class="crumbs">
+    <a href="{% url 'file_returns_with_id' content_id=content_id %}">Dashboard</a><span class="sep">›</span>
+    <a href="{% url 'file_returns_with_id' content_id=content_id %}">Returns</a><span class="sep">›</span>
+    <strong>GSTR-1 / IFF</strong>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="ribbon-box">
+    <div class="ribbon-inner">
+      <h1 class="rtitle">GSTR-1 - Details of outward supplies of goods or services</h1>
+      <div class="r-actions">
+        <a href="#" class="pill"><svg viewBox="0 0 24 24"><path d="M6 2h8l4 4v16a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zm8 1.5V7h3.5L14 3.5zM8 11h8v2H8v-2zm0 4h8v2H8v-2z"/></svg>E-INVOICE ADVISORY</a>
+        <a href="#" class="pill"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 .001 20.001A10 10 0 0 0 12 2zm.1 15.9a1.25 1.25 0 1 1 0 2.5 1.25 1.25 0 0 1 0-2.5zM12 6.5c-1.93 0-3.25 2.6-3.25 2.6h1.9c0-.62.53-1.03 1.35-1.03.74 0 1.3.37 1.3.96 0 .43-.27.77-.88 1.12-.98.56-1.59 1.17-1.55 2.35l.01.25h1.86c0-.67.21-.98 1.05-1.43.93-.5 1.63-1.22 1.63-2.32 0-1.64-1.4-2.5-3.42-2.5z"/></svg>HELP</a>
+        <a href="#" class="pill" title="Refresh"><svg viewBox="0 0 24 24"><path d="M17.65 6.35A7.95 7.95 0 0 0 12 4V1L7 6l5 5V7a5 5 0 1 1-5 5H5a7 7 0 1 0 12.65-5.65z"/></svg></a>
+      </div>
+    </div>
+  </div>
+
+  <div class="meta">
+    <div class="meta-inner">
+      <div class="grid">
+        <div><div class="k">GSTIN</div><div class="v" id="fldGSTIN"></div></div>
+        <div><div class="k">Legal Name</div><div class="v" id="fldLegalName"></div></div>
+        <div><div class="k">Trade Name</div><div class="v" id="fldTradeName"></div></div>
+        <div class="req"><span class="dot"></span>indicates mandatory fields</div>
+        <div><div class="k">FY</div><div class="v" id="fldFY"></div></div>
+        <div><div class="k">Return Period</div><div class="v" id="fldReturnPeriod"></div></div>
+        <div><div class="k">Status</div><div class="v">{{ status|default:"Not Filed" }}</div></div>
+        <div><div class="k">Due Date</div><div class="v"><span id="dueDate">{{ due_date|default:"" }}</span></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SUCCESS BANNER CONTAINER (hidden initially) -->
+<div id="actionBanner" class="alert hidden">
+  <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 .001 20.001A10 10 0 0 0 12 2zM11 15.2l-3.2-3.2-1.4 1.4L11 18 17.6 11.4 16.2 10l-5.2 5.2z"/></svg>
+  <div id="actionBannerText">Your request has been received.</div>
+</div>
+
+<div class="wrap">
+  <div class="panel">
+    <div class="flagline">
+      <input type="checkbox" id="nilToggle" {% if show_nil %}checked{% endif %}/>
+      <label for="nilToggle"><strong>File Nil GSTR-1</strong></label>
+    </div>
+
+    <div id="dashHeadBar" class="bar">
+      <div class="bar-inner">
+        <span class="bar-title">ADD RECORD DETAILS</span>
+        <span class="bar-caret" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg></span>
+      </div>
+    </div>
+
+    <!-- NIL view -->
+    <div id="nilView" class="hidden">
+      <div class="nil-box">
+        <div class="nil-title">Note: NIL Form GSTR-1 can be filed by you if you have:</div>
+        <ul class="nil-ul">
+          <li>a. No Outward Supplies (including supplies on which tax is to be charged on reverse charge basis, zero rated supplies and deemed exports) during the month or quarter for which the form is being filed for</li>
+          <li>b. No Amendments to be made to any of the supplies declared in an earlier form</li>
+          <li>c. No Credit or Debit Notes to be declared / amended</li>
+          <li>d. No details of advances received for services is to be declared or adjusted</li>
+        </ul>
+      </div>
+
+      <div class="note">
+        <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 .001 20.001A10 10 0 0 0 12 2zm1 15H11v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+        The taxpayers for whom e-invoicing is not applicable may ignore the sections/options related to e-invoice download. The downloaded file would be blank in case taxpayer is not e-invoicing or when e-invoices reported to IRP are yet to be processed by GST system
+      </div>
+
+      <div class="actions">
+        <a href="{% url 'file_returns_with_id' content_id=content_id %}" class="btn outline">BACK</a>
+        <a href="#" class="btn soft">DOWNLOAD DETAILS FROM E-INVOICES (EXCEL)</a>
+        <a href="#" class="btn soft">PREVIEW</a>
+        <a href="#" class="btn reset">RESET</a>
+        <!-- add id for JS -->
+        <a href="/gst_outward_supplies" id="btnFileStatement" class="btn primary">FILE STATEMENT</a>
+      </div>
+    </div>
+
+    <!-- Dashboard view -->
+    <div id="dashView">
+      <div class="tiles">
+        {% comment %} counts from context {% endcomment %}
+        <div class="tile"><a href="#" class="tile-link" data-tip="Taxable outward supplies made to registered persons (including UIN-holders)"><div class="tile-head">4A, 4B, 6B, 6C - B2B, SEZ, DE Invoices</div><div class="tile-body"><span class="ok"><svg viewBox="0 0 24 24"><path d="M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg><span class="count">{{ b2b_count|default:0 }}</span></span></div></a></div>
+        <div class="tile"><a href="#" class="tile-link" data-tip="Taxable Outward Supplies to an unregistered person where Place of Supply (State Code) is different (Inter-State) and invoice value &gt; Rs. 1 lakh"><div class="tile-head">5A - B2C (Large) Invoices</div><div class="tile-body"><span class="ok"><svg viewBox="0 0 24 24"><path d="M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg><span class="count">{{ b2c_large_count|default:0 }}</span></span></div></a></div>
+        <div class="tile"><a href="#" class="tile-link" data-tip="Supplies Exported"><div class="tile-head">6A - Exports Invoices</div><div class="tile-body"><span class="ok"><svg viewBox="0 0 24 24"><path d="M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg><span class="count">{{ exports_count|default:0 }}</span></span></div></a></div>
+        <div class="tile"><a href="#" class="tile-link" data-tip="Taxable supplies (net of debit/credit notes) to unregistered persons other than those in Table 5"><div class="tile-head">7 - B2C (Others)</div><div class="tile-body"><span class="ok"><svg viewBox="0 0 24 24"><path d="M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg><span class="count">{{ b2c_other_count|default:0 }}</span></span></div></a></div>
+        <div class="tile"><a href="#" class="tile-link" data-tip="Nil rated, Exempted and Non-GST outward supplies"><div class="tile-head">8A, 8B, 8C, 8D - Nil Rated Supplies</div><div class="tile-body"><span class="ok"><svg viewBox="0 0 24 24"><path d="M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg><span class="count">{{ nil_rated_count|default:0 }}</span></span></div></a></div>
+        <div class="tile"><a href="#" class="tile-link" data-tip="Details of Credit/Debit Notes issued to registered taxpayers"><div class="tile-head">9B - Credit / Debit Notes (Registered)</div><div class="tile-body"><span class="ok"><svg viewBox="0 0 24 24"><path d="M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg><span class="count">{{ cdn_reg_count|default:0 }}</span></span></div></a></div>
+        <div class="tile"><a href="#" class="tile-link" data-tip="Details of Credit/Debit Notes for unregistered users"><div class="tile-head">9B - Credit / Debit Notes (Unregistered)</div><div class="tile-body"><span class="ok"><svg viewBox="0 0 24 24"><path d="M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg><span class="count">{{ cdn_unreg_count|default:0 }}</span></span></div></a></div>
+        <div class="tile"><a href="#" class="tile-link" data-tip="Advance amount received in the tax period where invoice not issued (added to output tax liability)."><div class="tile-head">11A(1), 11A(2) - Tax Liability (Advance Received)</div><div class="tile-body"><span class="ok"><svg viewBox="0 0 24 24"><path d="M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg><span class="count">{{ adv_liab_count|default:0 }}</span></span></div></a></div>
+        <div class="tile"><a href="#" class="tile-link" data-tip="Advance received earlier and adjusted in this tax period (Tables 4,5,6,7)."><div class="tile-head">11B(1), 11B(2) - Adjustment of Advances</div><div class="tile-body"><span class="ok"><svg viewBox="0 0 24 24"><path d="M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg><span class="count">{{ adv_adj_count|default:0 }}</span></span></div></a></div>
+        <div class="tile"><a href="#" class="tile-link" data-tip="12 - HSN-wise summary of outward supplies"><div class="tile-head">12 - HSN-wise summary of outward supplies</div><div class="tile-body"><span class="ok"><svg viewBox="0 0 24 24"><path d="M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg><span class="count">{{ hsn_summary_count|default:0 }}</span></span></div></a></div>
+        <div class="tile"><a href="#" class="tile-link" data-tip="13 - Documents issued"><div class="tile-head">13 - Documents Issued</div><div class="tile-body"><span class="ok"><svg viewBox="0 0 24 24"><path d="M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg><span class="count">{{ docs_issued_count|default:0 }}</span></span></div></a></div>
+        <div class="tile"><a href="#" class="tile-link" data-tip="14 - Supplies made through ECO"><div class="tile-head">14 - Supplies made through ECO</div><div class="tile-body"><span class="ok"><svg viewBox="0 0 24 24"><path d="M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg><span class="count">{{ eco_supplies_count|default:0 }}</span></span></div></a></div>
+        <div class="tile"><a href="#" class="tile-link" data-tip="15 - Supplies under Section 9(5)"><div class="tile-head">15 - Supplies U/s 9(5)</div><div class="tile-body"><span class="ok"><svg viewBox="0 0 24 24"><path d="M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg><span class="count">{{ nine5_supplies_count|default:0 }}</span></span></div></a></div>
+      </div>
+
+      <div class="bar" style="margin-top:0">
+        <div class="bar-inner">
+          <span class="bar-title">AMEND RECORD DETAILS</span>
+          <span class="bar-caret" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg></span>
+        </div>
+      </div>
+
+      <div class="note">
+        <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 .001 20.001A10 10 0 0 0 12 2zm1 15H11v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+        The taxpayers for whom e-invoicing is not applicable may ignore the sections/options related to e-invoice download. The downloaded file would be blank in case taxpayer is not e-invoicing or when e-invoices reported to IRP are yet to be processed by GST system
+      </div>
+
+      <div class="bar">
+        <div class="bar-inner">
+          <span class="bar-title">E-INVOICE DOWNLOAD HISTORY</span>
+          <span class="bar-caret" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg></span>
+        </div>
+      </div>
+
+      <div class="actions">
+        <a href="{% url 'file_returns_with_id' content_id=content_id %}" class="btn outline">BACK</a>
+        <a href="#" class="btn soft">DOWNLOAD DETAILS FROM E-INVOICES (EXCEL)</a>
+        <a href="#" class="btn soft">PREVIEW</a>
+        <a href="#" class="btn reset">RESET</a>
+        <a href="#" class="btn primary">GENERATE SUMMARY</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="gstrDebugBox" class="hidden" style="margin:16px 24px;background:#111;color:#eee;border-radius:6px;padding:12px 14px">
+  <div style="font-weight:700;margin-bottom:6px">DEBUG (add <code>?debug=1</code> to URL)</div>
+  <pre style="white-space:pre-wrap;word-break:break-word;margin:0;font-size:12px;line-height:1.35"></pre>
+</div>
+
+<script>
+/* --------- Hydrate FY / Period / Due Date from URL or sessionStorage --------- */
+(function(){
+  const qs = new URLSearchParams(location.search);
+  let fy   = qs.get('fy');
+  let mon  = qs.get('period');   // e.g. 'october'
+  let dueISO = qs.get('due');
+
+  if(!fy || !mon || !dueISO){
+    try{
+      fy     = fy     || sessionStorage.getItem('g_fy');
+      mon    = mon    || sessionStorage.getItem('g_period');
+      dueISO = dueISO || sessionStorage.getItem('g_dueISO');
+
+      if(!qs.get('content_id')){
+        const cid = sessionStorage.getItem('g_content_id');
+        if (cid){
+          const u = new URL(location.href);
+          u.searchParams.set('content_id', cid);
+          history.replaceState(null,'',u.toString());
+        }
+      }
+    }catch(e){}
+  }
+
+  function put(id,val){ const el=document.getElementById(id); if(el && val) el.textContent = val; }
+
+  if (fy) put('fldFY', fy);
+  if (mon){
+    const label = mon.charAt(0).toUpperCase()+mon.slice(1).toLowerCase();
+    put('fldReturnPeriod', label);
+  }
+  if (dueISO){
+    const d = new Date(dueISO);
+    if(!isNaN(d)){
+      const pretty = new Intl.DateTimeFormat('en-IN',{day:'2-digit',month:'short',year:'numeric',timeZone:'Asia/Kolkata'}).format(d);
+      const dueEl=document.getElementById('dueDate'); if(dueEl) dueEl.textContent = pretty;
+    }
+  }
+})();
+</script>
+
+<script>
+/* ----------------- NIL toggle (persist + reflect in URL) ----------------- */
+const cb=document.getElementById('nilToggle');
+const nil=document.getElementById('nilView');
+const dash=document.getElementById('dashView');
+const dashHeadBar=document.getElementById('dashHeadBar');
+function syncNil(){
+  if(!cb) return;
+  const on=cb.checked;
+  if(on){ nil.classList.remove('hidden'); dash.classList.add('hidden'); dashHeadBar.classList.add('hidden'); }
+  else { nil.classList.add('hidden'); dash.classList.remove('hidden'); dashHeadBar.classList.remove('hidden'); }
+  document.body.classList.toggle('nil-on',on);
+  try{localStorage.setItem('gstr1_nil',on?'1':'0')}catch(e){}
+}
+cb&&cb.addEventListener('change',()=>{
+  syncNil();
+  const u=new URL(location.href);
+  if(cb.checked)u.searchParams.set('nil','1');else u.searchParams.delete('nil');
+  history.replaceState(null,'',u.toString());
+});
+const p=new URLSearchParams(location.search);
+if(cb){ if(p.get('nil')==='1'){cb.checked=true;} else{try{const v=localStorage.getItem('gstr1_nil'); if(v==='1') cb.checked=true;}catch(e){} } syncNil(); }
+
+/* ----------------- Due date fallback if server didn’t provide ----------------- */
+(function(){
+  const dueEl = document.getElementById('dueDate');
+  if(!dueEl) return;
+  const hasServerValue = (dueEl.textContent || '').trim().length > 0;
+  if(hasServerValue) return;
+  const now = new Date();
+  const d = now.getDate();
+  const due = new Date(now);
+  due.setMonth(due.getMonth() + 1);
+  if (due.getDate() !== d) { due.setDate(0); }
+  const formatted = new Intl.DateTimeFormat('en-IN', {
+    day: '2-digit', month: 'short', year: 'numeric', timeZone: 'Asia/Kolkata'
+  }).format(due);
+  dueEl.textContent = formatted;
+})();
+
+/* ----------------- Resolve content_id from path or query ----------------- */
+function resolveContentId(){
+  let contentId=null;
+  const m = location.pathname.match(/\/returns\/gstr1\/(\d+)\/?$/);
+  if(m) contentId=parseInt(m[1],10);
+  if(!contentId){
+    const qs=new URLSearchParams(location.search);
+    const q=qs.get('content_id')||qs.get('task');
+    if(q){ const n=parseInt(q,10); if(!isNaN(n)) contentId=n; }
+  }
+  return contentId;
+}
+function setText(id, val){ const el=document.getElementById(id); if(el) el.textContent = val || ''; }
+
+/* ----------------- Fetch server meta (GSTIN, Trade, FY, RP, Legal, Due) ----------------- */
+(function(){
+  const LEGAL_FALLBACK = 'AKHIL VASUDEV';
+
+  const contentId = resolveContentId();
+  if(!contentId) return;
+  const apiMeta = `/api/returns/gstr1/task/${contentId}/meta`;
+
+  const qs = new URLSearchParams(location.search);
+  const showDebug = qs.get('debug') === '1';
+  const debugBox = document.getElementById('gstrDebugBox');
+  if(showDebug && debugBox) debugBox.classList.remove('hidden');
+  const dbg = (label, obj) => {
+    if(!showDebug || !debugBox) return;
+    const pre = debugBox.querySelector('pre');
+    pre.textContent += `\n\n[${label}]\n` + (typeof obj === 'string' ? obj : JSON.stringify(obj,null,2));
+  };
+
+  fetch(apiMeta, { headers: { "X-Requested-With":"XMLHttpRequest" }})
+    .then(r => { if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
+    .then(data => {
+      dbg('meta endpoint', data);
+      const m = (data && data.meta) ? data.meta : {};
+
+      if(m.GSTIN)        setText('fldGSTIN', m.GSTIN);
+      if(m.TradeName)    setText('fldTradeName', m.TradeName);
+      if(m.FY)           setText('fldFY', m.FY);
+      if(m.ReturnPeriod) setText('fldReturnPeriod', m.ReturnPeriod);
+
+      // LEGAL NAME (fallback to constant)
+      const legal = (m.LegalName || '').trim() || LEGAL_FALLBACK;
+      setText('fldLegalName', legal);
+
+      if(m.DueDatePretty){
+        const dueEl=document.getElementById('dueDate'); if(dueEl) dueEl.textContent = m.DueDatePretty;
+      }
+
+      try{
+        sessionStorage.setItem('g_content_id', String(contentId));
+        if(m.FY) sessionStorage.setItem('g_fy', m.FY);
+        if(m.ReturnPeriod) sessionStorage.setItem('g_period', (m.ReturnPeriod||'').toLowerCase().split(' ')[0]);
+        sessionStorage.setItem('g_legal_name', legal);
+      }catch(e){}
+    })
+    .catch(err => { dbg('meta fetch error', String(err)); });
+})();
+
+/* ----------------- FIRST-CLICK BANNER for FILE STATEMENT ----------------- */
+(function(){
+  const btn = document.getElementById('btnFileStatement');
+  if(!btn) return;
+
+  const banner = document.getElementById('actionBanner');
+  const bannerText = document.getElementById('actionBannerText');
+
+  function showBanner(text){
+    if(!banner) return;
+    bannerText.textContent = text || 'Your request has been received.';
+    banner.classList.remove('hidden');
+    // Scroll banner into view for visibility
+    banner.scrollIntoView({behavior:'smooth', block:'center'});
+  }
+
+  // per-task key so each content_id shows one-time banner
+  function keyForTask(){
+    const cid = resolveContentId();
+    return 'gstr1_file_stmt_first_' + (cid || '0');
+  }
+
+  btn.addEventListener('click', function(ev){
+    const key = keyForTask();
+    const already = sessionStorage.getItem(key) === '1';
+
+    if(!already){
+      ev.preventDefault(); // block navigation on first click
+      // match the portal’s message style/wording
+      showBanner('Your File Statement request has been received. Please check the status in sometime by clicking on “Refresh” to view consolidated summary and file GSTR-1.');
+      sessionStorage.setItem(key, '1');
+
+      // brief visual feedback on the button
+      btn.classList.add('disabled');
+      setTimeout(()=>btn.classList.remove('disabled'), 800);
+    }
+    // second click will naturally follow the href
+  });
+})();
+</script>
+{% endblock %}

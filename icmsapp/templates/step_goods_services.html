@@ -1,0 +1,129 @@
+{% extends "base_trn.html" %}
+{% load static %}
+
+{% block content %}
+<style>
+    /* --- YOUR ORIGINAL CSS --- */
+    * { box-sizing: border-box; font-family: "Segoe UI", Tahoma, Arial, sans-serif; }
+
+    .page-wrapper {
+      max-width: 1200px;
+      margin: 20px auto 60px;
+      background: #fff;
+      border: 1px solid #d0d4db;
+      box-shadow: 0 0 3px rgba(0,0,0,0.08);
+      padding: 0;
+    }
+
+    /* TABS */
+    .tabs-header { display: flex; border-bottom: 1px solid #d0d4db; padding-left: 40px; background: #f5f5f5; }
+    .tab { padding: 10px 28px; font-size: 15px; border: 1px solid transparent; border-bottom: none; cursor: pointer; }
+    .tab.active { background: #ffffff; border-color: #d0d4db; border-top-left-radius: 2px; border-top-right-radius: 2px; border-bottom: 1px solid #ffffff; }
+    .tab.inactive { color: #0070c0; }
+
+    .content-wrapper { padding: 26px 40px 30px; }
+
+    h2.title { font-size: 20px; margin: 0 0 8px; color: #003366; }
+    .subtitle { font-size: 17px; margin-bottom: 30px; color: #333; }
+
+    .field-label { font-size: 14px; margin-bottom: 4px; color: #333; }
+
+    select { width: 100%; border: 1px solid #c0c4cc; padding: 7px 8px; font-size: 13px; min-height: 34px; }
+    .select-wrapper { max-width: 750px; margin-top: 4px; display: flex; gap: 10px; }
+
+    .btn-bar { margin-top: 40px; display: flex; justify-content: flex-end; gap: 10px; }
+    .btn { padding: 10px 24px; border-radius: 2px; border: none; cursor: pointer; font-size: 14px; text-decoration: none; display: inline-block; }
+    .btn-secondary { background: transparent; color: #333; border: 1px solid #ccc; }
+    .btn-primary { background: #244f86; color: #fff; }
+    .btn-add { background: #244f86; color: white; padding: 8px 16px; border: none; cursor: pointer; font-size: 13px; border-radius: 2px; }
+
+    /* Added Table Style for Listed Items */
+    .items-table { width: 100%; max-width: 750px; margin-top: 20px; border-collapse: collapse; font-size: 13px; }
+    .items-table th { background: #f0f0f0; text-align: left; padding: 8px; border: 1px solid #ddd; }
+    .items-table td { padding: 8px; border: 1px solid #ddd; }
+    .btn-delete { color: red; background: none; border: none; cursor: pointer; font-size: 12px; text-decoration: underline; }
+</style>
+
+<form method="POST">
+{% csrf_token %}
+<div class="page-wrapper">
+
+  <div class="tabs-header">
+    <div class="tab active">Goods</div>
+    <div class="tab inactive">Services</div>
+  </div>
+
+  <div class="content-wrapper">
+    <h2 class="title">Details of Goods / Commodities supplied by the business</h2>
+    <div class="subtitle">Please specify top 5 Commodities</div>
+
+    <div class="field-label">Search HSN Chapter by Name or Code</div>
+    
+    <div class="select-wrapper">
+      <select name="hsn_sac">
+        <option value="">Select</option>
+        <option value="1006 Rice">1006 Rice</option>
+        <option value="1001 Wheat And Meslin - Durum Wheat">1001 Wheat And Meslin - Durum Wheat</option>
+        <option value="2710 Petroleum Oils And Oils Obtained From Bituminous Minerals, Other Than Crude">2710 Petroleum Oils And Oils Obtained From Bituminous Minerals, Other Than Crude</option>
+        <option value="6901 BRICKS, BLOCKS, TILES AND OTHER CERAMIC GOODS OF SILICEOUS FOSSIL MEALS">6901 BRICKS, BLOCKS, TILES AND OTHER CERAMIC GOODS OF SILICEOUS FOSSIL MEALS</option>
+        <option value="1806 CHOCOLATE AND OTHER FOOD PREPARATIONS CONTAINING COCOA">1806 CHOCOLATE AND OTHER FOOD PREPARATIONS CONTAINING COCOA</option>
+        <option value="8308 CLASPS, FRAMES WITH CLASPS, BUCKLES, BUCKLE-CLASPS, HOOKS, EYELETS AND THE LIKE">8308 CLASPS, FRAMES WITH CLASPS, BUCKLES, BUCKLE-CLASPS, HOOKS, EYELETS AND THE LIKE</option>
+        <option value="8515 ELECTRIC (INCLUDING ELECTRICALLY HEATED GAS) LASER OR OTHER LIGHT OR PHOTO BEAM">8515 ELECTRIC (INCLUDING ELECTRICALLY HEATED GAS) LASER OR OTHER LIGHT OR PHOTO BEAM</option>
+        <option value="8517 TELEPHONE SETS, INCLUDING TELEPHONES FOR CELLULAR NETWORKS OR FOR OTHER WIRELESS NETWORKS">8517 TELEPHONE SETS, INCLUDING TELEPHONES FOR CELLULAR NETWORKS OR FOR OTHER WIRELESS NETWORKS</option>
+        <option value="480100 NEWSPRINT, IN ROLLS OR SHEETS">480100 NEWSPRINT, IN ROLLS OR SHEETS</option>
+        <option value="48042900 HAND-MADE PAPER AND PAPERBOARD">48042900 HAND-MADE PAPER AND PAPERBOARD</option>
+        <option value="100630 Semi-Milled Or Wholly-Milled Rice, Whether Or Not Polished Or Glazed">100630 Semi-Milled Or Wholly-Milled Rice, Whether Or Not Polished Or Glazed</option>
+        <option value="4201 SADDLERY AND HARNESS FOR ANY ANIMAL">4201 SADDLERY AND HARNESS FOR ANY ANIMAL</option>
+        <option value="4202 TRUNKS, SUIT-CASES, VANITY-CASES, EXECUTIVECASES , BRIEF - CASES , SCHOOL SATCHELS , SPECTACLE CASES">4202 TRUNKS, SUIT-CASES, VANITY-CASES, EXECUTIVECASES , BRIEF - CASES , SCHOOL SATCHELS , SPECTACLE CASES</option>
+        <option value="480210 UNCOATED KRAFT PAPER AND PAPERBOARD, IN ROLLS OR SHEETS">480210 UNCOATED KRAFT PAPER AND PAPERBOARD, IN ROLLS OR SHEETS</option>
+        <option value="6404 FOOTWEAR WITH OUTER SOLES OF RUBBER, PLASTICS, LEATHER OR COMPOSITION LEATHER">6404 FOOTWEAR WITH OUTER SOLES OF RUBBER, PLASTICS, LEATHER OR COMPOSITION LEATHER</option>
+        <option value="0811 FRUIT AND NUTS, UNCOOKED OR COOKED">0811 FRUIT AND NUTS, UNCOOKED OR COOKED</option>
+        <option value="7009 GLASS MIRRORS, WHETHER OR NOT FRAMED">7009 GLASS MIRRORS, WHETHER OR NOT FRAMED</option>
+        <option value="85340000 PRINTED CIRCUITS">85340000 PRINTED CIRCUITS</option>
+        <option value="9403330 Wooden furniture of a kind used in offices">9403330 Wooden furniture of a kind used in offices</option>
+        <option value="9403050 Wooden furniture of a kind used in the bed room">9403050 Wooden furniture of a kind used in the bed room</option>
+        <option value="9405 LUMINAIRES AND LIGHTING FITTINGS INCLUDING SEARCHLIGHTS AND SPOTLIGHTS">9405 LUMINAIRES AND LIGHTING FITTINGS INCLUDING SEARCHLIGHTS AND SPOTLIGHTS</option>
+        <option value="7031010 ONIONS, SHALLOTS, GARLIC, LEEKS AND OTHER ALLIACEOUS VEGETABLES">7031010 ONIONS, SHALLOTS, GARLIC, LEEKS AND OTHER ALLIACEOUS VEGETABLES</option>
+        <option value="7031011 Rose onion">7031011 Rose onion</option>
+        <option value="7031019 Other">7031019 Other</option>
+        <option value="6012021 BULBS, TUBERS, TUBEROUS ROOTS, CORMS, CROWNS AND RHIZOMES">6012021 BULBS, TUBERS, TUBEROUS ROOTS, CORMS, CROWNS AND RHIZOMES</option>
+        <option value="6012022 BULBS, TUBERS, TUBEROUS ROOTS, CORMS, CROWNS AND RHIZOMES, DORMANT">6012022 BULBS, TUBERS, TUBEROUS ROOTS, CORMS, CROWNS AND RHIZOMES, DORMANT</option>
+        <option value="6012010 Bulbs, tubers, tuberous roots, corms, crowns and rhizomes, in growth or in flower">6012010 Bulbs, tubers, tuberous roots, corms, crowns and rhizomes, in growth or in flower</option>
+      </select>
+
+      <input type="hidden" name="description" value="Commodity">
+
+      <button type="submit" name="action" value="add" class="btn-add">Add</button>
+    </div>
+
+    {% if items %}
+    <table class="items-table">
+        <thead>
+            <tr>
+                <th>HSN / Description</th>
+                <th style="width: 80px;">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
+            <tr>
+                <td>{{ item.hsn_sac }}</td>
+                <td>
+                    <button type="submit" name="action" value="delete" class="btn-delete">Delete</button>
+                    <input type="hidden" name="index" value="{{ forloop.counter0 }}">
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+
+    <div class="btn-bar">
+      <a href="{{ nav.apob }}" class="btn btn-secondary">BACK</a>
+      
+      <button type="submit" name="action" value="save_continue" class="btn btn-primary">SAVE & CONTINUE</button>
+    </div>
+  </div>
+</div>
+</form>
+{% endblock %}

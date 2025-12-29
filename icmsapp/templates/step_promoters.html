@@ -1,0 +1,180 @@
+{% extends "base_trn.html" %}
+{% load static %}
+
+{% block content %}
+<style>
+    /* --- YOUR ORIGINAL CSS RESTORED --- */
+    * { box-sizing: border-box; font-family: "Segoe UI", Tahoma, Arial, sans-serif; }
+    
+    .page-wrapper {
+      max-width: 100%;
+      /* Removed outer margins so it fits inside the base template correctly */
+      margin: 0; 
+      background: #fff;
+      /* Border handled by base, but we keep the internal structure */
+      padding: 10px 0 0 0; 
+    }
+
+    h1.page-title { font-size: 20px; margin: 0 0 10px; color: #333; }
+    .mandatory-note { font-size: 12px; color: #666; text-align: right; }
+    .mandatory-note::before { content: "● "; color: #e11; }
+
+    .section-title { font-size: 18px; font-weight: 600; margin: 20px 0 10px; display: flex; align-items: center; color: #003366; }
+    .section-title::before { content: "⧉"; margin-right: 8px; font-size: 16px; color: #003366; }
+    .section-title.icon-mail::before { content: "✉"; }
+    .section-title.icon-home::before { content: "🏠"; }
+    .section-title.icon-upload::before { content: "⤴"; }
+
+    hr.section-divider { border: none; border-top: 1px solid #d0d4db; margin: 0 0 10px; }
+
+    .form-row { display: flex; gap: 20px; margin-bottom: 12px; }
+    .form-group { flex: 1; display: flex; flex-direction: column; font-size: 13px; }
+    .form-group.small { max-width: 240px; }
+
+    label { margin-bottom: 3px; color: #333; }
+    .required::after { content: " *"; color: #e11; }
+
+    input[type="text"], input[type="email"], input[type="tel"], select {
+      border: 1px solid #c0c4cc; padding: 6px 8px; border-radius: 0; font-size: 13px; min-height: 32px; width: 100%;
+    }
+    input[disabled], select[disabled] { background: #f4f4f4; color: #888; }
+
+    .date-wrapper, .phone-wrapper { display: flex; align-items: center; border: 1px solid #c0c4cc; min-height: 32px; }
+    .date-wrapper input, .phone-wrapper input { border: none; flex: 1; padding: 6px 8px; outline: none; }
+    .date-wrapper .icon-btn { border-left: 1px solid #c0c4cc; padding: 0 8px; cursor: pointer; font-size: 16px; }
+    .phone-wrapper .code { border-right: 1px solid #c0c4cc; padding: 0 10px; white-space: nowrap; font-size: 13px; }
+
+    .gender-options { display: flex; align-items: center; gap: 25px; margin-top: 4px; }
+    .radio-inline { display: inline-flex; align-items: center; gap: 5px; }
+
+    .toggle-wrapper { display: flex; align-items: center; gap: 10px; margin-top: 4px; }
+    .toggle { width: 56px; height: 28px; background: #e0e0e0; border-radius: 14px; position: relative; cursor: pointer; }
+    .toggle::before { content: ""; position: absolute; top: 3px; left: 3px; width: 22px; height: 22px; background: #fff; border-radius: 50%; box-shadow: 0 0 2px rgba(0,0,0,0.3); transition: all 0.2s ease; }
+    .toggle.on { background: #2cab3d; }
+    .toggle.on::before { left: 31px; }
+
+    .upload-container { display: flex; margin-top: 10px; border: 1px solid #d0d4db; padding: 18px 20px; align-items: center; }
+    .upload-left, .upload-right { flex: 1; text-align: center; }
+    .upload-center { width: 40px; text-align: center; font-weight: 600; font-size: 14px; }
+
+    .btn { padding: 8px 18px; border-radius: 2px; border: none; cursor: pointer; font-size: 13px; }
+    .btn-secondary { background: #e4e7ed; color: #333; border: 1px solid #c0c4cc; text-decoration: none; display: inline-block; }
+    .btn-blue { background: #3c6ca8; color: #fff; }
+    .btn-green { background: #307a3a; color: #fff; }
+    .btn-file { padding: 4px 12px; font-size: 12px; border-radius: 3px; border: 1px solid #ccc; background: #f5f5f5; cursor: pointer; }
+    .btn-primary { background: #3c6ca8; color: #fff; } /* For Camera Button */
+
+    .btn-bar { margin-top: 30px; display: flex; justify-content: flex-end; gap: 10px; }
+
+    @media (max-width: 900px) { .form-row { flex-direction: column; } }
+</style>
+
+<form method="POST">
+{% csrf_token %}
+<div class="page-wrapper">
+    <div class="mandatory-note">indicates mandatory fields</div>
+    <h1 class="page-title">Details of Proprietor</h1>
+
+    <div class="section-title">Personal Information</div>
+    <hr class="section-divider" />
+
+    <div class="form-group"><label class="required">Name of Person</label></div>
+    <div class="form-row">
+      <div class="form-group"><label class="required">First Name</label><input type="text" name="name" value="{{ promoter.name }}"></div>
+      <div class="form-group"><label>Middle Name</label><input type="text" name="middle_name"></div>
+      <div class="form-group"><label>Last Name</label><input type="text" name="last_name"></div>
+    </div>
+
+    <div class="form-group"><label>Name of Father</label></div>
+    <div class="form-row">
+      <div class="form-group"><label class="required">First Name</label><input type="text" name="father_name"></div>
+      <div class="form-group"><label>Middle Name</label><input type="text"></div>
+      <div class="form-group"><label>Last Name</label><input type="text"></div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group"><label class="required">Date of Birth</label><div class="date-wrapper"><input type="text" placeholder="dd/mm/yyyy" name="dob"><div class="icon-btn">📅</div></div></div>
+      <div class="form-group"><label class="required">Mobile Number</label><div class="phone-wrapper"><div class="code">+91</div><input type="tel" name="mobile"></div></div>
+      <div class="form-group"><label class="required">Email Address</label><input type="email" name="email"></div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label class="required">Gender</label>
+        <div class="gender-options">
+          <label class="radio-inline"><input type="radio" name="gender" value="Male"> Male</label>
+          <label class="radio-inline"><input type="radio" name="gender" value="Female"> Female</label>
+          <label class="radio-inline"><input type="radio" name="gender" value="Other"> Others</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-title icon-mail">Identity Information</div>
+    <hr class="section-divider" />
+
+    <div class="form-row">
+      <div class="form-group"><label class="required">Designation / Status</label><input type="text" name="designation"></div>
+      <div class="form-group"><label>Director Identification Number</label><input type="text"></div>
+      <div class="form-group"><label>Are you citizen of India?</label><div class="toggle-wrapper"><div class="toggle on"></div></div></div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group"><label class="required">Permanent Account Number (PAN)</label><input type="text" name="pan"></div>
+      <div class="form-group"><label>Passport Number (In case of Foreigner)</label><input type="text"></div>
+      <div class="form-group"><label>Aadhaar Number</label><input type="text" disabled /></div>
+    </div>
+
+    <div class="section-title icon-home">Residential Address</div>
+    <hr class="section-divider" />
+
+    <div class="form-row">
+      <div class="form-group"><label class="required">Building No. / Flat No.</label><input type="text" name="building_no"></div>
+      <div class="form-group"><label>Floor Number</label><input type="text" name="floor_no"></div>
+      <div class="form-group"><label>Name of the Premises / Building</label><input type="text" name="premises"></div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group"><label class="required">Road / Street</label><input type="text" name="street"></div>
+      <div class="form-group"><label class="required">City / Town / Locality / Village</label><input type="text" name="city"></div>
+      <div class="form-group"><label class="required">Country</label><select name="country"><option>Select</option><option>India</option></select></div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group"><label class="required">State</label><input type="text" name="state"></div>
+      <div class="form-group"><label class="required">District</label><input type="text" name="district"></div>
+      <div class="form-group"><label class="required">Pin Code</label><input type="text" name="pincode"></div>
+    </div>
+
+    <div class="section-title icon-upload">Document Upload</div>
+    <hr class="section-divider" />
+    <div class="form-group"><label class="required">Upload Photograph (of person whose information has been given above)</label></div>
+    <div class="upload-container">
+      <div class="upload-left">
+        <div class="info-text">Only JPEG file format is allowed</div>
+        <div class="info-text">Maximum file size for upload 100 KB</div>
+        <div style="margin-top:10px;"><button type="button" class="btn-file">Choose File</button><span style="font-size:12px;"> No file chosen</span></div>
+      </div>
+      <div class="upload-center">OR</div>
+      <div class="upload-right">
+        <button type="button" class="btn btn-primary">📷 TAKE PICTURE</button>
+        <div class="info-text" style="margin-top:8px;">You can use your device camera to take selfie Photograph</div>
+      </div>
+    </div>
+
+    <div class="section-title">Other Information</div>
+    <hr class="section-divider" />
+    <div class="form-row">
+      <div class="form-group"><label>Also Authorized Signatory</label><div class="toggle-wrapper"><div class="toggle"></div></div></div>
+    </div>
+
+    <div class="btn-bar">
+      <a href="{{ nav.business }}" class="btn btn-secondary">BACK</a>
+      
+      <button type="button" class="btn btn-secondary">SHOW LIST</button>
+      <button type="button" class="btn btn-blue">ADD NEW</button>
+      
+      <button type="submit" class="btn btn-green">SAVE & CONTINUE</button>
+    </div>
+</div>
+</form>
+{% endblock %}

@@ -1,0 +1,110 @@
+{% extends "base_trn.html" %}
+{% load static %}
+
+{% block content %}
+<style>
+    /* --- YOUR ORIGINAL STYLES --- */
+    * { box-sizing: border-box; font-family: "Segoe UI", Tahoma, Arial, sans-serif; }
+
+    .page-wrapper {
+      max-width: 100%;
+      margin: 0;
+      background: #fff;
+      /* Border handled by base layout */
+      border: none;
+      box-shadow: none;
+      padding: 10px 0 0 0;
+    }
+
+    h1.title { font-size: 22px; margin: 0 0 16px; color: #333; }
+
+    .info-box {
+      background: #fff7df;
+      border: 1px solid #f2e2b3;
+      padding: 14px 18px 14px;
+      font-size: 14px;
+      line-height: 1.5;
+      color: #555;
+    }
+
+    .info-header { font-weight: 600; margin-bottom: 4px; }
+    .info-header::before { content: "ⓘ "; margin-right: 2px; }
+
+    .info-list { margin: 4px 0 0 0; padding-left: 18px; }
+    .info-list li { margin: 2px 0; }
+
+    .bold { font-weight: 600; }
+
+    .btn-bar { margin-top: 40px; display: flex; justify-content: flex-end; gap: 10px; align-items: center; }
+
+    .btn { padding: 10px 26px; border-radius: 2px; border: none; cursor: pointer; font-size: 14px; text-decoration: none; display: inline-block; }
+    .btn-text { background: transparent; color: #555; border: 1px solid transparent; }
+    .btn-text:hover { border-color: #ccc; }
+    
+    .btn-secondary { background: #5b76a8; color: #fff; }
+    .btn-primary { background: #244f86; color: #fff; }
+
+    /* Added small table style if you want to list added places later */
+    .places-list { margin-top: 20px; width: 100%; border-collapse: collapse; }
+    .places-list th, .places-list td { border: 1px solid #ddd; padding: 8px; font-size: 13px; }
+    .places-list th { background-color: #f2f2f2; text-align: left; }
+</style>
+
+<form method="POST">
+{% csrf_token %}
+<div class="page-wrapper">
+
+  <h1 class="title">Details of Additional Places of your Business</h1>
+
+  <div class="info-box">
+    <div class="info-header">
+      Important! If you need to add details on additional places of business:
+    </div>
+    <ol class="info-list">
+      <li>
+        Go to <span class="bold">Principal Place of Business</span> tab.
+      </li>
+      <li>
+        Select <span class="bold">Yes</span> for
+        <span class="bold">Have Additional Places of Business</span>
+      </li>
+    </ol>
+  </div>
+
+  {% if places %}
+  <table class="places-list">
+      <thead>
+          <tr>
+              <th>Pincode</th>
+              <th>City</th>
+              <th>Action</th>
+          </tr>
+      </thead>
+      <tbody>
+          {% for p in places %}
+          <tr>
+              <td>{{ p.pincode }}</td>
+              <td>{{ p.city }}</td>
+              <td>
+                  <button type="submit" name="action" value="delete" class="btn-text" style="color:red; padding:2px 5px;">Delete</button>
+                  <input type="hidden" name="index" value="{{ forloop.counter0 }}">
+              </td>
+          </tr>
+          {% endfor %}
+      </tbody>
+  </table>
+  {% endif %}
+
+  <div class="btn-bar">
+    <a href="{{ nav.ppob }}" class="btn btn-text">BACK</a>
+    
+    <button type="button" class="btn btn-text">SHOW LIST</button>
+    
+    <button type="submit" name="action" value="add" class="btn btn-secondary">ADD NEW</button>
+    
+    <button type="submit" name="action" value="save_continue" class="btn btn-primary">SAVE & CONTINUE</button>
+  </div>
+
+</div>
+</form>
+{% endblock %}

@@ -1,0 +1,87 @@
+{% extends "base_trn.html" %}
+{% load static %}
+
+{% block content %}
+<style>
+    /* --- YOUR ORIGINAL CSS --- */
+    * { box-sizing: border-box; font-family: "Segoe UI", Tahoma, Arial, sans-serif; }
+
+    .page-wrapper {
+      max-width: 1200px;
+      margin: 20px auto 60px;
+      background: #fff;
+      border: 1px solid #d0d4db;
+      box-shadow: 0 0 3px rgba(0,0,0,0.08);
+      padding: 22px 30px 35px;
+    }
+
+    h1.title { font-size: 22px; margin: 0 0 14px; color: #003366; }
+
+    hr.section-divider { border: none; border-top: 1px solid #d0d4db; margin: 0 0 14px; }
+
+    .section-box { background: #f7f7f7; border-top: 1px solid #e0e0e0; padding: 18px 18px 20px; margin-bottom: 26px; }
+
+    .form-row { display: flex; gap: 24px; margin-bottom: 16px; }
+
+    .form-group { flex: 1; display: flex; flex-direction: column; font-size: 13px; }
+
+    label { margin-bottom: 4px; color: #333; }
+
+    input[type="text"] {
+      border: 1px solid #c0c4cc; padding: 7px 8px; font-size: 13px; min-height: 34px; border-radius: 0; width: 100%;
+    }
+
+    .btn-bar { display: flex; justify-content: flex-end; gap: 10px; margin-top: 8px; }
+
+    .btn { padding: 10px 24px; border-radius: 2px; border: none; cursor: pointer; font-size: 14px; text-decoration: none; display: inline-block; }
+
+    .btn-text { background: transparent; color: #444; border: 1px solid #ccc; }
+    
+    .btn-primary { background: #244f86; color: #fff; }
+
+    @media (max-width: 900px) {
+      .page-wrapper { margin: 10px; padding: 16px; }
+      .form-row { flex-direction: column; }
+    }
+</style>
+
+<form method="POST">
+{% csrf_token %}
+<div class="page-wrapper">
+
+  <h1 class="title">State Specific Information</h1>
+  <hr class="section-divider">
+
+  <div class="section-box">
+    <div class="form-row">
+      <div class="form-group">
+        <label>Professional Tax Employee Code (EC) No.</label>
+        <input type="text" name="prof_tax_ec" placeholder="Enter Professional Tax E.C Number" value="{{ saved.prof_tax_ec }}">
+      </div>
+      <div class="form-group">
+        <label>Professional Tax Registration Certificate (RC) No.</label>
+        <input type="text" name="prof_tax_rc" placeholder="Enter Professional Tax R.C Number" value="{{ saved.prof_tax_rc }}">
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>State Excise License No.</label>
+        <input type="text" name="excise_license" placeholder="Enter State Excise License Number" value="{{ saved.excise_license }}">
+      </div>
+      <div class="form-group">
+        <label>Name of the person in whose name Excise Licence is held</label>
+        <input type="text" name="excise_person_name" placeholder="Enter Name of the person in whose name Excise Licence is held" value="{{ saved.excise_person_name }}">
+      </div>
+    </div>
+  </div>
+
+  <div class="btn-bar">
+    <a href="{{ nav.goods }}" class="btn btn-text">BACK</a>
+    
+    <button type="submit" class="btn btn-primary">SAVE & CONTINUE</button>
+  </div>
+
+</div>
+</form>
+{% endblock %}

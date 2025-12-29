@@ -1,0 +1,179 @@
+{% extends 'gov.html' %}
+
+{% block title %}TRN Login{% endblock %}
+
+{% block content %}
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Promoter Partners | New Registration</title>
+<style>
+  :root{--ink:#2b3443;--muted:#6b7280;--bg:#eef2f7;--panel:#fff;--line:#d8e0ea;
+        --accent:#294e80;--banner:#ffe58f;--tile:#fff7cc;--red:#b91c1c;}
+  *{box-sizing:border-box} body{margin:0;background:#e9edf2;font-family:system-ui,-apple-system,Segoe UI,Roboto}
+  .wrap{max-width:1180px;margin:auto;padding:0 16px}
+  .topbar{background:#fff7e6;border-bottom:1px solid #fcd34d;color:#92400e;font-size:12px;padding:7px 12px}
+  .kpi{background:var(--banner);border-bottom:1px solid #facc15}
+  .kpi .grid{display:grid;grid-template-columns:1.2fr .8fr .8fr .6fr;gap:18px;padding:18px 0}
+  .tile{background:var(--tile);border:1px solid #facc15;border-radius:8px;padding:14px}
+  .tile h4{margin:0 0 6px;font-size:13px;color:#6b4f00;text-transform:uppercase}
+  .tile .v{font-size:20px;font-weight:800}
+  .tabs{display:grid;grid-template-columns:repeat(8,1fr);gap:10px;padding:16px 0}
+  .tab{background:#fff;border:1px solid var(--line);border-radius:8px;text-align:center;padding:14px}
+  .tab.active{outline:2px solid var(--accent)}
+  .ico{font-size:26px;display:block}
+  .lbl{font-size:13px;color:var(--muted);font-weight:600;line-height:1.1}
+  .req{color:var(--red)}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px;margin:16px 0}
+  h3{margin:0 0 14px}
+  label{display:block;font-size:13px;color:var(--muted);margin:0 0 6px}
+  input[type=text],input[type=date],select{width:100%;padding:10px;border:1px solid #cbd5e1;border-radius:6px;background:#fff}
+  .g2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+  .actions{display:flex;gap:10px;justify-content:flex-end}
+  .btn{padding:10px 16px;border-radius:8px;border:1px solid var(--line);background:#fff;font-weight:600;cursor:pointer}
+  .btn.primary{background:#1f4f91;border-color:#1f4f91;color:#fff}
+  /* Toggle */
+  .tog{--h:30px;--w:60px;width:var(--w);height:var(--h);border-radius:999px;background:#cbd5e1;border:1px solid #94a3b8;position:relative;display:inline-block}
+  .tog input{display:none}
+  .tog .k{position:absolute;top:2px;left:2px;width:26px;height:26px;border-radius:50%;background:#fff;transition:left .2s}
+  .tog input:checked + .k{left:32px}
+  .tog input:checked ~ .bg{background:#22c55e}
+  .tog .bg{position:absolute;inset:0;border-radius:999px;transition:background .2s}
+  @media(max-width:960px){.kpi .grid{grid-template-columns:1fr 1fr}.g2,.g3{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="topbar">Mobile number/e-mail id linked with Aadhaar can be verified at https://resident.uidai.gov.in/verify-email-mobile. Please wait 45 seconds before regenerating the OTP</div>
+
+<div class="kpi"><div class="wrap">
+  <div class="grid">
+    <div class="tile"><h4>Application Type</h4><div class="v">New Registration</div></div>
+    <div class="tile"><h4>Due Date to Complete</h4><div class="v">{{ reg.due_date|default:"28/11/2025" }}</div></div>
+    <div class="tile"><h4>Last Modified</h4><div class="v">{{ reg.last_modified|default:"13/11/2025" }}</div></div>
+    <div class="tile"><h4>Profile</h4><div class="v">{{ reg.profile_percent|default:0 }}%</div></div>
+  </div>
+</div></div>
+
+<div class="wrap">
+  <div class="tabs">
+    <div class="tab active"><span class="ico">💼</span><span class="lbl">Business<br>Details</span></div>
+    <div class="tab"><span class="ico">🧍</span><span class="lbl">Promoter<br>Partners</span></div>
+    <div class="tab"><span class="ico">✍️</span><span class="lbl">Authorized<br>Signatory</span></div>
+    <div class="tab"><span class="ico">🧑‍⚖️</span><span class="lbl">Authorized<br>Representative</span></div>
+    <div class="tab"><span class="ico">📍</span><span class="lbl">Principal Place<br>of Business</span></div>
+    <div class="tab"><span class="ico">➕</span><span class="lbl">Additional Places<br>of Business</span></div>
+    <div class="tab"><span class="ico">🛒</span><span class="lbl">Goods And<br>Services</span></div>
+    <div class="tab"><span class="ico">✅</span><span class="lbl">Verification</span></div>
+  </div>
+
+  <form method="post">
+    {% csrf_token %}
+    <div class="card">
+      <h3>Details of your Business</h3>
+
+      <div class="g2">
+        <div>
+          <label>Legal Name of the Business</label>
+          <input type="text" name="legal_name" value="{{ reg.legal_name }}">
+        </div>
+        <div>
+          <label>Permanent Account Number (PAN)</label>
+          <input type="text" name="pan" value="{{ reg.pan }}">
+        </div>
+      </div>
+
+      <div class="g2" style="margin-top:12px">
+        <div>
+          <label>Trade Name</label>
+          <input type="text" name="trade_name" placeholder="Enter Legal Name of Business" value="{{ reg.trade_name }}">
+        </div>
+        <div>
+          <label>Constitution of Business (Select Appropriate) <span class="req">*</span></label>
+          <select name="constitution">
+            <option value="">Select</option>
+            {% for c in constitutions %}
+              <option value="{{ c }}" {% if reg.constitution == c %}selected{% endif %}>{{ c }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+
+      <div class="g2" style="margin-top:12px">
+        <div>
+          <label>Name of the State</label>
+          <input type="text" name="state" value="{{ reg.state }}">
+        </div>
+        <div>
+          <label>District</label>
+          <input type="text" name="district" value="{{ reg.district }}">
+        </div>
+      </div>
+
+      <div style="margin-top:16px">
+        <label>Are you applying for registration as a casual taxable person?</label><br>
+        <span class="tog">
+          <input type="checkbox" name="is_casual" {% if reg.is_casual %}checked{% endif %}><span class="k"></span><span class="bg"></span>
+        </span>
+      </div>
+
+      <div style="margin-top:16px">
+        <label>Option For Composition</label><br>
+        <span class="tog">
+          <input type="checkbox" name="is_composition" {% if reg.is_composition %}checked{% endif %}><span class="k"></span><span class="bg"></span>
+        </span>
+      </div>
+
+      <div class="g3" style="margin-top:16px">
+        <div>
+          <label>Reason to obtain registration <span class="req">*</span></label>
+          <select name="reason">
+            <option value="">Select</option>
+            {% for r in reasons %}
+              <option value="{{ r }}" {% if reg.reason_to_register == r %}selected{% endif %}>{{ r }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div>
+          <label>Date of commencement of Business <span class="req">*</span></label>
+          <input type="date" name="commencement_date" value="{{ reg.commencement_date|date:'Y-m-d' }}">
+        </div>
+        <div>
+          <label>Date on which liability to register arises <span class="req">*</span></label>
+          <input type="date" name="liability_date" value="{{ reg.liability_date|date:'Y-m-d' }}">
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Indicate Existing Registrations</h3>
+      <div class="g3">
+        <div>
+          <label>Type of Registration</label>
+          <select name="existing_type">
+            <option value="">Select</option>
+            {% for t in existing_types %}
+              <option value="{{ t }}" {% if reg.existing_type == t %}selected{% endif %}>{{ t }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div>
+          <label>Registration No. <span class="req">*</span></label>
+          <input type="text" name="existing_reg_no" value="{{ reg.existing_reg_no }}">
+        </div>
+        <div>
+          <label>Date of Registration <span class="req">*</span></label>
+          <input type="date" name="existing_reg_date" value="{{ reg.existing_reg_date|date:'Y-m-d' }}">
+        </div>
+      </div>
+
+      <div class="actions" style="margin-top:14px">
+        <button class="btn" type="button">+ ADD</button>
+        <a class="btn" href="#">CANCEL</a>
+        <button class="btn primary" type="submit">SAVE & CONTINUE</button>
+      </div>
+    </div>
+  </form>
+</div>
+{% endblock %}
+
+
+
