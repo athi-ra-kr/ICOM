@@ -10,6 +10,7 @@
   --panel:#ffffff; --border:#cfd9e6;
   --tile-h:#2b4f83; --ok:#1db954;
   --note-blue:#0038e6;
+  --note-border:#0038e6;
   --tooltip-bg:#1f1f1f; --tooltip-ink:#fff;
 }
 body.nil-on{ --accent:#1f3e73; --accent-hover:#1b3868; }
@@ -39,30 +40,49 @@ body{background:var(--page-bg);color:var(--ink);font-family:Roboto,system-ui,-ap
 .req{display:flex;align-items:center;justify-content:flex-end;color:#cc1e1e;font-weight:600;font-size:13px}
 .req .dot{width:7px;height:7px;border-radius:50%;background:#cc1e1e;margin-right:6px}
 
-.bar{background:var(--accent);color:#fff;border-radius:2px;margin:22px 0 0}
-.bar-inner{display:flex;align-items:center;justify-content:space-between;min-height:42px;padding:0 16px}
-.bar-title{font-weight:700;font-size:14px}
+.bar{background:var(--accent);color:#fff;border-radius:2px;margin:10px 0 0}
+.bar-inner{display:flex;align-items:center;justify-content:space-between;min-height:42px;padding:0 16px; cursor: pointer;}
+.bar-title{font-weight:700;font-size:14px; text-transform: uppercase;}
 .bar-caret svg{width:18px;height:18px;fill:#fff;opacity:.9}
 
 .panel{background:transparent;border:none;margin:12px 24px 22px}
-.flagline{display:flex;align-items:center;gap:10px;font-size:16px;padding:0 0 12px}
-.flagline input{width:18px;height:18px}
+.flagline{display:flex;align-items:center;gap:10px;font-size:14px;padding:0 0 16px; color: #333;}
+.flagline input{width:16px;height:16px; margin-top: 1px;}
 
-.nil-box{border:1px solid var(--border);margin:10px 0 16px;border-radius:3px;background:#fff}
-.nil-title{font-weight:800;color:var(--note-blue);padding:12px 16px;font-size:15px}
-.nil-ul{padding:0 24px 16px 42px;margin:0;font-size:14px;line-height:22px}
-.nil-ul li{margin:6px 0;color:var(--note-blue);font-weight:600}
+.nil-box{border:1px solid var(--note-border);margin:0 0 16px;border-radius:2px;background:#fff;}
+.nil-title{font-weight:700;color:var(--note-blue);padding:12px 16px 8px;font-size:14px; font-style: italic;}
+.nil-ul{padding:0 24px 16px 42px;margin:0;font-size:13px;line-height:20px; list-style-type: none;}
+.nil-ul li{margin:4px 0;color:var(--note-blue);}
 
-.note{margin:16px 0;background:#d9eefb;border:1px solid #bfe1f7;border-radius:4px;color:#345e84;padding:12px 14px;font-size:14px;line-height:20px;display:flex;gap:10px;align-items:flex-start}
-.note svg{width:18px;height:18px;fill:#2f6ea4;flex:0 0 auto;margin-top:2px}
+/* Info Note (Light Blue) */
+.note{margin:16px 0;background:#d9eefb;border:1px solid #bfe1f7;border-radius:4px;color:#345e84;padding:12px 14px;font-size:13px;line-height:18px;display:flex;gap:10px;align-items:flex-start}
+.note svg{width:16px;height:16px;fill:#2f6ea4;flex:0 0 auto;margin-top:2px}
 
-/* ---------- GREEN SUCCESS BANNER (like portal) ---------- */
-.alert{margin:16px 24px;background:#e6f4ea;border:1px solid #c7e6cf;border-radius:4px;color:#1e4620;padding:12px 14px;font-size:14px;line-height:20px;display:flex;gap:10px;align-items:flex-start}
-.alert svg{width:18px;height:18px;fill:#1e4620;flex:0 0 auto;margin-top:2px}
+/* ---------- GREEN SUCCESS BANNER ---------- */
+.alert{
+    margin: 16px 24px; /* Matches the margin of .ribbon-box and .meta */
+    background: #e6f4ea; 
+    border: 1px solid #c7e6cf; 
+    border-radius: 2px; /* Slight radius to match the ribbon style */
+    color: #1e4620; 
+    padding: 12px 14px;
+    font-size: 14px;
+    line-height: 20px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+}
+.alert svg{
+    width: 20px;
+    height: 20px;
+    fill: #1e4620; /* Dark green icon */
+    flex: 0 0 auto;
+    margin-top: 0px; 
+}
 .hidden{display:none!important}
 
-.actions{padding:14px 0 0;display:flex;flex-wrap:wrap;justify-content:flex-end;gap:12px}
-.btn{display:inline-flex;align-items:center;justify-content:center;height:40px;padding:0 18px;border-radius:3px;border:1px solid transparent;font-weight:700;font-size:14px;letter-spacing:.2px;text-transform:uppercase;text-decoration:none;box-shadow:0 1px 0 rgba(0,0,0,.06),0 2px 8px rgba(0,0,0,.05)}
+.actions{padding:20px 0 0;display:flex;flex-wrap:wrap;justify-content:flex-end;gap:12px}
+.btn{display:inline-flex;align-items:center;justify-content:center;height:38px;padding:0 20px;border-radius:2px;border:1px solid transparent;font-weight:700;font-size:13px;letter-spacing:.3px;text-transform:uppercase;text-decoration:none;box-shadow:0 1px 0 rgba(0,0,0,.06),0 2px 4px rgba(0,0,0,.05)}
 .btn:hover{filter:brightness(1.04)}
 .btn.outline{background:#fff;color:#1b2f4f;border-color:#a9bfdc}
 .btn.primary,.btn.reset{background:var(--accent);color:#fff}
@@ -144,10 +164,11 @@ body{background:var(--page-bg);color:var(--ink);font-family:Roboto,system-ui,-ap
   </div>
 </div>
 
-<!-- SUCCESS BANNER CONTAINER (hidden initially) -->
-<div id="actionBanner" class="alert hidden">
-  <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 .001 20.001A10 10 0 0 0 12 2zM11 15.2l-3.2-3.2-1.4 1.4L11 18 17.6 11.4 16.2 10l-5.2 5.2z"/></svg>
-  <div id="actionBannerText">Your request has been received.</div>
+<div class="wrap">
+  <div id="actionBanner" class="alert hidden">
+    <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+    <div id="actionBannerText">Your request has been received.</div>
+  </div>
 </div>
 
 <div class="wrap">
@@ -157,14 +178,13 @@ body{background:var(--page-bg);color:var(--ink);font-family:Roboto,system-ui,-ap
       <label for="nilToggle"><strong>File Nil GSTR-1</strong></label>
     </div>
 
-    <div id="dashHeadBar" class="bar">
+    <div id="dashHeadBar" class="bar" style="margin-top: 22px;">
       <div class="bar-inner">
         <span class="bar-title">ADD RECORD DETAILS</span>
         <span class="bar-caret" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg></span>
       </div>
     </div>
 
-    <!-- NIL view -->
     <div id="nilView" class="hidden">
       <div class="nil-box">
         <div class="nil-title">Note: NIL Form GSTR-1 can be filed by you if you have:</div>
@@ -180,18 +200,23 @@ body{background:var(--page-bg);color:var(--ink);font-family:Roboto,system-ui,-ap
         <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 .001 20.001A10 10 0 0 0 12 2zm1 15H11v-6h2v6zm0-8h-2V7h2v2z"/></svg>
         The taxpayers for whom e-invoicing is not applicable may ignore the sections/options related to e-invoice download. The downloaded file would be blank in case taxpayer is not e-invoicing or when e-invoices reported to IRP are yet to be processed by GST system
       </div>
+      
+      <div class="bar">
+        <div class="bar-inner">
+          <span class="bar-title">E-INVOICE DOWNLOAD HISTORY</span>
+          <span class="bar-caret" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg></span>
+        </div>
+      </div>
 
       <div class="actions">
         <a href="{% url 'file_returns_with_id' content_id=content_id %}" class="btn outline">BACK</a>
         <a href="#" class="btn soft">DOWNLOAD DETAILS FROM E-INVOICES (EXCEL)</a>
         <a href="#" class="btn soft">PREVIEW</a>
         <a href="#" class="btn reset">RESET</a>
-        <!-- add id for JS -->
-        <a href="/gst_outward_supplies" id="btnFileStatement" class="btn primary">FILE STATEMENT</a>
+        <a href="{% url 'file_gstr1' content_id=content_id %}" id="btnFileStatement" class="btn primary">FILE STATEMENT</a>
       </div>
     </div>
 
-    <!-- Dashboard view -->
     <div id="dashView">
       <div class="tiles">
         {% comment %} counts from context {% endcomment %}
@@ -250,7 +275,7 @@ body{background:var(--page-bg);color:var(--ink);font-family:Roboto,system-ui,-ap
 (function(){
   const qs = new URLSearchParams(location.search);
   let fy   = qs.get('fy');
-  let mon  = qs.get('period');   // e.g. 'october'
+  let mon  = qs.get('period');
   let dueISO = qs.get('due');
 
   if(!fy || !mon || !dueISO){
@@ -288,7 +313,7 @@ body{background:var(--page-bg);color:var(--ink);font-family:Roboto,system-ui,-ap
 </script>
 
 <script>
-/* ----------------- NIL toggle (persist + reflect in URL) ----------------- */
+/* ----------------- NIL toggle ----------------- */
 const cb=document.getElementById('nilToggle');
 const nil=document.getElementById('nilView');
 const dash=document.getElementById('dashView');
@@ -310,7 +335,7 @@ cb&&cb.addEventListener('change',()=>{
 const p=new URLSearchParams(location.search);
 if(cb){ if(p.get('nil')==='1'){cb.checked=true;} else{try{const v=localStorage.getItem('gstr1_nil'); if(v==='1') cb.checked=true;}catch(e){} } syncNil(); }
 
-/* ----------------- Due date fallback if server didn’t provide ----------------- */
+/* ----------------- Due date fallback ----------------- */
 (function(){
   const dueEl = document.getElementById('dueDate');
   if(!dueEl) return;
@@ -327,7 +352,7 @@ if(cb){ if(p.get('nil')==='1'){cb.checked=true;} else{try{const v=localStorage.g
   dueEl.textContent = formatted;
 })();
 
-/* ----------------- Resolve content_id from path or query ----------------- */
+/* ----------------- Resolve content_id ----------------- */
 function resolveContentId(){
   let contentId=null;
   const m = location.pathname.match(/\/returns\/gstr1\/(\d+)\/?$/);
@@ -341,10 +366,9 @@ function resolveContentId(){
 }
 function setText(id, val){ const el=document.getElementById(id); if(el) el.textContent = val || ''; }
 
-/* ----------------- Fetch server meta (GSTIN, Trade, FY, RP, Legal, Due) ----------------- */
+/* ----------------- Fetch server meta ----------------- */
 (function(){
   const LEGAL_FALLBACK = 'AKHIL VASUDEV';
-
   const contentId = resolveContentId();
   if(!contentId) return;
   const apiMeta = `/api/returns/gstr1/task/${contentId}/meta`;
@@ -353,31 +377,20 @@ function setText(id, val){ const el=document.getElementById(id); if(el) el.textC
   const showDebug = qs.get('debug') === '1';
   const debugBox = document.getElementById('gstrDebugBox');
   if(showDebug && debugBox) debugBox.classList.remove('hidden');
-  const dbg = (label, obj) => {
-    if(!showDebug || !debugBox) return;
-    const pre = debugBox.querySelector('pre');
-    pre.textContent += `\n\n[${label}]\n` + (typeof obj === 'string' ? obj : JSON.stringify(obj,null,2));
-  };
 
   fetch(apiMeta, { headers: { "X-Requested-With":"XMLHttpRequest" }})
     .then(r => { if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
     .then(data => {
-      dbg('meta endpoint', data);
       const m = (data && data.meta) ? data.meta : {};
-
       if(m.GSTIN)        setText('fldGSTIN', m.GSTIN);
       if(m.TradeName)    setText('fldTradeName', m.TradeName);
       if(m.FY)           setText('fldFY', m.FY);
       if(m.ReturnPeriod) setText('fldReturnPeriod', m.ReturnPeriod);
-
-      // LEGAL NAME (fallback to constant)
       const legal = (m.LegalName || '').trim() || LEGAL_FALLBACK;
       setText('fldLegalName', legal);
-
       if(m.DueDatePretty){
         const dueEl=document.getElementById('dueDate'); if(dueEl) dueEl.textContent = m.DueDatePretty;
       }
-
       try{
         sessionStorage.setItem('g_content_id', String(contentId));
         if(m.FY) sessionStorage.setItem('g_fy', m.FY);
@@ -385,7 +398,7 @@ function setText(id, val){ const el=document.getElementById(id); if(el) el.textC
         sessionStorage.setItem('g_legal_name', legal);
       }catch(e){}
     })
-    .catch(err => { dbg('meta fetch error', String(err)); });
+    .catch(err => {});
 })();
 
 /* ----------------- FIRST-CLICK BANNER for FILE STATEMENT ----------------- */
@@ -396,35 +409,28 @@ function setText(id, val){ const el=document.getElementById(id); if(el) el.textC
   const banner = document.getElementById('actionBanner');
   const bannerText = document.getElementById('actionBannerText');
 
-  function showBanner(text){
-    if(!banner) return;
-    bannerText.textContent = text || 'Your request has been received.';
-    banner.classList.remove('hidden');
-    // Scroll banner into view for visibility
-    banner.scrollIntoView({behavior:'smooth', block:'center'});
-  }
-
-  // per-task key so each content_id shows one-time banner
-  function keyForTask(){
-    const cid = resolveContentId();
-    return 'gstr1_file_stmt_first_' + (cid || '0');
-  }
+  // Track click state within the current page view only
+  // (Reloading page resets this, making testing easier)
+  let hasClicked = false;
 
   btn.addEventListener('click', function(ev){
-    const key = keyForTask();
-    const already = sessionStorage.getItem(key) === '1';
+    // If it is the first time clicking on this page load...
+    if(!hasClicked){
+      ev.preventDefault(); // Stop navigation (don't go to href yet)
+      hasClicked = true;
 
-    if(!already){
-      ev.preventDefault(); // block navigation on first click
-      // match the portal’s message style/wording
-      showBanner('Your File Statement request has been received. Please check the status in sometime by clicking on “Refresh” to view consolidated summary and file GSTR-1.');
-      sessionStorage.setItem(key, '1');
-
-      // brief visual feedback on the button
-      btn.classList.add('disabled');
-      setTimeout(()=>btn.classList.remove('disabled'), 800);
+      if(banner && bannerText){
+        // Exact text from screenshot
+        bannerText.textContent = "Your Generate Summary request has been received. Please check the status in sometime by clicking on 'Refresh' to view consolidated summary and file GSTR-1";
+        
+        banner.classList.remove('hidden');
+        
+        // Scroll smoothly to the banner so the user sees it
+        banner.scrollIntoView({behavior:'smooth', block:'center'});
+      }
     }
-    // second click will naturally follow the href
+    // If hasClicked is already true (2nd click), we do NOT call preventDefault().
+    // The browser will proceed to follow the <a href="..."> which now points to 'file_gstr1'.
   });
 })();
 </script>

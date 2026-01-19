@@ -656,7 +656,10 @@ def student_delete(request, pk):
 def institution_list(request):
     institutions = Institution.objects.all().order_by('-id')
     for inst in institutions:
-        inst.masked_password = '*' * len(inst.password)
+        # distinct check to prevent error if password is empty
+        pwd_len = len(inst.password) if inst.password else 0
+        inst.masked_password = '*' * pwd_len
+        
     paginator = Paginator(institutions, 8)
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
@@ -672,24 +675,27 @@ def add_institution(request):
 
         if not all([name, email, password, student_limit, validity]):
             messages.error(request, "All fields are required.")
-            return render(request, 'institution_form.html')
+            return redirect('institution_list') # Redirect back to list instead of render for popup flow
 
         try:
             student_limit = int(student_limit)
-            validity = parse_date(validity)
+            validity_date = parse_date(validity)
+            
             if Institution.objects.filter(email=email).exists():
                 messages.error(request, "Email already exists.")
-                return render(request, 'institution_form.html')
+                return redirect('institution_list')
 
-            Institution.create(
+            # FIX: Use objects.create
+            Institution.objects.create(
                 name=name, email=email, password=password,
-                student_limit=student_limit, validity=validity
+                student_limit=student_limit, validity=validity_date
             )
             messages.success(request, "Institution added successfully.")
             return redirect('institution_list')
+            
         except Exception as e:
             messages.error(request, f"Error: {str(e)}")
-            return render(request, 'institution_form.html')
+            return redirect('institution_list')
 
     return render(request, 'institution_form.html')
 
@@ -700,17 +706,20 @@ def edit_institution(request, pk):
         email = request.POST.get('email')
         password = request.POST.get('password')
         student_limit = request.POST.get('student_limit')
-        validity = parse_date(validity := request.POST.get('validity'))
+        validity = request.POST.get('validity')
+        
+        # FIX: Validate validity before passing
+        validity_date = parse_date(validity) if validity else None
 
-        if not all([name, email, student_limit, validity]):
+        if not all([name, email, student_limit, validity_date]):
             messages.error(request, "All fields except password are required.")
-            return render(request, 'institution_form.html', {'institution': institution})
+            return redirect('institution_list')
 
         try:
             institution.name = name
             institution.email = email
             institution.student_limit = int(student_limit)
-            institution.validity = validity
+            institution.validity = validity_date
             if password:
                 institution.password = password
             institution.save()
@@ -718,7 +727,7 @@ def edit_institution(request, pk):
             return redirect('institution_list')
         except Exception as e:
             messages.error(request, f"Error: {str(e)}")
-            return render(request, 'institution_form.html', {'institution': institution})
+            return redirect('institution_list')
 
     return render(request, 'institution_form.html', {'institution': institution})
 
@@ -1086,9 +1095,11 @@ def NIL_Return_Filinglog(request):
             return render(request, 'NIL_Return_Filinglog.html')
 
         LOGIN_MAP = {
-            'NERGYINDIA': ('Nergy@123', 2),
-            'ELECTRO': ('Elect@22', 3),
-            'RAHUL@45': ('Rk@123', 4),
+            'JNINFOTECH@09': ('Icom@001', 2),
+            'VIJAY@51': ('Vjy@051', 3),
+            'EPLANET': ('Eplanet@20', 4),
+            'GAUTHAM11': ('Gautham@51', 5),
+            'NOVARO53': ('Novaro@35', 6),
         }
         entry = LOGIN_MAP.get(username.upper())
         if entry:
@@ -2416,15 +2427,161 @@ def step_aadhaar(request, qid: int):
     return render(request, "step_aadhaar.html", { "qid": qid, "saved": app.get("aadhaar", {}), "demo_otp": DEMO_OTP, **_header_context(request, qid, "aadhaar") })
 
 # 10. VERIFICATION
+# 10. VERIFICATION
 def step_verification(request, qid: int):
     app = _wizard_get(request, qid)
+    
+    # --- LOGIC: GET CORRECT SIGNATORY NAME ---
+    # 1. Try to get name from Session (Step 2: Promoter Details)
+    signatory_name = app.get("promoter", {}).get("name")
+    
+    # 2. If Session is empty, fallback to the Correct Name for the specific Question ID
+    if not signatory_name:
+        # Mapping QID to the correct Person Name from your questions
+        NAME_MAPPING = {
+            9: "Vijay Kumar",       # Case 1
+            10: "Vetrimaaran",      # Case 2
+            11: "John Durairaj",    # Case 3
+            12: "Jeevanandham",     # Case 4
+            13: "Guru Prasad"       # Case 5
+        }
+        signatory_name = NAME_MAPPING.get(qid, "Authorized Signatory")
+
     if request.method == "POST":
         if request.POST.get("declaration") == "on":
-            _wizard_store(request, qid, { "verification": { "declared": True, "place": request.POST.get("place"), "date": request.POST.get("date") or str(date.today()), "is_completed": True } })
+            _wizard_store(request, qid, { 
+                "verification": { 
+                    "declared": True, 
+                    "place": request.POST.get("place"), 
+                    "date": request.POST.get("date") or str(date.today()), 
+                    "signatory_name": signatory_name, # Save the name used
+                    "is_completed": True 
+                } 
+            })
             messages.success(request, "Application Submitted.")
-            # FINISH:
+            # FINISH: Redirect to Dashboard
             return redirect("gst_dashboard_with_id", qid=qid) 
         else:
             messages.error(request, "Please check declaration.")
-        return redirect("step_verification", qid=qid)
-    return render(request, "step_verification.html", { "qid": qid, "saved_ver": app.get("verification", {}), "today": date.today(), **_header_context(request, qid, "verify") })
+            return redirect("step_verification", qid=qid)
+
+    return render(request, "step_verification.html", { 
+        "qid": qid, 
+        "saved_ver": app.get("verification", {}), 
+        "today": date.today(), 
+        "signatory_name": signatory_name, # <-- Passed to Template
+        **_header_context(request, qid, "verify") 
+    })
+
+
+
+
+
+
+from django.shortcuts import render, get_object_or_404
+# Make sure you import your model and helper functions
+# from .models import CourseContent1 
+# from .utils import _resolve_task_id, parse_task_info_para, _legal_name_for_task
+
+def file_gstr1(request, content_id=None):
+    # 1. Get the Task ID (e.g., 3)
+    cid = _resolve_task_id(request, content_id)
+    
+    # 2. Fetch the specific Question/Task from Database
+    obj = get_object_or_404(CourseContent1, pk=cid)
+    
+    # 3. Extract the data (FY: 2022-2023, Period: December, etc.)
+    meta = parse_task_info_para(obj.task_info or "")
+    
+    # 4. Get Legal Name
+    legal_name = _legal_name_for_task(cid)
+
+    # 5. Send this data to the template
+    context = {
+        "content_id": cid,
+        "gstin": meta.get("GSTIN") or "33BACXM3031K1Z5", # Fallback if missing
+        "fy": meta.get("FY") or "2025-2026",
+        "period": meta.get("ReturnPeriod") or "June",
+        "legal_name": legal_name,
+    }
+
+    return render(request, 'gstr1_file.html', context)
+
+
+from django.shortcuts import render, get_object_or_404, redirect
+from django.utils.dateparse import parse_date
+import datetime
+
+# Helper function to capitalize "october" -> "October"
+def _capitalize_period(p):
+    if not p: return ""
+    return p[0].upper() + p[1:].lower()
+
+def gstr3b_return(request, content_id=None):
+    # 1. Resolve Task ID
+    cid = _resolve_task_id(request, content_id)
+    obj = get_object_or_404(CourseContent1, pk=cid)
+    
+    # 2. Get Basic Info from DB
+    meta_db = parse_task_info_para(obj.task_info or "")
+    legal_name = _legal_name_for_task(cid)
+    
+    # 3. DETERMINE FY, PERIOD, DUE DATE
+    # Priority: URL Params (User Selection) > Database (Task Info)
+    
+    # Financial Year
+    fy = request.GET.get('fy') or meta_db.get("FY") or ""
+    
+    # Return Period (e.g., "October")
+    raw_period = request.GET.get('period') or meta_db.get("ReturnPeriod") or ""
+    return_period = _capitalize_period(raw_period)
+
+    # Due Date logic
+    due_date_str = ""
+    
+    # Check if 'due' is passed in URL (ISO format from JS)
+    if request.GET.get('due'):
+        try:
+            # Parse the ISO string "2024-11-20T..."
+            dt = parse_date(request.GET.get('due').split('T')[0])
+            if dt:
+                due_date_str = _format_date_ind(dt)
+        except:
+            pass
+            
+    # Fallback: Calculate if not in URL but we have Period/FY
+    if not due_date_str and return_period and fy:
+        mon, yr = _return_period_to_month_year(return_period, fy)
+        if mon and yr:
+            # You can make a specific helper for 3B if you want exact 20th/22nd/24th logic
+            # For now re-using GSTR1 helper or adding offset
+            d = _compute_due_date_for_gstr3b(mon, yr) 
+            due_date_str = _format_date_ind(d)
+
+    context = {
+        "content_id": cid,
+        "gstin": meta_db.get("GSTIN") or "",
+        "legal_name": legal_name,
+        "trade_name": _trade_name_for_task(cid),
+        "status": "Not Filed",
+        "fy": fy,
+        "return_period": return_period,
+        "due_date": due_date_str,
+    }
+
+    return render(request, 'gstr3b_return.html', context)
+
+
+
+from django.shortcuts import render
+
+def file_gstr3b_view(request):
+    # You can pass context context here if you need dynamic data
+    # (e.g., fetching the Authorised Signatory name from the database)
+    context = {
+        'gstin': '33BACXM3031K1Z5',
+        'signatory_name': 'Akhil Vasudev'
+    }
+    return render(request, 'gstr3b_filing.html', context)
+
+

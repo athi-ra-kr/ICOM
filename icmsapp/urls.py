@@ -71,14 +71,7 @@ urlpatterns = [
     path('gstdashboard/', views.gst_dashboard, name='gst_dashboard'),
     path('gstdashboard/<int:qid>/', views.gst_dashboard, name='gst_dashboard_with_id'),
     
-    # path('gst-registration/', views.gst_registration_form, name='gst_registration_form'),
-    # path('gst-registration/success/<int:pk>/', views.gst_registration_success, name='gst_registration_success'),
-    # path('gst-registration/list/', views.gst_registration_list, name='gst_registration_list'),
-    # path('gst-registration/detail/<int:pk>/', views.gst_registration_detail, name='gst_registration_detail'),
-    # path('gst-registration/edit/<int:pk>/', views.gst_registration_edit, name='gst_registration_edit'),
-    # path('api/load-trn/', views.load_trn_gst_data, name='load_trn_gst_data'),
-    # path("gst/<str:trn>/business/", views.business_details, name="gst_business"),
-    # path("gst/<str:trn>/promoter/", views.promoter_details, name="gst_promoter"),
+  
     path("registration/<int:qid>/business/", views.step_business_details,name="step_business_details"),
     path("registration/<int:qid>/promoters/",views.step_promoters,name="step_promoters",),
     path("registration/<int:qid>/signatory/",views.step_authorized_signatory, name="step_authorized_signatory",),
@@ -89,8 +82,17 @@ urlpatterns = [
     path("registration/<int:qid>/state-specific/", views.step_state_specific, name="step_state_specific",),
     path("registration/<int:qid>/aadhaar-authentication/", views.step_aadhaar, name="step_aadhaar",),
     path("registration/<int:qid>/verification/", views.step_verification, name="step_verification",),
+
+
+    path('file-gstr1/', views.file_gstr1, name='file_gstr1'),
+    path('returns/gstr1/file/<int:content_id>/', views.file_gstr1, name='file_gstr1'),
+
+    path('gstr3b_return/', views.gstr3b_return, name='gstr3b_return'),
+    path('returns/gstr3b/<int:content_id>/', views.gstr3b_return, name='gstr3b_return_with_id'),
+    path('returns/gstr3b/filing/', views.file_gstr3b_view, name='file_gstr3b'),
     
 
     
 ]
-   
+
+    

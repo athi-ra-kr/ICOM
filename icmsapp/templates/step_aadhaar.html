@@ -3,7 +3,7 @@
 
 {% block content %}
 <style>
-    /* --- YOUR ORIGINAL CSS --- */
+    /* --- YOUR CSS --- */
     * { box-sizing: border-box; font-family: "Segoe UI", Tahoma, Arial, sans-serif; }
 
     .page-wrapper {
@@ -12,7 +12,6 @@
       background: #fff;
       border: 1px solid #d0d4db;
       box-shadow: 0 0 3px rgba(0,0,0,0.08);
-      /* Removed duplicate border logic from base conflict */
       padding: 0; 
     }
 
@@ -70,7 +69,8 @@
 {% csrf_token %}
 
 <input type="hidden" name="otp" value="123456">
-<input type="hidden" name="aadhaar_no" value="999999999999"> <div class="page-wrapper">
+<input type="hidden" name="aadhaar_no" value="999999999999"> 
+<div class="page-wrapper">
   <div class="top-bar-local"></div>
 
   <div class="content">
@@ -89,7 +89,7 @@
       </div>
       
       <label class="toggle-wrapper">
-        <input type="checkbox" class="toggle-input" checked>
+        <input type="checkbox" class="toggle-input" id="aadhaarToggle" checked>
         <span class="toggle-slider"></span>
       </label>
     </div>
@@ -108,7 +108,7 @@
       </li>
     </ol>
 
-    <div class="table-wrapper">
+    <div class="table-wrapper" id="dataTable">
       <table>
         <thead>
         <tr>
@@ -158,4 +158,27 @@
   </div>
 </div>
 </form>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // 1. Get the checkbox and the table wrapper
+        var toggle = document.getElementById("aadhaarToggle");
+        var table = document.getElementById("dataTable");
+
+        // 2. Define a function to update display based on checkbox status
+        function updateTableVisibility() {
+            if (toggle.checked) {
+                table.style.display = "block"; // Show if ON
+            } else {
+                table.style.display = "none";  // Hide if OFF
+            }
+        }
+
+        // 3. Add event listener to run the function whenever the user clicks
+        toggle.addEventListener("change", updateTableVisibility);
+
+        // 4. Run the function once on page load to set the initial state correctly
+        updateTableVisibility();
+    });
+</script>
 {% endblock %}

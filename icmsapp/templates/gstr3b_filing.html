@@ -1,0 +1,142 @@
+{% extends 'gov1.html' %}
+
+{% block title %}File Returns - GST Portal{% endblock %}
+
+{% block content %}
+<style>
+    /* Basic Styling to mimic the GST Portal */
+    .gst-container { padding: 20px; font-family: sans-serif; }
+    .btn-gst { border-radius: 0; font-weight: bold; padding: 10px 20px; color: white; border: none; cursor: pointer; margin-right: 5px; }
+    .btn-back { background-color: #f0f0f0; color: #333; border: 1px solid #ccc; }
+    .btn-evc { background-color: #337ab7; } /* Blue */
+    .btn-dsc { background-color: #337ab7; }
+    .btn-preview { background-color: #337ab7; }
+    .btn-system { background-color: #d9534f; } /* Red/Pink */
+    
+    .section-hidden { display: none; margin-top: 15px; }
+    .form-group { margin-bottom: 15px; }
+    select.form-control { width: 300px; padding: 8px; }
+
+    /* Modal Styling */
+    .modal-overlay {
+        display: none; position: fixed; z-index: 1000; left: 0; top: 0;
+        width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.4);
+    }
+    .modal-content {
+        background-color: #fefefe; margin: 10% auto; padding: 20px;
+        border: 1px solid #888; width: 50%; box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+        border-radius: 5px;
+    }
+    
+    /* OTP Specifics */
+    .otp-header { color: #003366; font-size: 18px; font-weight: bold; border-bottom: 1px solid #ddd; padding-bottom: 10px; margin-bottom: 15px;}
+    .otp-alert { background-color: #dff0d8; color: #3c763d; padding: 15px; border-radius: 4px; margin-bottom: 15px; font-size: 14px;}
+    .otp-input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px; }
+    
+    /* Success Specifics */
+    .success-content { text-align: center; }
+    .success-logo { font-size: 50px; margin-bottom: 10px; }
+    .well-done-btn { background-color: #003366; color: white; padding: 10px 30px; border-radius: 20px; border: none; cursor: pointer; margin-top: 20px;}
+</style>
+
+<div class="gst-container">
+    <div class="card">
+        <h3>Filing of Tax</h3>
+        
+        <div class="form-group">
+            <label style="font-weight: normal;">
+                <input type="checkbox" id="declarationCheck"> 
+                I/We hereby solemnly affirm and declare that the information given herein above is true and correct to the best of my/our knowledge and belief and nothing has been concealed therefrom.
+            </label>
+        </div>
+
+        <div id="signatorySection" class="section-hidden">
+            <div class="form-group">
+                <label>Authorised signatory <span style="color:red">*</span></label><br>
+                <select class="form-control">
+                    <option>Select</option>
+                    <option value="Akhil">Akhil Vasudev</option>
+                </select>
+            </div>
+
+            <div class="btn-toolbar">
+                <button class="btn-gst btn-back">BACK</button>
+                <button class="btn-gst btn-system">SYSTEM GENERATED GSTR-3B</button>
+                <button class="btn-gst btn-preview">PREVIEW DRAFT GSTR-3B</button>
+                <button class="btn-gst btn-evc" onclick="openOtpModal()">FILE GSTR-3B WITH EVC</button>
+                <button class="btn-gst btn-dsc">FILE GSTR-3B WITH DSC</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="otpModal" class="modal-overlay">
+    <div class="modal-content">
+        <div class="otp-header">Validate One Time Password (OTP)</div>
+        <div class="otp-alert">
+            One-Time Password (OTP) has been sent to your registered email ID exxxxxxxxxxxx@gmail.com and mobile no. 93xxxxxx22. OTP is valid Till 15:34
+        </div>
+        
+        <label>Enter One Time Password (OTP:123456)</label>
+        <input type="text" id="otpInput" class="otp-input" placeholder="Enter OTP">
+        
+        <div style="margin-top: 20px; text-align: right;">
+            <button class="btn-gst btn-back" onclick="closeModal('otpModal')">CANCEL</button>
+            <button class="btn-gst btn-evc" onclick="verifyOtp()">VERIFY</button>
+        </div>
+        
+        <p style="font-size: 12px; color: #555; margin-top: 15px;">
+            If you do not receive the OTP within 30 seconds, please click "RESEND OTP" button to request same OTP again.
+        </p>
+    </div>
+</div>
+
+<div id="successModal" class="modal-overlay">
+    <div class="modal-content success-content">
+        <div class="success-logo">🎉</div> 
+        <h2 style="color: #333;">Filing Successful</h2>
+        <p>
+            GSTR-3B of GSTIN 33BACXM3031K1Z5 for the period May - 2025-2026 has been successfully filed on 17/06/2025 at 15:24. 
+            The Acknowledgment Reference Number is AA320921306204S.
+        </p>
+        <button class="well-done-btn" onclick="closeModal('successModal')">Well Done</button>
+    </div>
+</div>
+
+<script>
+    // 1. Logic for Checkbox -> Show Dropdown
+    const checkbox = document.getElementById('declarationCheck');
+    const section = document.getElementById('signatorySection');
+
+    checkbox.addEventListener('change', function() {
+        if (this.checked) {
+            section.style.display = 'block';
+        } else {
+            section.style.display = 'none';
+        }
+    });
+
+    // 2. Logic to Open OTP Modal
+    function openOtpModal() {
+        document.getElementById('otpModal').style.display = 'block';
+    }
+
+    // 3. Logic to Verify OTP -> Show Success
+    function verifyOtp() {
+        const otpValue = document.getElementById('otpInput').value;
+        if(otpValue.length > 0) {
+            // Close OTP modal
+            document.getElementById('otpModal').style.display = 'none';
+            // Open Success modal
+            document.getElementById('successModal').style.display = 'block';
+        } else {
+            alert("Please enter the OTP");
+        }
+    }
+
+    // Helper to close modals
+    function closeModal(modalId) {
+        document.getElementById(modalId).style.display = 'none';
+    }
+</script>
+{% endblock %}

@@ -2,40 +2,21 @@
 {% block title %}File Returns - GST Portal{% endblock %}
 {% block content %}
 <style>
+  /* ... (Your existing CSS remains exactly the same) ... */
     *{margin:0;padding:0;box-sizing:border-box}
-    body{
-        font-family:"Segoe UI",Arial,Helvetica,sans-serif;
-        background:#E4E8EB;
-        color:#222;
-        -webkit-font-smoothing:antialiased;
-    }
-
-    .header{
-        background:#fff;
-        border-bottom:1px solid #dcdcdc;
-        height:64px;
-        display:flex;
-        align-items:center;
-        justify-content:space-between;
-        padding:0 36px;
-        font-size:14px
-    }
-
+    body{font-family:"Segoe UI",Arial,Helvetica,sans-serif;background:#E4E8EB;color:#222;-webkit-font-smoothing:antialiased}
+    .header{background:#fff;border-bottom:1px solid #dcdcdc;height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 36px;font-size:14px}
     .breadcrumb{color:#333;font-weight:600;display:flex;gap:10px;align-items:center}
     .breadcrumb a{color:#0D3A66;text-decoration:none}
     .breadcrumb a:hover{text-decoration:underline}
     .task-badge{background:#14385D;color:#fff;font-weight:700;font-size:12px;padding:4px 8px;border-radius:3px}
     .lang-toggle{font-weight:600;color:#333}
-
     .main-content{width:1200px;margin:28px auto;background:transparent;border:none;box-shadow:none;padding:0 28px}
     .page-title{font-size:20px;font-weight:600;margin-bottom:14px;color:#1f2933}
-
     .info-banner{background:#FCF8E3;border:1px solid #F1D17C;border-radius:3px;height:28px;overflow:hidden;display:flex;align-items:center;position:relative;margin-bottom:4px}
     .info-text{position:absolute;white-space:nowrap;will-change:transform;animation:scrollText 32s linear infinite;padding-left:100%;font-size:13px;color:#5A4E2C}
     @keyframes scrollText{0%{transform:translateX(0)}100%{transform:translateX(-100%)}}
-
     .mandatory-note-top{text-align:right;font-size:12.4px;color:#555;margin-bottom:16px}
-
     .form-section{background:#fff;padding:14px 10px;border:1px solid #ddd;border-radius:3px}
     .form-row{display:flex;gap:16px;align-items:flex-end;padding:4px 8px}
     .form-group{display:flex;flex-direction:column;width:250px}
@@ -45,13 +26,10 @@
     .form-select:focus{border-color:#0D3A66;box-shadow:0 0 0 2px rgba(13,58,102,0.06)}
     .search-btn{height:34px;min-width:120px;border-radius:3px;border:none;background:#14385D;color:#fff;font-weight:700;font-size:13px;cursor:pointer}
     .search-btn:hover{background:#0D2C49}
-
     .info-message{display:none;margin-top:12px;background:#D9EDF7;border-left:4px solid #2C86B6;color:#0B4B52;padding:10px 12px;border-radius:2px;font-size:13px;animation:fadeIn .5s ease}
     @keyframes fadeIn{from{opacity:0;transform:translateY(-3px)}to{opacity:1;transform:translateY(0)}}
-
     .returns-container{margin-top:16px;display:none;animation:fadeIn .7s ease}
     .returns-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
-
     .return-card{background:#fff;border:1px solid #e0e0e0;min-height:208px;display:flex;flex-direction:column;box-shadow:0 2px 6px rgba(0,0,0,.04);border-radius:3px}
     .return-header{background:linear-gradient(180deg,#14385D 0%,#2C4E86 100%);color:#fff;padding:14px 10px;text-align:center;font-size:13px;font-weight:700;min-height:68px;display:flex;flex-direction:column;justify-content:center}
     .return-title{font-weight:500;font-size:13px;margin-bottom:4px}
@@ -118,7 +96,6 @@
   <div class="returns-container" id="returnsContainer">
     <div class="returns-grid">
 
-      <!-- GSTR1 -->
       <div class="return-card">
         <div class="return-header">
           <div class="return-title">Details of outward supplies of goods or services</div>
@@ -127,14 +104,13 @@
         <div class="return-body">
           <div class="due-date" id="gstr1DueDate">Due Date - </div>
           <div class="return-actions">
-            <a id="goGSTR1" class="btn-action btn-primary-action"
+            <a id="goGSTR1" class="btn-action btn-primary-action" 
                href="{% url 'gstr1_summary_with_id' content_id=content_id %}">PREPARE ONLINE</a>
             <a class="btn-action btn-secondary-action" href="#">PREPARE OFFLINE</a>
           </div>
         </div>
       </div>
 
-      <!-- GSTR2A -->
       <div class="return-card">
         <div class="return-header">
           <div class="return-title">Auto Drafted details (For view only)</div>
@@ -148,7 +124,6 @@
         </div>
       </div>
 
-      <!-- GSTR2B Quarterly -->
       <div class="return-card">
         <div class="return-header">
           <div class="return-title">Auto-drafted ITC Statement for the quarter</div>
@@ -162,7 +137,6 @@
         </div>
       </div>
 
-      <!-- GSTR2B Monthly -->
       <div class="return-card">
         <div class="return-header">
           <div class="return-title">Auto-drafted ITC Statement (Monthly)</div>
@@ -176,7 +150,6 @@
         </div>
       </div>
 
-      <!-- GSTR3B -->
       <div class="return-card">
         <div class="return-header">
           <div class="return-title">Summary of outward supplies, ITC and payment</div>
@@ -185,7 +158,8 @@
         <div class="return-body">
           <div class="due-date" id="gstr3bDueDate">Due Date - </div>
           <div class="return-actions">
-            <a class="btn-action btn-primary-action" href="#">PREPARE ONLINE</a>
+            <a id="goGSTR3B" class="btn-action btn-primary-action" 
+               href="{% url 'gstr3b_return_with_id' content_id=content_id %}">PREPARE ONLINE</a>
             <a class="btn-action btn-secondary-action" href="#">PREPARE OFFLINE</a>
           </div>
         </div>
@@ -241,7 +215,7 @@ function computeAndSetDueDates(){
   const dueYear = selectedYear + (mIdx === 11 ? 1 : 0);
 
   const gstr1Date = new Date(dueYear, nextMonthIdx, 11);
-  const gstr3bDate = new Date(dueYear, nextMonthIdx, 21);
+  const gstr3bDate = new Date(dueYear, nextMonthIdx, 21); // GSTR-3B usually 20th/22nd/24th
 
   const g1 = `Due Date - ${pad2(gstr1Date.getDate())}/${pad2(gstr1Date.getMonth()+1)}/${gstr1Date.getFullYear()}`;
   const g3 = `Due Date - ${pad2(gstr3bDate.getDate())}/${pad2(gstr3bDate.getMonth()+1)}/${gstr3bDate.getFullYear()}`;
@@ -266,40 +240,43 @@ function searchReturns(){
   }
 }
 
-// Handoff to GSTR-1 page (persist in sessionStorage + append query params)
+// -------------------------------------------------------------
+// LOGIC FOR PASSING DATES TO GSTR-1 AND GSTR-3B VIEWS
+// -------------------------------------------------------------
 (function(){
-  const a = document.getElementById('goGSTR1');
-  if(!a) return;
-  a.addEventListener('click', function(e){
-    const elFY = document.getElementById('financialYear');
-    const elPeriod = document.getElementById('period');
-    if(!elFY.value || !elPeriod.value){ e.preventDefault(); alert("Please select FY and Period."); return; }
+  function attachLinkHandler(btnId, isGstr1) {
+    const btn = document.getElementById(btnId);
+    if (!btn) return;
 
-    const sel = computeAndSetDueDates();
-    if(!sel){ e.preventDefault(); return; }
-    const { gstr1Date } = sel;
+    btn.addEventListener('click', function(e){
+      const elFY = document.getElementById('financialYear');
+      const elPeriod = document.getElementById('period');
+      if(!elFY.value || !elPeriod.value){ e.preventDefault(); alert("Please select FY and Period."); return; }
 
-    const fy = elFY.value;
-    const period = elPeriod.value; // lowercase month
-    const dueISO = new Date(gstr1Date.getFullYear(), gstr1Date.getMonth(), gstr1Date.getDate()).toISOString();
+      const dates = computeAndSetDueDates();
+      if(!dates){ e.preventDefault(); return; }
+      
+      const targetDate = isGstr1 ? dates.gstr1Date : dates.gstr3bDate;
+      const dueISO = new Date(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate()).toISOString();
 
-    const contentId = document.querySelector('.main-content')?.getAttribute('data-content-id') || '';
+      const fy = elFY.value;
+      const period = elPeriod.value; 
+      const contentId = document.querySelector('.main-content')?.getAttribute('data-content-id') || '';
 
-    try{
-      sessionStorage.setItem('g_fy', fy);
-      sessionStorage.setItem('g_period', period);
-      sessionStorage.setItem('g_dueISO', dueISO);
-      if(contentId) sessionStorage.setItem('g_content_id', contentId);
-    }catch(err){}
+      // Set URL Params
+      const u = new URL(btn.href, location.origin);
+      u.searchParams.set('fy', fy);
+      u.searchParams.set('period', period);
+      u.searchParams.set('due', dueISO);
+      if(contentId) u.searchParams.set('content_id', contentId);
+      
+      btn.href = u.toString();
+    });
+  }
 
-    const u = new URL(a.href, location.origin);
-    u.searchParams.set('fy', fy);
-    u.searchParams.set('period', period);
-    u.searchParams.set('due', dueISO);
-    if(contentId) u.searchParams.set('content_id', contentId);
-
-    a.href = u.toString();
-  });
+  // Attach handlers for both buttons
+  attachLinkHandler('goGSTR1', true);
+  attachLinkHandler('goGSTR3B', false);
 })();
 </script>
 {% endblock %}

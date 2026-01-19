@@ -2,128 +2,374 @@
 {% load static %}
 
 {% block content %}
-<style>
-    /* --- YOUR ORIGINAL CSS --- */
-    * { box-sizing: border-box; font-family: "Segoe UI", Tahoma, Arial, sans-serif; }
 
-    .page-wrapper {
-      max-width: 1200px;
-      margin: 20px auto 60px;
-      background: #fff;
-      border: 1px solid #d0d4db;
-      box-shadow: 0 0 3px rgba(0,0,0,0.08);
-      padding: 0;
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<style>
+    /* --- FONTS & GLOBAL RESET --- */
+    * { box-sizing: border-box; }
+
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        font-size: 14px;
+        color: #212529;
+        background-color: #f4f6f9;
+        line-height: 1.5;
+        margin: 0;
     }
 
-    /* TABS */
-    .tabs-header { display: flex; border-bottom: 1px solid #d0d4db; padding-left: 40px; background: #f5f5f5; }
-    .tab { padding: 10px 28px; font-size: 15px; border: 1px solid transparent; border-bottom: none; cursor: pointer; }
-    .tab.active { background: #ffffff; border-color: #d0d4db; border-top-left-radius: 2px; border-top-right-radius: 2px; border-bottom: 1px solid #ffffff; }
-    .tab.inactive { color: #0070c0; }
+    /* --- PAGE CONTAINER --- */
+    .page-wrapper {
+        max-width: 1140px;
+        margin: 20px auto 60px;
+        background: #fff;
+        border: 1px solid #dee2e6;
+        box-shadow: 0 .125rem .25rem rgba(0,0,0,.075);
+        padding-bottom: 20px;
+        min-height: 600px;
+    }
 
-    .content-wrapper { padding: 26px 40px 30px; }
+    .content-wrapper { padding: 30px 40px; }
 
-    h2.title { font-size: 20px; margin: 0 0 8px; color: #003366; }
-    .subtitle { font-size: 17px; margin-bottom: 30px; color: #333; }
+    /* --- HEADINGS --- */
+    h2.main-title { 
+        font-size: 18px; 
+        margin: 0 0 10px; 
+        color: #003366; 
+        font-weight: 500; 
+    }
 
-    .field-label { font-size: 14px; margin-bottom: 4px; color: #333; }
+    .section-divider {
+        border-bottom: 1px solid #dee2e6;
+        margin-bottom: 20px;
+    }
+    
+    .subtitle { 
+        font-size: 16px; 
+        margin-bottom: 30px; 
+        color: #212529; 
+        font-weight: 400;
+    }
 
-    select { width: 100%; border: 1px solid #c0c4cc; padding: 7px 8px; font-size: 13px; min-height: 34px; }
-    .select-wrapper { max-width: 750px; margin-top: 4px; display: flex; gap: 10px; }
+    /* --- FORM ELEMENTS --- */
+    .field-label { 
+        font-size: 14px; 
+        margin-bottom: 8px; 
+        color: #212529; 
+        font-weight: 400; 
+    }
 
-    .btn-bar { margin-top: 40px; display: flex; justify-content: flex-end; gap: 10px; }
-    .btn { padding: 10px 24px; border-radius: 2px; border: none; cursor: pointer; font-size: 14px; text-decoration: none; display: inline-block; }
-    .btn-secondary { background: transparent; color: #333; border: 1px solid #ccc; }
-    .btn-primary { background: #244f86; color: #fff; }
-    .btn-add { background: #244f86; color: white; padding: 8px 16px; border: none; cursor: pointer; font-size: 13px; border-radius: 2px; }
+    .select-wrapper {
+        max-width: 50%;
+        margin-bottom: 40px;
+    }
 
-    /* Added Table Style for Listed Items */
-    .items-table { width: 100%; max-width: 750px; margin-top: 20px; border-collapse: collapse; font-size: 13px; }
-    .items-table th { background: #f0f0f0; text-align: left; padding: 8px; border: 1px solid #ddd; }
-    .items-table td { padding: 8px; border: 1px solid #ddd; }
-    .btn-delete { color: red; background: none; border: none; cursor: pointer; font-size: 12px; text-decoration: underline; }
+    select { 
+        display: block;
+        width: 100%;
+        padding: .375rem .75rem;
+        font-size: 1rem;
+        line-height: 1.5;
+        color: #495057;
+        background-color: #fff;
+        border: 1px solid #ced4da;
+        border-radius: .25rem;
+        transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+        outline: none;
+    }
+    
+    select:focus { 
+        border-color: #80bdff; 
+        box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25); 
+    }
+
+    /* --- TABLE SECTION --- */
+    h3.list-title {
+        color: #003366;
+        font-size: 16px;
+        margin-bottom: 15px;
+        font-weight: 500;
+    }
+
+    #goodsTableContainer { display: none; }
+
+    table.items-table { 
+        width: 100%; 
+        border-collapse: collapse; 
+        margin-bottom: 1rem;
+        border-top: 1px solid #dee2e6;
+    }
+    
+    .items-table th { 
+        vertical-align: bottom;
+        border-bottom: 1px solid #dee2e6;
+        background-color: #fff;
+        text-align: left; 
+        padding: 12px; 
+        font-weight: 700;
+        color: #212529;
+        font-size: 13px;
+    }
+    
+    .items-table td { 
+        padding: 12px; 
+        vertical-align: top;
+        border-bottom: 1px solid #dee2e6;
+        color: #212529;
+        font-size: 13px;
+    }
+
+    /* --- DELETE BUTTON --- */
+    .btn-delete { 
+        background-color: #d9534f;
+        color: white; 
+        border: none; 
+        padding: 6px 10px; 
+        cursor: pointer; 
+        font-size: 12px; 
+        border-radius: 3px;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        font-weight: 400;
+        text-transform: uppercase;
+        line-height: 1.5;
+    }
+    .btn-delete:hover { background-color: #c9302c; }
+    .btn-delete i { font-size: 11px; }
+
+    /* --- FOOTER BUTTONS --- */
+    .footer-actions {
+        margin-top: 80px;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .btn-back {
+        background: none;
+        border: none;
+        color: #555;
+        font-size: 13px;
+        cursor: pointer;
+        text-transform: uppercase;
+        font-weight: 600;
+        text-decoration: none;
+    }
+    .btn-back:hover { color: #000; }
+
+    .btn-save {
+        background-color: #244f86;
+        color: #fff;
+        border: none;
+        padding: 10px 24px;
+        font-size: 13px;
+        cursor: pointer;
+        font-weight: 600;
+        border-radius: 2px;
+        text-transform: uppercase;
+    }
+    .btn-save:hover { background-color: #1a3a63; }
 </style>
 
-<form method="POST">
+<form method="POST" id="mainForm">
 {% csrf_token %}
 <div class="page-wrapper">
 
-  <div class="tabs-header">
-    <div class="tab active">Goods</div>
-    <div class="tab inactive">Services</div>
-  </div>
+    <div class="content-wrapper">
+        <h2 class="main-title">Details of Goods / Commodities supplied by the business</h2>
+        <div class="section-divider"></div>
+        
+        <div class="subtitle">Please specify top 5 Commodities</div>
 
-  <div class="content-wrapper">
-    <h2 class="title">Details of Goods / Commodities supplied by the business</h2>
-    <div class="subtitle">Please specify top 5 Commodities</div>
+        <div class="field-label">Search HSN Chapter by Name or Code</div>
+        
+        <div class="select-wrapper">
+            <select id="hsnSelect" onchange="addItem()">
+                <option value="">Select</option>
+                <option value="1006 Rice">1006 Rice</option>
+                <option value="1001 Wheat And Meslin - Durum Wheat">1001 Wheat And Meslin - Durum Wheat</option>
+                <option value="2710 Petroleum Oils And Oils Obtained From Bituminous Minerals, Other Than Crude; Preparations Not Elsewhere Specified Or Included, Containing By Weight 70% Or More Of Petroleum Oils Or Of">2710 Petroleum Oils And Oils Obtained From Bituminous Minerals, Other Than Crude; Preparations Not Elsewhere Specified Or Included, Containing By Weight 70% Or More Of Petroleum Oils Or Of</option>
+                <option value="27101211 Petroleum Oils And Oils Obtained From Bituminous Minerals, Other Than Crude; Preparations Not Else where Specified Or Included, Containign By Weight 70% Or More Of Petroleum Oils">27101211 Petroleum Oils And Oils Obtained From Bituminous Minerals, Other Than Crude; Preparations Not Else where Specified Or Included, Containign By Weight 70% Or More Of Petroleum Oils</option>
+                <option value="6901 BRICKS, BLOCKS, TILES AND OTHER CERAMIC GOODS OF SILICEOUS FOSSIL MEALS (FOR EXAMPLE, KIESELGUHR, TRIPOLITE OR DIATOMITE) OR OF SIMILAR SILICEOUS EARTHS">6901 BRICKS, BLOCKS, TILES AND OTHER CERAMIC GOODS OF SILICEOUS FOSSIL MEALS (FOR EXAMPLE, KIESELGUHR, TRIPOLITE OR DIATOMITE) OR OF SIMILAR SILICEOUS EARTHS</option>
+                <option value="1806 CHOCOLATE AND OTHER FOOD PREPARATIONS CONTAINING COCOA">1806 CHOCOLATE AND OTHER FOOD PREPARATIONS CONTAINING COCOA</option>
+                <option value="8308 CLASPS, FRAMES WITH CLASPS, BUCKLES, BUCKLE-CLASPS, HOOKS, EYES, EYELETS AND THE LIKE, OF BASE METAL, OF A KIND USED FOR CLOTHING, FOOTWEAR">8308 CLASPS, FRAMES WITH CLASPS, BUCKLES, BUCKLE-CLASPS, HOOKS, EYES, EYELETS AND THE LIKE, OF BASE METAL, OF A KIND USED FOR CLOTHING, FOOTWEAR</option>
+                <option value="8515 ELECTRIC (INCLUDING ELECTRICALLY HEATED GAS), LASER OR OTHER LIGHT OR PHOTO BEAM, ULTRASONIC, ELECTRON BEAM, MAGNETIC PULSE OR PLASMA ARC SOLDERING">8515 ELECTRIC (INCLUDING ELECTRICALLY HEATED GAS), LASER OR OTHER LIGHT OR PHOTO BEAM, ULTRASONIC, ELECTRON BEAM, MAGNETIC PULSE OR PLASMA ARC SOLDERING</option>
+                <option value="8517 TELEPHONE SETS, INCLUDING TELEPHONES FOR CELLULAR NETWORKS OR FOR OTHER WIRELESS NETWORKS; OTHER APPARATUS FOR THE TRANSMISSION OR RECEPTION">8517 TELEPHONE SETS, INCLUDING TELEPHONES FOR CELLULAR NETWORKS OR FOR OTHER WIRELESS NETWORKS; OTHER APPARATUS FOR THE TRANSMISSION OR RECEPTION</option>
+                <option value="480100 NEWSPRINT, IN ROLLS OR SHEETS">480100 NEWSPRINT, IN ROLLS OR SHEETS</option>
+                <option value="48042900 HAND-MADE PAPER AND PAPERBOARD">48042900 HAND-MADE PAPER AND PAPERBOARD</option>
+                <option value="100630 Semi-Milled Or Wholly-Milled Rice, Whether Or Not Polished Or Glazed">100630 Semi-Milled Or Wholly-Milled Rice, Whether Or Not Polished Or Glazed</option>
+                <option value="4201 SADDLERY AND HARNESS FOR ANY ANIMAL (INCLUDING TRACES, LEADS, KNEE PADS, MUZZLES, SADDLE CLOTHS, SADDLE BAGS, DOG COATS AND THE LIKE), OF ANY MATERIA">4201 SADDLERY AND HARNESS FOR ANY ANIMAL (INCLUDING TRACES, LEADS, KNEE PADS, MUZZLES, SADDLE CLOTHS, SADDLE BAGS, DOG COATS AND THE LIKE), OF ANY MATERIA</option>
+                <option value="4202 TRUNKS, SUIT-CASES, VANITY-CASES, EXECUTIVECASES , BRIEF - CASES , SCHOOL SATCHELS , SPECTACLE CASES, BINOCULAR CASES, CAMERA CASES, MUSICAL INSTRUME">4202 TRUNKS, SUIT-CASES, VANITY-CASES, EXECUTIVECASES , BRIEF - CASES , SCHOOL SATCHELS , SPECTACLE CASES, BINOCULAR CASES, CAMERA CASES, MUSICAL INSTRUME</option>
+                <option value="480210 UNCOATED KRAFT PAPER AND PAPERBOARD, IN ROLLS OR SHEETS, OTHER THAN THAT OF HEADING 4802 OR 4803 - SACK KRAFT PAPER : OTHER">480210 UNCOATED KRAFT PAPER AND PAPERBOARD, IN ROLLS OR SHEETS, OTHER THAN THAT OF HEADING 4802 OR 4803 - SACK KRAFT PAPER : OTHER</option>
+                <option value="6404 FOOTWEAR WITH OUTER SOLES OF RUBBER, PLASTICS, LEATHER OR COMPOSITION LEATHER AND UPPERS OF TEXTILE MATERIALS">6404 FOOTWEAR WITH OUTER SOLES OF RUBBER, PLASTICS, LEATHER OR COMPOSITION LEATHER AND UPPERS OF TEXTILE MATERIALS</option>
+                <option value="0811 FRUIT AND NUTS, UNCOOKED OR COOKED BY STEAMING OR BOILING IN WATER, FROZEN, WHETHER OR NOT CONTAINING ADDED SUGAR OR OTHER SWEETENING MATTER">0811 FRUIT AND NUTS, UNCOOKED OR COOKED BY STEAMING OR BOILING IN WATER, FROZEN, WHETHER OR NOT CONTAINING ADDED SUGAR OR OTHER SWEETENING MATTER</option>
+                <option value="7009 GLASS MIRRORS, WHETHER OR NOT FRAMED, INCLUDING REAR-VIEW MIRRORS">7009 GLASS MIRRORS, WHETHER OR NOT FRAMED, INCLUDING REAR-VIEW MIRRORS</option>
+                <option value="85340000 PRINTED CIRCUITS">85340000 PRINTED CIRCUITS</option>
+                <option value="87142090 PARTS AND ACCESSORIES OF VEHICLES OF HEADINGS 8711TO 8713 OF CARRIAGES FOR DISABLED PERSONS OTHER">87142090 PARTS AND ACCESSORIES OF VEHICLES OF HEADINGS 8711TO 8713 OF CARRIAGES FOR DISABLED PERSONS OTHER</option>
+                <option value="2041000 MEAT OF SHEEP OR GOATS, FRESH, CHILLED OR FROZEN CARCASSES AND HALF CARCASSES OF LAMB, FRESH OR CHILLED">2041000 MEAT OF SHEEP OR GOATS, FRESH, CHILLED OR FROZEN CARCASSES AND HALF CARCASSES OF LAMB, FRESH OR CHILLED</option>
+                <option value="2202 WATERS, INCLUDING MINERAL WATERS AND AERATED WATERS, CONTAINING ADDED SUGAR OR OTHER SWEETENING MATTER OR FLAVOURED, AND OTHER NON-ALCOHOLIC">2202 WATERS, INCLUDING MINERAL WATERS AND AERATED WATERS, CONTAINING ADDED SUGAR OR OTHER SWEETENING MATTER OR FLAVOURED, AND OTHER NON-ALCOHOLIC</option>
+                <option value="220110 MINERAL WATERS AND AERATED WATERS">220110 MINERAL WATERS AND AERATED WATERS</option>
+                <option value="220210 WATERS, INCLUDING MINERAL WATERS AND AERATED WATERS, CONTAINING ADDED SUGAR OR OTHER SWEETENING MATTER OR FLAVOURED">220210 WATERS, INCLUDING MINERAL WATERS AND AERATED WATERS, CONTAINING ADDED SUGAR OR OTHER SWEETENING MATTER OR FLAVOURED</option>
+                <option value="4022910 MILK AND CREAM, CONCENTRATED OR CONTAINING ADDED SUGAR OR OTHER SWEETENING MATTER WHOLE MILK">4022910 MILK AND CREAM, CONCENTRATED OR CONTAINING ADDED SUGAR OR OTHER SWEETENING MATTER WHOLE MILK</option>
+                <option value="8712 BICYCLES AND OTHER CYCLES (INCLUDING DELIVERY TRICYCLES), NOT MOTORISED">8712 BICYCLES AND OTHER CYCLES (INCLUDING DELIVERY TRICYCLES), NOT MOTORISED</option>
+                <option value="64021210 Other Footwear With Outer Soles And Uppers Of Rubber Or Plastics Sports Footwear : Ski-Boots, Cross-Country Ski Footwear And Snowboard Boots: Of Rubber">64021210 Other Footwear With Outer Soles And Uppers Of Rubber Or Plastics Sports Footwear : Ski-Boots, Cross-Country Ski Footwear And Snowboard Boots: Of Rubber</option>
+                <option value="87142010 PARTS AND ACCESSORIES OF VEHICLES OF HEADINGS 8711TO 8713 OF CARRIAGES FOR DISABLED PERSONS MECHANICALLY PROPELLED">87142010 PARTS AND ACCESSORIES OF VEHICLES OF HEADINGS 8711TO 8713 OF CARRIAGES FOR DISABLED PERSONS MECHANICALLY PROPELLED</option>
+                <option value="902290 Other, including parts and accessories">902290 Other, including parts and accessories</option>
+                <option value="8501 Motors of an output not exceeding">8501 Motors of an output not exceeding</option>
+                <option value="9201 PIANOS, INCLUDING AUTOMATIC PIANOS; HARPSI-CHORDS AND OTHER KEYBOARD STRINGED INSTRUMENTS">9201 PIANOS, INCLUDING AUTOMATIC PIANOS; HARPSI-CHORDS AND OTHER KEYBOARD STRINGED INSTRUMENTS</option>
+                <option value="91149091 FOR WATCHES">91149091 FOR WATCHES</option>
+                <option value="94029010 MEDICAL, SURGICAL, DENTAL OR VETERINARY FURNITURE (FOR EXAMPLE, OPERATING TABLES, EXAMINATION TABLES, HOSPITAL BEDS WITH MECHANICAL FITTINGS, DE">94029010 MEDICAL, SURGICAL, DENTAL OR VETERINARY FURNITURE (FOR EXAMPLE, OPERATING TABLES, EXAMINATION TABLES, HOSPITAL BEDS WITH MECHANICAL FITTINGS, DE</option>
+                <option value="940330 Wooden furniture of a kind used in offices">940330 Wooden furniture of a kind used in offices</option>
+                <option value="940350 Wooden furniture of a kind used in the bed room">940350 Wooden furniture of a kind used in the bed room</option>
+                <option value="9405 LUMINAIRES AND LIGHTING FITTINGS INCLUDING SEARCHLIGHTS AND SPOTLIGHTS AND PARTS THEREOF, NOT ELSEWHERE SPECIFIED OR INCLUDED; ILLUMINATED SIGNS, IL">9405 LUMINAIRES AND LIGHTING FITTINGS INCLUDING SEARCHLIGHTS AND SPOTLIGHTS AND PARTS THEREOF, NOT ELSEWHERE SPECIFIED OR INCLUDED; ILLUMINATED SIGNS, IL</option>
+                <option value="94052090 LAMPS AND LIGHTING FITTINGS INCLUDING SEARCHLIGHTS AND SPOTLIGHTS AND PARTS THEREOF, NOT ELSEWHERE SPECIFIED OR INCLUDED; ILLUMINATED SIGNS, IL">94052090 LAMPS AND LIGHTING FITTINGS INCLUDING SEARCHLIGHTS AND SPOTLIGHTS AND PARTS THEREOF, NOT ELSEWHERE SPECIFIED OR INCLUDED; ILLUMINATED SIGNS, IL</option>
+                <option value="7031010 ONIONS, SHALLOTS, GARLIC, LEEKS AND OTHERALLIACEOUS VEGETABLES, FRESH OR CHILLED ONIONS AND SHALLOTS ONIONS">7031010 ONIONS, SHALLOTS, GARLIC, LEEKS AND OTHERALLIACEOUS VEGETABLES, FRESH OR CHILLED ONIONS AND SHALLOTS ONIONS</option>
+                <option value="7031011 Rose onion">7031011 Rose onion</option>
+                <option value="7031019 Other">7031019 Other</option>
+                <option value="6012021 BULBS, TUBERS, TUBEROUS ROOTS, CORMS, CROWNS AND RHIZOMES, DORMANT, IN GROWTH OR IN FLOWER; CHICORY PLANTS AND ROOTS OTHER THAN ROOTS OF HE">6012021 BULBS, TUBERS, TUBEROUS ROOTS, CORMS, CROWNS AND RHIZOMES, DORMANT, IN GROWTH OR IN FLOWER; CHICORY PLANTS AND ROOTS OTHER THAN ROOTS OF HE</option>
+                <option value="6012022 BULBS, TUBERS, TUBEROUS ROOTS, CORMS, CROWNS AND RHIZOMES, DORMANT, IN GROWTH OR IN FLOWER; CHICORY PLANTS AND ROOTS OTHER THAN ROOTS OF HE">6012022 BULBS, TUBERS, TUBEROUS ROOTS, CORMS, CROWNS AND RHIZOMES, DORMANT, IN GROWTH OR IN FLOWER; CHICORY PLANTS AND ROOTS OTHER THAN ROOTS OF HE</option>
+                <option value="6012010 Bulbs, tubers, tuberous roots, corms, crowns and rhizomes, in growth or in flower; chicory plants and roots">6012010 Bulbs, tubers, tuberous roots, corms, crowns and rhizomes, in growth or in flower; chicory plants and roots</option>
+            </select>
+        </div>
 
-    <div class="field-label">Search HSN Chapter by Name or Code</div>
-    
-    <div class="select-wrapper">
-      <select name="hsn_sac">
-        <option value="">Select</option>
-        <option value="1006 Rice">1006 Rice</option>
-        <option value="1001 Wheat And Meslin - Durum Wheat">1001 Wheat And Meslin - Durum Wheat</option>
-        <option value="2710 Petroleum Oils And Oils Obtained From Bituminous Minerals, Other Than Crude">2710 Petroleum Oils And Oils Obtained From Bituminous Minerals, Other Than Crude</option>
-        <option value="6901 BRICKS, BLOCKS, TILES AND OTHER CERAMIC GOODS OF SILICEOUS FOSSIL MEALS">6901 BRICKS, BLOCKS, TILES AND OTHER CERAMIC GOODS OF SILICEOUS FOSSIL MEALS</option>
-        <option value="1806 CHOCOLATE AND OTHER FOOD PREPARATIONS CONTAINING COCOA">1806 CHOCOLATE AND OTHER FOOD PREPARATIONS CONTAINING COCOA</option>
-        <option value="8308 CLASPS, FRAMES WITH CLASPS, BUCKLES, BUCKLE-CLASPS, HOOKS, EYELETS AND THE LIKE">8308 CLASPS, FRAMES WITH CLASPS, BUCKLES, BUCKLE-CLASPS, HOOKS, EYELETS AND THE LIKE</option>
-        <option value="8515 ELECTRIC (INCLUDING ELECTRICALLY HEATED GAS) LASER OR OTHER LIGHT OR PHOTO BEAM">8515 ELECTRIC (INCLUDING ELECTRICALLY HEATED GAS) LASER OR OTHER LIGHT OR PHOTO BEAM</option>
-        <option value="8517 TELEPHONE SETS, INCLUDING TELEPHONES FOR CELLULAR NETWORKS OR FOR OTHER WIRELESS NETWORKS">8517 TELEPHONE SETS, INCLUDING TELEPHONES FOR CELLULAR NETWORKS OR FOR OTHER WIRELESS NETWORKS</option>
-        <option value="480100 NEWSPRINT, IN ROLLS OR SHEETS">480100 NEWSPRINT, IN ROLLS OR SHEETS</option>
-        <option value="48042900 HAND-MADE PAPER AND PAPERBOARD">48042900 HAND-MADE PAPER AND PAPERBOARD</option>
-        <option value="100630 Semi-Milled Or Wholly-Milled Rice, Whether Or Not Polished Or Glazed">100630 Semi-Milled Or Wholly-Milled Rice, Whether Or Not Polished Or Glazed</option>
-        <option value="4201 SADDLERY AND HARNESS FOR ANY ANIMAL">4201 SADDLERY AND HARNESS FOR ANY ANIMAL</option>
-        <option value="4202 TRUNKS, SUIT-CASES, VANITY-CASES, EXECUTIVECASES , BRIEF - CASES , SCHOOL SATCHELS , SPECTACLE CASES">4202 TRUNKS, SUIT-CASES, VANITY-CASES, EXECUTIVECASES , BRIEF - CASES , SCHOOL SATCHELS , SPECTACLE CASES</option>
-        <option value="480210 UNCOATED KRAFT PAPER AND PAPERBOARD, IN ROLLS OR SHEETS">480210 UNCOATED KRAFT PAPER AND PAPERBOARD, IN ROLLS OR SHEETS</option>
-        <option value="6404 FOOTWEAR WITH OUTER SOLES OF RUBBER, PLASTICS, LEATHER OR COMPOSITION LEATHER">6404 FOOTWEAR WITH OUTER SOLES OF RUBBER, PLASTICS, LEATHER OR COMPOSITION LEATHER</option>
-        <option value="0811 FRUIT AND NUTS, UNCOOKED OR COOKED">0811 FRUIT AND NUTS, UNCOOKED OR COOKED</option>
-        <option value="7009 GLASS MIRRORS, WHETHER OR NOT FRAMED">7009 GLASS MIRRORS, WHETHER OR NOT FRAMED</option>
-        <option value="85340000 PRINTED CIRCUITS">85340000 PRINTED CIRCUITS</option>
-        <option value="9403330 Wooden furniture of a kind used in offices">9403330 Wooden furniture of a kind used in offices</option>
-        <option value="9403050 Wooden furniture of a kind used in the bed room">9403050 Wooden furniture of a kind used in the bed room</option>
-        <option value="9405 LUMINAIRES AND LIGHTING FITTINGS INCLUDING SEARCHLIGHTS AND SPOTLIGHTS">9405 LUMINAIRES AND LIGHTING FITTINGS INCLUDING SEARCHLIGHTS AND SPOTLIGHTS</option>
-        <option value="7031010 ONIONS, SHALLOTS, GARLIC, LEEKS AND OTHER ALLIACEOUS VEGETABLES">7031010 ONIONS, SHALLOTS, GARLIC, LEEKS AND OTHER ALLIACEOUS VEGETABLES</option>
-        <option value="7031011 Rose onion">7031011 Rose onion</option>
-        <option value="7031019 Other">7031019 Other</option>
-        <option value="6012021 BULBS, TUBERS, TUBEROUS ROOTS, CORMS, CROWNS AND RHIZOMES">6012021 BULBS, TUBERS, TUBEROUS ROOTS, CORMS, CROWNS AND RHIZOMES</option>
-        <option value="6012022 BULBS, TUBERS, TUBEROUS ROOTS, CORMS, CROWNS AND RHIZOMES, DORMANT">6012022 BULBS, TUBERS, TUBEROUS ROOTS, CORMS, CROWNS AND RHIZOMES, DORMANT</option>
-        <option value="6012010 Bulbs, tubers, tuberous roots, corms, crowns and rhizomes, in growth or in flower">6012010 Bulbs, tubers, tuberous roots, corms, crowns and rhizomes, in growth or in flower</option>
-      </select>
+        <input type="hidden" name="commodity_data" id="commodityDataInput">
 
-      <input type="hidden" name="description" value="Commodity">
+        <div id="goodsTableContainer">
+            <h3 class="list-title">List of Goods</h3>
+            <table class="items-table" id="goodsTable">
+                <thead>
+                    <tr>
+                        <th style="width: 5%;">Sl No</th>
+                        <th style="width: 15%;">HSN Code</th>
+                        <th style="width: 70%;">Description of Goods</th>
+                        <th style="width: 10%;">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    </tbody>
+            </table>
+        </div>
 
-      <button type="submit" name="action" value="add" class="btn-add">Add</button>
+        <div class="footer-actions">
+            <a href="#" class="btn-back">BACK</a>
+            <button type="submit" class="btn-save">SAVE & CONTINUE</button>
+        </div>
+
     </div>
-
-    {% if items %}
-    <table class="items-table">
-        <thead>
-            <tr>
-                <th>HSN / Description</th>
-                <th style="width: 80px;">Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for item in items %}
-            <tr>
-                <td>{{ item.hsn_sac }}</td>
-                <td>
-                    <button type="submit" name="action" value="delete" class="btn-delete">Delete</button>
-                    <input type="hidden" name="index" value="{{ forloop.counter0 }}">
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    {% endif %}
-
-    <div class="btn-bar">
-      <a href="{{ nav.apob }}" class="btn btn-secondary">BACK</a>
-      
-      <button type="submit" name="action" value="save_continue" class="btn btn-primary">SAVE & CONTINUE</button>
-    </div>
-  </div>
 </div>
 </form>
+
+<script>
+    // --- JAVASCRIPT LOGIC WITH SESSION STORAGE ---
+    
+    // 1. Storage Key
+    const STORAGE_KEY = 'tempGoodsList';
+    let selectedItems = [];
+
+    // 2. Load Data on Page Load
+    window.onload = function() {
+        // Retrieve from SessionStorage (clears on tab close)
+        const storedData = sessionStorage.getItem(STORAGE_KEY);
+        if (storedData) {
+            selectedItems = JSON.parse(storedData);
+            // Re-render table if data exists
+            if (selectedItems.length > 0) {
+                document.getElementById('goodsTableContainer').style.display = 'block';
+                selectedItems.forEach(item => renderRow(item.code, item.description));
+                updateHiddenInput();
+            }
+        }
+    };
+
+    function addItem() {
+        const select = document.getElementById('hsnSelect');
+        const value = select.value;
+        
+        if (!value) return;
+
+        // Parse Logic
+        const firstSpaceIndex = value.indexOf(' ');
+        let code = "", desc = "";
+
+        if (firstSpaceIndex !== -1) {
+            code = value.substring(0, firstSpaceIndex);
+            desc = value.substring(firstSpaceIndex + 1);
+        } else {
+            code = value;
+            desc = value;
+        }
+
+        // Add to array
+        selectedItems.push({ code: code, description: desc });
+        
+        // Save & Render
+        saveToStorage();
+        renderRow(code, desc);
+        updateHiddenInput();
+
+        // Show table & Reset
+        document.getElementById('goodsTableContainer').style.display = 'block';
+        select.value = "";
+    }
+
+    function renderRow(code, desc) {
+        const tbody = document.querySelector('#goodsTable tbody');
+        const rowCount = tbody.rows.length + 1;
+        
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td class="sl-no">${rowCount}</td>
+            <td>${code}</td>
+            <td>${desc}</td>
+            <td>
+                <button type="button" class="btn-delete" onclick="deleteItem(this, '${code}')">
+                     <i class="fas fa-trash-alt"></i> DELETE
+                </button>
+            </td>
+        `;
+        tbody.appendChild(row);
+    }
+
+    function deleteItem(button, codeToRemove) {
+        // Remove Row
+        const row = button.closest('tr');
+        row.remove();
+        
+        // Remove from Array
+        const index = selectedItems.findIndex(item => item.code === codeToRemove);
+        if (index > -1) {
+            selectedItems.splice(index, 1);
+        }
+        
+        // Save Updates
+        saveToStorage();
+        updateHiddenInput();
+
+        // Re-calculate Serial Numbers
+        const tbody = document.querySelector('#goodsTable tbody');
+        const rows = tbody.querySelectorAll('tr');
+        
+        rows.forEach((row, index) => {
+            row.querySelector('.sl-no').innerText = index + 1;
+        });
+
+        // Hide container if empty
+        if (rows.length === 0) {
+            document.getElementById('goodsTableContainer').style.display = 'none';
+        }
+    }
+
+    // Save to SessionStorage (Persists on Reload, Clears on Tab Close)
+    function saveToStorage() {
+        sessionStorage.setItem(STORAGE_KEY, JSON.stringify(selectedItems));
+    }
+
+    // Update Hidden Input for Form Submission
+    function updateHiddenInput() {
+        document.getElementById('commodityDataInput').value = JSON.stringify(selectedItems);
+    }
+</script>
+
 {% endblock %}

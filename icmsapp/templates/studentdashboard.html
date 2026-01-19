@@ -148,6 +148,28 @@
         }
 
         /* -----------------------------
+           COMING SOON
+        ----------------------------- */
+        .card.coming-soon {
+            opacity: 0.65;
+            pointer-events: none;
+        }
+
+        .card.coming-soon::after {
+            content: "Coming Soon";
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            background: #f59e0b;
+            color: #ffffff;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 6px 12px;
+            border-radius: 999px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        /* -----------------------------
            FOOTER
         ----------------------------- */
         .footer {
@@ -212,38 +234,40 @@
 
     <div class="grid">
 
+        <!-- ACTIVE MODULE -->
         <a href="/goodsandservicetax/">
             <div class="card">
                 <h3>Goods and Service Tax</h3>
             </div>
         </a>
 
+        <!-- COMING SOON MODULES -->
         <a href="#">
-            <div class="card">
+            <div class="card coming-soon">
                 <h3>Income Tax</h3>
             </div>
         </a>
 
         <a href="#">
-            <div class="card">
+            <div class="card coming-soon">
                 <h3>Labour Laws</h3>
             </div>
         </a>
 
         <a href="#">
-            <div class="card">
+            <div class="card coming-soon">
                 <h3>Digital Signature Certificate</h3>
             </div>
         </a>
 
         <a href="#">
-            <div class="card">
+            <div class="card coming-soon">
                 <h3>Ministry of Corporate Affairs</h3>
             </div>
         </a>
 
         <a href="#">
-            <div class="card">
+            <div class="card coming-soon">
                 <h3>MSME</h3>
             </div>
         </a>
