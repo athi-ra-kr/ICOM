@@ -1,0 +1,488 @@
+{% extends 'gov.html' %}
+{% block title %}B2B Invoice - Listing{% endblock %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            line-height: 1.6;
+        }
+        
+        .breadcrumb {
+            background: white;
+            padding: 15px 30px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .breadcrumb a {
+            color: #007bff;
+            text-decoration: none;
+            margin-right: 10px;
+        }
+        
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+        
+        .breadcrumb span {
+            color: #6c757d;
+            margin: 0 5px;
+        }
+        
+        .info-section {
+            background: white;
+            padding: 20px 30px;
+            margin: 20px 30px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .info-item {
+            color: #333;
+            font-size: 14px;
+        }
+        
+        .info-item strong {
+            color: #000;
+        }
+        
+        .main-container {
+            margin: 20px 30px;
+            background: white;
+            border-radius: 5px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .header {
+            background: #20b2aa;
+            color: white;
+            padding: 15px 30px;
+            font-size: 18px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn-help, .btn-refresh {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.3);
+            padding: 8px 15px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        
+        .btn-help:hover, .btn-refresh:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        
+        .content-section {
+            padding: 30px;
+        }
+        
+        .section-title {
+            color: #6c757d;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+        
+        .action-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+        }
+        
+        .btn-add {
+            background: #3b5998;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        
+        .btn-add:hover {
+            background: #2d4373;
+        }
+        
+        .btn-import {
+            background: #3b5998;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        
+        .btn-import:hover {
+            background: #2d4373;
+        }
+        
+        .records-title {
+            color: #333;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        
+        .invoice-table {
+            width: 100%;
+            border-collapse: collapse;
+            border: 1px solid #ddd;
+            margin-bottom: 30px;
+        }
+        
+        .invoice-table th {
+            background: #f8f9fa;
+            color: #333;
+            padding: 15px 12px;
+            text-align: left;
+            font-weight: bold;
+            font-size: 13px;
+            border: 1px solid #ddd;
+        }
+        
+        .invoice-table td {
+            padding: 15px 12px;
+            border: 1px solid #ddd;
+            font-size: 13px;
+            color: #333;
+        }
+        
+        .invoice-table tbody tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        
+        .invoice-table tbody tr:hover {
+            background: #e3f2fd;
+        }
+        
+        .btn-add-invoice {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .btn-add-invoice:hover {
+            background: #218838;
+        }
+        
+        .btn-back {
+            background: #6c757d;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            text-transform: uppercase;
+            float: right;
+            margin-top: 20px;
+        }
+        
+        .btn-back:hover {
+            background: #545b62;
+        }
+        
+        .status-processed {
+            color: #28a745;
+            font-weight: bold;
+        }
+        
+        .status-pending {
+            color: #dc3545;
+            font-weight: bold;
+        }
+        
+        .no-data {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+            font-style: italic;
+        }
+        
+        @media (max-width: 768px) {
+            .main-container, .info-section {
+                margin: 10px;
+            }
+            
+            .content-section {
+                padding: 15px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .invoice-table {
+                font-size: 11px;
+            }
+            
+            .invoice-table th,
+            .invoice-table td {
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="breadcrumb">
+        <a href="#" onclick="goToDashboard()">Dashboard</a>
+        <span>></span>
+        <a href="#" onclick="goToReturns()">Returns</a>
+        <span>></span>
+        <a href="#" onclick="goToGSTR()">GSTR-1/IFF</a>
+        <span>></span>
+        <span>B2B</span>
+        <div style="float: right;">
+            <span>English</span>
+        </div>
+    </div>
+    
+    <div class="info-section">
+        <div class="info-grid">
+            <div class="info-item">
+                <strong>GSTIN:</strong> <span id="display-gstin">32BACXM3031K1Z5</span>
+                <strong>FY:</strong> <span id="display-fy">2021-2022</span>
+            </div>
+            <div class="info-item">
+                <strong>Legal Name:</strong> <span id="display-legal-name">AKHIL MANOJ</span>
+                <strong>Return Period:</strong> <span id="display-return-period">September</span>
+            </div>
+            <div class="info-item">
+                <strong>Trade Name:</strong> <span id="display-trade-name">STC PVT. LTD</span>
+                <strong>Status:</strong> <span id="display-status">Not Filed</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <div class="header">
+            <span>4A, 4B, 6B, 6C - B2B, SEZ, DE Invoices</цю
+            <div class="header-buttons">
+                <button class="btn-help">HELP ⓘ</button>
+                <button class="btn-refresh" onclick="loadSavedInvoices()">REFRESH</button>
+            </div>
+        </div>
+        
+        <div class="content-section">
+            <div class="section pior-title">Recipient wise count</div>
+            
+            <div class="action-buttons">
+                <button class="btn-add" onclick="goToAddInvoice()">ADD RECORD</button>
+                <button class="btn-import">IMPORT EWB DATA</button>
+            </div>
+            
+            <div class="records-title">Record Details</div>
+            
+            <table class="invoice-table" id="invoiceTable">
+                <thead>
+                    <tr>
+                        <th>Recipient Details</th>
+                        <th>Trade/Legal Name</th>
+                        <th>Taxpayer Type</th>
+                        <th>Processed Invoices</th>
+                        <th>Pending/Errored Invoices</th>
+                        <th>Add Invoice</th>
+                    </tr>
+                </thead>
+                <tbody id="invoiceTableBody">
+                    <!-- Populated dynamically -->
+                </tbody>
+            </table>
+            
+            <button class="btn-back" onclick="goBack()">BACK</button>
+            <div style="clear: both;"></div>
+        </div>
+    </div>
+
+    <script>
+        // Store for saved invoices
+        let savedInvoices = JSON.parse(localStorage.getItem('savedInvoices') || '[]');
+
+        // Function to check for duplicate invoices
+        function isDuplicateInvoice(newInvoice) {
+            return savedInvoices.some(invoice => 
+                invoice['recipient-gstin'] === newInvoice['recipient-gstin'] && 
+                invoice['invoice-number'] === newInvoice['invoice-number']
+            );
+        }
+
+        // Function to deduplicate invoices
+        function deduplicateInvoices(invoices) {
+            const uniqueInvoices = [];
+            const seen = new Set();
+
+            invoices.forEach(invoice => {
+                const key = `${invoice['recipient-gstin']}-${invoice['invoice-number']}`;
+                if (!seen.has(key)) {
+                    seen.add(key);
+                    uniqueInvoices.push(invoice);
+                }
+            });
+
+            return uniqueInvoices;
+        }
+
+        // Function to save a new invoice
+        function saveInvoice(invoice) {
+            if (isDuplicateInvoice(invoice)) {
+                alert('Duplicate invoice detected! An invoice with the same GSTIN and invoice number already exists.');
+                return false;
+            }
+            savedInvoices.push(invoice);
+            // Deduplicate before saving to localStorage
+            savedInvoices = dedเผ
+
+            deduplicateInvoices(savedInvoices);
+            localStorage.setItem('savedInvoices', JSON.stringify(savedInvoices));
+            return true;
+        }
+
+        // Function to load saved invoices from localStorage
+        function loadSavedInvoices() {
+            // Load and deduplicate invoices
+            savedInvoices = deduplicateInvoices(JSON.parse(localStorage.getItem('savedInvoices') || '[]'));
+            const tableBody = document.getElementById('invoiceTableBody');
+
+            if (savedInvoices.length === 0) {
+                tableBody.innerHTML = '<tr class="no-data-row"><td colspan="6" class="no-data">No invoices added yet. Click "ADD RECORD" to add your first invoice.</td></tr>';
+                return;
+            }
+
+            // Group invoices by recipient GSTIN
+            const groupedInvoices = {};
+            savedInvoices.forEach(invoice => {
+                const gstin = invoice['recipient-gstin'];
+                if (!groupedInvoices[gstin]) {
+                    groupedInvoices[gstin] = {
+                        recipientName: invoice['recipient-name'],
+                        processed: 0,
+                        pending: 0,
+                        invoices: []
+                    };
+                }
+                groupedInvoices[gstin].invoices.push(invoice);
+                if (invoice.status === 'Processed') {
+                    groupedInvoices[gstin].processed++;
+                } else {
+                    groupedInvoices[gstin].pending++;
+                }
+            });
+
+            // Clear existing rows
+            tableBody.innerHTML = '';
+
+            // Create table rows
+            Object.keys(groupedInvoices).forEach(gstin => {
+                const data = groupedInvoices[gstin];
+                const newRow = document.createElement('tr');
+                newRow.innerHTML = `
+                    <td>${gstin}</td>
+                    <td>${data.recipientName}</td>
+                    <td>Regular taxpayer</td>
+                    <td class="status-processed">${data.processed}</td>
+                    <td class="status-pending">${data.pending}</td>
+                    <td><button class="btn-add-invoice" onclick="addMoreInvoices('${gstin}')" title="Add more invoices">+</button></td>
+                `;
+                tableBody.appendChild(newRow);
+            });
+        }
+
+        // Function to handle adding more invoices for existing recipient
+        function addMoreInvoices(gstin) {
+            window.location.href = '{% url "gstinvoiceform" %}?gstin=' + encodeURIComponent(gstin);
+        }
+
+        // Navigation functions
+        function goToDashboard() {
+            window.location.href = '#';
+        }
+
+        function goToReturns() {
+            window.location.href = '#';
+        }
+
+        function goToGSTR() {
+            window.location.href = '#';
+        }
+
+        function goToAddInvoice() {
+            window.location.href = '{% url "gstinvoiceform" %}';
+        }
+
+        function goBack() {
+            if (confirm('Are you sure you want to go back?')) {
+                window.location.href = '{% url "gstr1_summary1" %}';
+            }
+        }
+
+        // Handle new invoice submission from form (if redirected from gstinvoiceform)
+        function handleNewInvoice() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const newInvoiceData = localStorage.getItem('newInvoice');
+            if (newInvoiceData) {
+                const newInvoice = JSON.parse(newInvoiceData);
+                if (saveInvoice(newInvoice)) {
+                    loadSavedInvoices();
+                    alert('Invoice added successfully!');
+                } else {
+                    alert('Failed to add invoice: Duplicate detected.');
+                }
+                // Clear newInvoice from localStorage to prevent re-adding
+                localStorage.removeItem('newInvoice');
+            }
+        }
+
+        // Initialize and load saved invoices
+        document.addEventListener('DOMContentLoaded', function() {
+            handleNewInvoice();
+            loadSavedInvoices();
+        });
+    </script>
+</body>
+</html>
+{% endblock %}

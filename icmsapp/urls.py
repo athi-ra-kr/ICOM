@@ -90,7 +90,24 @@ urlpatterns = [
     path('gstr3b_return/', views.gstr3b_return, name='gstr3b_return'),
     path('returns/gstr3b/<int:content_id>/', views.gstr3b_return, name='gstr3b_return_with_id'),
     path('returns/gstr3b/filing/', views.file_gstr3b_view, name='file_gstr3b'),
+    path('course2/', views.course_overview2, name='course_overview2'),
+    path('course2/topic/<int:topic_id>/', views.course_topic_detail2, name='course_topic_detail2'),
+    path('gov2/', views.gov2, name='gov2'),
+    path('trn-dashboard1/', views.trn_dashboard1, name='trn_dashboard1'),
+    path('trn-dashboard1/<int:content_id>/', views.trn_dashboard1, name='trn_dashboard1_with_id'),
+    path('NIL_Return_Filinglog1/', views.NIL_Return_Filinglog1, name='NIL_Return_Filinglog1'),
     
+    path('gst_ledger_dashboard1/', views.gst_ledger_dashboard1, name='gst_ledger_dashboard1'),
+
+    path('file-returns1/', views.file_returns1, name='file_returns1'),
+
+    path('returns1/gstr1/', views.gstr1_summary1, name='gstr1_summary1'),
+
+    path('gstr_b2b_invoices/', views.gstr_b2b_invoices, name='gstr_b2b_invoices'),
+
+    path('gstinvoiceform/', views.gstinvoiceform, name='gstinvoiceform'),
+
+    path('invoice_listing/', views.invoice_listing, name='invoice_listing'),
 
     
 ]

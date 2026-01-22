@@ -10,6 +10,7 @@ from django.db.models import Q
 import json
 import re
 from datetime import date, datetime, timedelta
+from .models import CourseTopic2, CourseContent2
 
 from .models import (
     Institution, Student,
@@ -2585,3 +2586,155 @@ def file_gstr3b_view(request):
     return render(request, 'gstr3b_filing.html', context)
 
 
+
+
+def course_overview2(request):
+    topics = list(CourseTopic2.objects.order_by('order'))
+    selected_topic = topics[0] if topics else None
+    content = CourseContent2.objects.filter(topic=selected_topic).first() if selected_topic else None
+
+    previous_topic = None
+    next_topic = None
+
+    if selected_topic:
+        current_index = topics.index(selected_topic)
+        if current_index > 0:
+            previous_topic = topics[current_index - 1]
+        if current_index < len(topics) - 1:
+            next_topic = topics[current_index + 1]
+
+    return render(request, 'course_overview2.html', {
+        'topics': topics,
+        'selected_topic': selected_topic,
+        'content': content,
+        'previous_topic': previous_topic,
+        'next_topic': next_topic,
+    })
+
+
+def course_topic_detail2(request, topic_id):
+    topics = list(CourseTopic2.objects.order_by('order'))
+    selected_topic = get_object_or_404(CourseTopic2, pk=topic_id)
+    content = CourseContent2.objects.filter(topic=selected_topic).first()
+
+    previous_topic = None
+    next_topic = None
+
+    if selected_topic in topics:
+        current_index = topics.index(selected_topic)
+        if current_index > 0:
+            previous_topic = topics[current_index - 1]
+        if current_index < len(topics) - 1:
+            next_topic = topics[current_index + 1]
+
+    return render(request, 'course_overview2.html', {
+        'topics': topics,
+        'selected_topic': selected_topic,
+        'content': content,
+        'previous_topic': previous_topic,
+        'next_topic': next_topic,
+    })
+
+
+def gov2(request):
+    topic_id = request.GET.get('topic_id')
+    # Render or process task logic here if needed
+    return render(request, 'gov2.html') 
+
+
+def NIL_Return_Filinglog1(request, content_id=None):
+
+    USERS = {
+        "KKR007": {
+            "password": "Icom@123",
+            "company": "KKR Pvt. Ltd.",
+            "month": "October 2023",
+        },
+        "JHN2255": {
+            "password": "Johnshonda@2255",
+            "company": "Johns Honda",
+            "month": "February 2023",
+        },
+        "Lghome": {
+            "password": "Lgkar@123",
+            "company": "LG Home Appliances",
+            "month": "August 2024",
+        },
+        "VENUSDIGI456": {
+            "password": "Wd@135",
+            "company": "Venus Digital Arcade",
+            "month": "July 2022",
+        },
+        "PRAGATHACOM": {
+            "password": "Pragatha@2018",
+            "company": "Pragatha Group",
+            "month": "December 2022",
+        }
+    }
+
+    CORRECT_CAPTCHA = "519741"   # dummy captcha
+
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        captcha = request.POST.get('captcha')
+
+        if (
+            username in USERS and
+            USERS[username]["password"] == password and
+            captcha.lower() == CORRECT_CAPTCHA.lower()
+        ):
+            # Save session
+            request.session['trn_user'] = username
+            request.session['company'] = USERS[username]['company']
+            request.session['month'] = USERS[username]['month']
+
+            # 🔁 REDIRECT LOGIC
+            if content_id:
+                return redirect('trn_dashboard1_with_id', content_id=content_id)
+            else:
+                return redirect('trn_dashboard1')
+
+        messages.error(request, "Invalid User ID / Password / Captcha")
+
+    return render(request, 'NIL_Return_Filinglog1.html')
+
+
+
+def trn_dashboard1(request):
+    return render(request, 'trn_dashboard1.html') 
+
+def gst_ledger_dashboard1(request):
+    return render(request, 'gst_ledger_dashboard1.html') 
+
+
+def file_returns1(request):
+    return render(request, 'file_returns1.html')
+
+
+
+def gstr1_summary1(request):
+    fy = request.GET.get('fy', '')
+    quarter = request.GET.get('quarter', '')
+    period = request.GET.get('period', '')
+
+    context = {
+        'financial_year': fy,
+        'quarter': quarter,
+        'period': period,
+    }
+    return render(request, 'gstr1_summary1.html', context)
+
+
+
+def gstr_b2b_invoices(request):
+    return render(request, 'gstr_b2b_invoices.html')
+
+
+
+def gstinvoiceform(request):
+    return render(request, 'gstinvoiceform.html')
+
+
+def invoice_listing(request):
+    return render(request, 'invoice-listing.html')

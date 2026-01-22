@@ -1,0 +1,142 @@
+{% extends 'gov.html' %}
+{% load static %}
+
+{% block title %}TRN Login{% endblock %}
+
+{% block content %}
+<style>
+  body {
+    background-color: #e5eaee;
+  }
+
+  .container {
+    max-width: 480px;
+    margin: 80px auto;
+    background-color: #ffffff;
+    padding: 30px 35px;
+    border-radius: 6px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.15);
+  }
+
+  h2 {
+    margin-bottom: 20px;
+    font-size: 22px;
+    font-weight: 600;
+  }
+
+  label {
+    display: block;
+    margin: 15px 0 6px;
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  input[type="text"],
+  input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #2e7d32;
+    border-radius: 4px;
+    font-size: 14px;
+  }
+
+  /* CAPTCHA SECTION */
+  .captcha-wrapper {
+    margin-top: 10px;
+  }
+
+  .captcha-wrapper img {
+    width: 150px;      /* FIXED WIDTH */
+    height: 45px;      /* FIXED HEIGHT */
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    display: block;
+    margin-bottom: 8px;
+    background-color: #f5f5f5;
+  }
+
+  .login-btn {
+    width: 100%;
+    padding: 12px;
+    background-color: #1f3b8d;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 25px;
+  }
+
+  .login-btn:hover {
+    background-color: #182e70;
+  }
+
+  .links {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 18px;
+    font-size: 13px;
+  }
+
+  .links a {
+    color: #1f3b8d;
+    text-decoration: none;
+  }
+
+  .first-time {
+    margin-top: 18px;
+    font-size: 13px;
+    background: #f4f7fb;
+    padding: 10px;
+    border-radius: 4px;
+  }
+
+  .first-time b {
+    color: #000;
+  }
+
+  .first-time a {
+    color: #1f3b8d;
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .required {
+    color: red;
+  }
+</style>
+
+<div class="container">
+  <h2>Login</h2>
+
+  <form method="post">
+    {% csrf_token %}
+
+    <label>Username <span class="required">*</span></label>
+    <input type="text" name="username" placeholder="Enter Username" required>
+
+    <label>Password <span class="required">*</span></label>
+    <input type="password" name="password" placeholder="Enter Password" required>
+
+    <label>Type the characters you see in the image below <span class="required">*</span></label>
+
+    <!-- CAPTCHA IMAGE -->
+    <div class="captcha-wrapper">
+      <img src="{% static 'media/dummy-captcha.png' %}" alt="CAPTCHA Image">
+      <input type="text" name="captcha" placeholder="Enter CAPTCHA" required>
+    </div>
+
+    <button class="login-btn" type="submit">LOGIN</button>
+
+    <div class="links">
+      <a href="#">Forgot Username?</a>
+      <a href="#">Forgot Password?</a>
+    </div>
+
+    <div class="first-time">
+      🛈 <b>First time login:</b> If you are logging in for the first time,
+      <a href="#">click here</a> to login.
+    </div>
+  </form>
+</div>
+{% endblock %}

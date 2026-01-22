@@ -1,0 +1,323 @@
+{% extends 'studentdashboard.html' %}
+{% block title %}E-Filing of GSTR1{% endblock %}
+
+{% block content %}
+<style>
+/* --- Layout (From no1) --- */
+body { background-color: #f7f9fc; margin: 0; padding: 0; }
+.container {
+    display: flex;
+    flex-direction: row;
+    min-height: 100vh;
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+/* --- Sidebar (From no1) --- */
+.sidebar {
+    width: 320px;
+    background: #ffffff;
+    border-right: 1px solid #e0e0e0;
+    padding: 20px;
+    box-sizing: border-box;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: #c7d2fe #f1f5f9;
+}
+.sidebar::-webkit-scrollbar { width: 6px; }
+.sidebar::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 8px; }
+.sidebar::-webkit-scrollbar-thumb { background: #c7d2fe; border-radius: 8px; }
+.sidebar::-webkit-scrollbar-thumb:hover { background: #93c5fd; }
+
+/* --- Sidebar UI (From no1) --- */
+.nav-bar { display: flex; margin-bottom: 15px; gap: 10px; flex-wrap: wrap; }
+.nav-bar a {
+    font-size: 14px; text-decoration: none; color: #2563eb;
+    font-weight: 600;
+}
+.subheading {
+    margin: 8px 0 12px;
+    font-size: 13px;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+}
+
+.course-topic {
+    background: #f4fdf7;
+    border-radius: 12px;
+    padding: 12px 18px;
+    margin-bottom: 10px;
+    display: flex;
+    flex-direction: column; 
+    justify-content: center;
+    align-items: flex-start;
+    text-decoration: none;
+    color: #0f172a;
+    font-weight: 500;
+    border: 2px solid transparent;
+    transition: background .2s, border-color .2s, transform .06s;
+}
+.course-topic:hover { background: #eef3ff; }
+.course-topic:active { transform: scale(.995); }
+.course-topic.active {
+    background: #eaf2ff;
+    border-color: #2563eb;
+}
+.topic-meta {
+    font-size: 12px;
+    color: #64748b;
+    margin-top: 4px;
+}
+
+/* --- Content Area (From no1) --- */
+.content-area {
+    flex: 1;
+    padding: 20px 40px;
+    background-color: #ffffff;
+    overflow-y: auto;
+    border-radius: 20px 0 0 20px;
+}
+
+.pdf-link {
+    display: inline-block;
+    padding: 10px 14px;
+    background: #eaf6ff;
+    border-radius: 10px;
+    color: #2563eb;
+    text-decoration: none;
+    margin-top: 20px;
+    font-weight: 500;
+}
+
+/* --- Video Iframe (From no1) --- */
+.video-frame iframe {
+    width: 100%;
+    height: 400px;
+    border-radius: 12px;
+    margin-top: 20px;
+    border: none;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+/* --- Task Box (From no1 + Table styles from no2) --- */
+.task-info {
+    background: #f9f9f9;
+    padding: 20px;
+    border-radius: 12px;
+    margin-top: 20px;
+    font-size: 16px;
+    white-space: pre-wrap;
+    overflow-x: auto;
+}
+/* Table styles specific to Course 2 data */
+.task-info table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+}
+.task-info th, .task-info td {
+    border: 1px solid #e2e8f0;
+    padding: 12px;
+    text-align: left;
+    font-size: 14px;
+}
+.task-info th {
+    background-color: #f1f5f9;
+    color: #334155;
+    font-weight: 600;
+}
+
+/* --- Buttons (From no1) --- */
+.task-buttons {
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+.do-btn, .nav-btn {
+    background: #dbeafe;
+    color: #1d4ed8;
+    padding: 10px 16px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    display: inline-block;
+}
+.do-btn:hover, .nav-btn:hover { background: #bfdbfe; }
+.redo-btn {
+    background: #fef3c7;
+    color: #b45309;
+    padding: 10px 16px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 500;
+    cursor: pointer;
+}
+.redo-btn:hover { background: #fde68a; }
+.done-label { font-weight: 600; color: #16a34a; font-size: 15px; }
+
+/* Mobile */
+@media (max-width: 768px) {
+    .container { flex-direction: column; }
+    .sidebar {
+        width: 100%;
+        height: auto;
+        max-height: 45vh;
+        position: relative;
+        border-bottom: 1px solid #e0e0e0;
+    }
+    .content-area {
+        border-radius: 0 0 20px 20px;
+        padding: 16px 20px;
+    }
+}
+</style>
+
+<div class="container">
+
+    <div class="sidebar">
+        <div class="nav-bar">
+            <a href="{% url 'studentdashboard' %}">🏚️ Home</a>
+            <a href="{% url 'course_overview2' %}">⬅️ Back</a>
+        </div>
+
+        <h2>E-Filing of GSTR1</h2>
+        <div class="subheading">Topics</div>
+
+        {% for topic in topics %}
+            <a href="{% url 'course_topic_detail2' topic.id %}"
+               class="course-topic {% if topic.id == selected_topic.id %}active{% endif %}">
+                <span>{{ topic.order }}. {{ topic.title }}</span>
+                <span class="topic-meta">{{ topic.topic_type }}</span>
+            </a>
+        {% endfor %}
+    </div>
+
+    <div class="content-area">
+        {% if selected_topic %}
+            <h1>{{ selected_topic.title }}</h1>
+            <h3>{{ selected_topic.topic_type }}</h3>
+
+            {% if content.pdf_file %}
+                <a href="{{ content.pdf_file.url }}" class="pdf-link" target="_blank">
+                    📄 {{ content.pdf_filename }}
+                </a>
+                <div style="margin-top: 15px; border-radius: 12px; overflow: hidden; border: 1px solid #e2e8f0;">
+                    <embed src="{{ content.pdf_file.url }}" width="100%" height="500px" type="application/pdf">
+                </div>
+            {% endif %}
+
+            {% if content.video_url %}
+                <div class="video-frame">
+                    <iframe 
+                        src="{{ content.get_embed_url }}"
+                        title="YouTube video player"
+                        frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        referrerpolicy="strict-origin-when-cross-origin"
+                        allowfullscreen>
+                    </iframe>
+                </div>
+            {% endif %}
+
+            {% if content.task_info %}
+                <div class="task-info">
+                    <div id="taskContent"></div>
+                    <div class="task-buttons" id="taskButtons"></div>
+                </div>
+            {% endif %}
+
+        {% else %}
+            <p style="color: #64748b; margin-top: 20px;">Please select a topic from the sidebar.</p>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const topicId = '{{ selected_topic.id }}';
+    // Keeping unique key for Course 2
+    const taskKey = 'task_completed_course2_' + topicId; 
+    const taskButtons = document.getElementById('taskButtons');
+    const taskContent = document.getElementById('taskContent');
+    // Using gov2 url
+    const govUrl = "{% url 'gov2' %}?topic_id=" + topicId; 
+    const rawData = `{{ content.task_info|escapejs }}`;
+
+    // 1. Logic to render the Tab-Separated Table
+    function renderTaskTable(data) {
+        if (!data) return;
+        const lines = data.trim().split('\n').filter(Boolean);
+        
+        // If not tabular data, just show text
+        if (lines.length < 2 || !lines[0].includes('\t')) {
+            taskContent.innerHTML = data; 
+            return;
+        }
+
+        const table = document.createElement('table');
+        lines.forEach((line, index) => {
+            const row = document.createElement('tr');
+            const cells = line.split('\t');
+            cells.forEach(cell => {
+                const cellEl = document.createElement(index === 0 ? 'th' : 'td');
+                cellEl.textContent = cell.trim();
+                row.appendChild(cellEl);
+            });
+            table.appendChild(row);
+        });
+
+        taskContent.innerHTML = '';
+        taskContent.appendChild(table);
+    }
+
+    // 2. Logic to render Do/Redo Buttons (Styled like no1)
+    function renderButtons() {
+        if (!taskButtons) return;
+        taskButtons.innerHTML = '';
+        const state = localStorage.getItem(taskKey);
+
+        if (state === 'done' || state === 'redo') {
+            const redoBtn = document.createElement('a');
+            redoBtn.href = govUrl;
+            redoBtn.className = 'redo-btn'; // no1 style
+            redoBtn.textContent = '🔄 Redo Task';
+            redoBtn.target = '_blank';
+            redoBtn.onclick = () => localStorage.setItem(taskKey, 'redo');
+
+            const doneLabel = document.createElement('span');
+            doneLabel.className = 'done-label'; // no1 style
+            doneLabel.textContent = '✅ Task Completed';
+
+            taskButtons.appendChild(redoBtn);
+            taskButtons.appendChild(doneLabel);
+        } else {
+            const doBtn = document.createElement('a');
+            doBtn.href = govUrl;
+            doBtn.className = 'do-btn'; // no1 style
+            doBtn.textContent = 'Do Task';
+            doBtn.target = '_blank';
+            doBtn.onclick = () => localStorage.setItem(taskKey, 'done');
+
+            taskButtons.appendChild(doBtn);
+        }
+    }
+
+    renderTaskTable(rawData);
+    renderButtons();
+});
+</script>
+
+{% endblock %}

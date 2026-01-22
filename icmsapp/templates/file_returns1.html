@@ -1,0 +1,443 @@
+{% extends 'gov.html' %}
+
+{% block title %}File Returns - GST Portal{% endblock %}
+
+{% block content %}
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f5f5f5;
+    }
+
+    .header {
+        background: #2c3e50;
+        color: white;
+        padding: 12px 24px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 14px;
+    }
+
+    .breadcrumb a {
+        color: #3498db;
+        text-decoration: none;
+    }
+
+    .lang-toggle {
+        color: white;
+        font-weight: 500;
+    }
+
+    .main-content {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 30px 20px;
+    }
+
+    .page-title {
+        font-size: 28px;
+        font-weight: 600;
+        margin-bottom: 30px;
+        color: #2c3e50;
+    }
+
+    .info-banner {
+        background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+        color: #0d47a1;
+        padding: 16px 24px;
+        border-radius: 8px;
+        margin-bottom: 30px;
+        font-size: 14px;
+        border-left: 4px solid #2196f3;
+    }
+
+    .form-section {
+        background: white;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        margin-bottom: 20px;
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr auto;
+        gap: 20px;
+        align-items: end;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 8px;
+        font-size: 14px;
+    }
+
+    .required-asterisk {
+        color: #e74c3c;
+    }
+
+    .form-select {
+        padding: 12px 16px;
+        border: 2px solid #ddd;
+        border-radius: 6px;
+        font-size: 14px;
+        background-color: white;
+    }
+
+    .form-select:focus {
+        border-color: #3498db;
+        outline: none;
+    }
+
+    .search-btn {
+        padding: 12px 30px;
+        background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+    }
+
+    .info-message {
+        background: #d1ecf1;
+        color: #0c5460;
+        padding: 16px 24px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        font-size: 14px;
+        border-left: 4px solid #17a2b8;
+        display: none;
+        position: relative;
+    }
+
+    .info-message::before {
+        content: "ℹ️";
+        margin-right: 8px;
+    }
+
+    .close-btn {
+        position: absolute;
+        right: 16px;
+        top: 16px;
+        background: none;
+        border: none;
+        font-size: 18px;
+        cursor: pointer;
+        color: #0c5460;
+    }
+
+    .returns-container {
+        display: none;
+    }
+
+    .returns-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+        margin-top: 20px;
+    }
+
+    .return-card {
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        border: 1px solid #e0e0e0;
+        min-height: 200px;
+    }
+
+    .return-header {
+        background: #2c5282;
+        color: white;
+        padding: 16px 20px;
+        text-align: center;
+        min-height: 80px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .return-title {
+        font-size: 14px;
+        font-weight: 500;
+        margin-bottom: 4px;
+        line-height: 1.3;
+    }
+
+    .return-code {
+        font-size: 16px;
+        font-weight: 700;
+        letter-spacing: 1px;
+    }
+
+    .return-body {
+        padding: 16px 20px;
+        text-align: center;
+    }
+
+    .due-date {
+        font-size: 13px;
+        color: #17a2b8;
+        margin-bottom: 16px;
+        font-weight: 600;
+    }
+
+    .return-actions {
+        display: flex;
+        gap: 8px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .btn-action {
+        padding: 8px 16px;
+        font-size: 12px;
+        font-weight: 600;
+        border-radius: 4px;
+        border: none;
+        cursor: pointer;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        min-width: 100px;
+        text-decoration: none;
+        display: inline-block;
+        text-align: center;
+    }
+
+    .btn-primary-action {
+        background: #2c5282;
+        color: white;
+    }
+
+    .btn-secondary-action {
+        background: #718096;
+        color: white;
+    }
+
+    .btn-action:hover {
+        opacity: 0.9;
+    }
+
+    .mandatory-note {
+        margin-top: 30px;
+        font-size: 13px;
+        color: #7f8c8d;
+        text-align: center;
+    }
+
+    .return-card.quarterly .return-header {
+        background: #2c5282;
+    }
+
+    .return-card.quarterly .return-title {
+        font-size: 13px;
+    }
+
+    @media (max-width: 768px) {
+        .form-row {
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+
+        .returns-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 1200px) {
+        .returns-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+</style>
+
+<div class="header">
+    <div class="breadcrumb">
+        <a href="{% url 'file_returns' %}">Dashboard</a> | Returns
+    </div>
+    <div class="lang-toggle">🌐 English</div>
+</div>
+
+<div class="main-content">
+    <h1 class="page-title">File Returns</h1>
+
+    <div class="info-banner">
+        📋 GSTR-2A can now be downloaded in Excel/CSV format. Nil return for GSTR-1, GSTR-3B, and GSTR-2B can now be filed through SMS.
+    </div>
+
+    <div class="form-section">
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">Financial Year<span class="required-asterisk">*</span></label>
+                <select class="form-select" id="financialYear">
+                    <option value="">Select Financial Year</option>
+                    <option value="2021-2022">2021-2022</option>
+                    <option value="2022-2023">2022-2023</option>
+                    <option value="2023-2024">2023-2024</option>
+                    <option value="2024-2025">2024-2025</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Quarter<span class="required-asterisk">*</span></label>
+                <select class="form-select" id="quarter">
+                    <option value="">Select Quarter</option>
+                    <option value="q1">Quarter1 (Apr-Jun)</option>
+                    <option value="q2">Quarter2 (Jul-Sep)</option>
+                    <option value="q3">Quarter3 (Oct-Dec)</option>
+                    <option value="q4">Quarter4 (Jan-Mar)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Period<span class="required-asterisk">*</span></label>
+                <select class="form-select" id="period">
+                    <option value="">Select Period</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <button class="search-btn" onclick="searchReturns()">SEARCH</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="info-message" id="monthlyInfo">
+        You have selected to file the return on monthly frequency. GSTR-1 and GSTR-3B shall be required to be filed for each month of the quarter.
+        <button class="close-btn" onclick="closeInfo()">×</button>
+    </div>
+
+    <div class="returns-container" id="returnsContainer">
+        <div class="returns-grid">
+            <!-- GSTR1 -->
+            <div class="return-card">
+                <div class="return-header" id="gstr1">
+                    <div class="return-title">Details of outward supplies of goods or services</div>
+                    <div class="return-code">GSTR1</div>
+                </div>
+                <div class="return-body">
+                    <div class="due-date">Due Date - 11/10/2021</div>
+                    <div class="return-actions">
+                        <a href="/returns1/gstr1/" class="btn-action btn-primary-action">PREPARE ONLINE</a>
+                        <a href="#gstr1" class="btn-action btn-secondary-action">PREPARE OFFLINE</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- GSTR2A -->
+            <div class="return-card">
+                <div class="return-header" id="gstr2a">
+                    <div class="return-title">Auto Drafted details (For view only)</div>
+                    <div class="return-code">GSTR2A</div>
+                </div>
+                <div class="return-body">
+                    <div class="return-actions">
+                        <a href="#gstr2a" class="btn-action btn-primary-action">VIEW</a>
+                        <a href="#gstr2a" class="btn-action btn-secondary-action">DOWNLOAD</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- GSTR2B -->
+            <div class="return-card">
+                <div class="return-header" id="gstr2b">
+                    <div class="return-title">Auto - drafted ITC Statement</div>
+                    <div class="return-code">GSTR2B</div>
+                </div>
+                <div class="return-body">
+                    <div class="return-actions">
+                        <a href="#gstr2b" class="btn-action btn-primary-action">VIEW</a>
+                        <a href="#gstr2b" class="btn-action btn-secondary-action">DOWNLOAD</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- GSTR-2B Quarterly -->
+            <div class="return-card quarterly">
+                <div class="return-header" id="gstr2bq">
+                    <div class="return-title">Auto - drafted ITC Statement for the quarter</div>
+                    <div class="return-code">GSTR-2B</div>
+                </div>
+                <div class="return-body">
+                    <div class="return-actions">
+                        <a href="#gstr2bq" class="btn-action btn-primary-action">VIEW</a>
+                        <a href="#gstr2bq" class="btn-action btn-secondary-action">DOWNLOAD</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- GSTR3B -->
+            <div class="return-card">
+                <div class="return-header" id="gstr3b">
+                    <div class="return-title">Monthly Return</div>
+                    <div class="return-code">GSTR3B</div>
+                </div>
+                <div class="return-body">
+                    <div class="due-date">Due Date - 20/10/2021</div>
+                    <div class="return-actions">
+                        <a href="/gstr_3b/" class="btn-action btn-primary-action">PREPARE ONLINE</a>
+                        <a href="#gstr3b" class="btn-action btn-secondary-action">PREPARE OFFLINE</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mandatory-note">
+        <span class="required-asterisk">*</span> indicates mandatory fields
+    </div>
+</div>
+
+<script>
+    const quarterPeriods = {
+        'q1': ['April', 'May', 'June'],
+        'q2': ['July', 'August', 'September'],
+        'q3': ['October', 'November', 'December'],
+        'q4': ['January', 'February', 'March']
+    };
+
+    document.getElementById('quarter').addEventListener('change', function () {
+        const quarter = this.value;
+        const periodSelect = document.getElementById('period');
+        periodSelect.innerHTML = '<option value="">Select Period</option>';
+
+        if (quarterPeriods[quarter]) {
+            quarterPeriods[quarter].forEach(month => {
+                const option = document.createElement('option');
+                option.value = month.toLowerCase();
+                option.textContent = month;
+                periodSelect.appendChild(option);
+            });
+        }
+    });
+
+    function searchReturns() {
+        const year = document.getElementById('financialYear').value;
+        const quarter = document.getElementById('quarter').value;
+        const period = document.getElementById('period').value;
+
+        if (year && quarter && period) {
+            document.getElementById('monthlyInfo').style.display = 'block';
+            document.getElementById('returnsContainer').style.display = 'block';
+            document.getElementById('returnsContainer').scrollIntoView({ behavior: 'smooth' });
+        } else {
+            alert("Please select all mandatory fields.");
+        }
+    }
+
+    function closeInfo() {
+        document.getElementById('monthlyInfo').style.display = 'none';
+    }
+</script>
+{% endblock %}

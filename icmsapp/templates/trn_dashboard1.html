@@ -1,0 +1,282 @@
+{% extends 'gov.html' %}
+
+{% block title %}TRN Dashboard{% endblock %}
+
+{% block content %}
+<style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #e5e9ec;
+        }
+
+        .header {
+            background-color: #f8f9fa;
+            padding: 10px 20px;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header .breadcrumb {
+            color: #007bff;
+            font-size: 14px;
+        }
+
+        .header .language {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 30px auto;
+            background: #ffffff;
+            border-radius: 4px;
+            display: flex;
+            min-height: 500px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .main-content {
+            flex: 3;
+            padding: 40px 50px;
+        }
+
+        .welcome-title {
+            font-size: 20px;
+            font-weight: normal;
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+        }
+
+        .navigation-info {
+            border: 1px solid #000;
+            padding: 15px;
+            font-size: 14px;
+            text-align: center;
+            width: 100%;
+            max-width: 650px;
+            margin: 0 auto 40px;
+            background-color: #fff;
+        }
+
+        .button-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        .nav-button {
+            background-color: #2c4e8d;
+            color: white;
+            padding: 15px 20px;
+            text-align: center;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            display: inline-block;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-button:hover {
+            background-color: #1e3a6f;
+        }
+
+        .btn-return {
+            min-width: 220px;
+        }
+
+        .btn-challan {
+            min-width: 220px;
+        }
+
+        .btn-notice {
+            min-width: 300px;
+        }
+
+        .annual-return-section {
+            text-align: left;
+            margin-bottom: 40px;
+        }
+
+        .btn-annual {
+            min-width: 180px;
+        }
+
+        .continue-section {
+            text-align: center;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .continue-text {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .btn-continue {
+            min-width: 250px;
+            padding: 12px 30px;
+        }
+
+        .sidebar {
+            flex: 1;
+            border-left: 1px solid #ccc;
+            padding: 30px 25px;
+            background-color: #fafafa;
+        }
+
+        .profile-section {
+            margin-bottom: 25px;
+        }
+
+        .profile-link {
+            font-size: 14px;
+            color: #1a73e8;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .profile-link:hover {
+            text-decoration: underline;
+        }
+
+        .divider {
+            border: none;
+            border-top: 1px solid #ccc;
+            margin: 25px 0;
+        }
+
+        .quick-links-title {
+            font-size: 18px;
+            font-weight: normal;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .quick-links-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .quick-links-list li {
+            margin-bottom: 12px;
+        }
+
+        .quick-links-list a {
+            font-size: 14px;
+            text-decoration: none;
+            color: #1a73e8;
+        }
+
+        .quick-links-list a:hover {
+            text-decoration: underline;
+        }
+
+        .arrow {
+            font-size: 16px;
+            margin-left: 5px;
+        }
+    </style>
+    <!-- Header -->
+    <div class="header">
+        <div class="breadcrumb">Dashboard</div>
+        <div class="language">🌐 English</div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Main Content Area -->
+        <div class="main-content">
+            <!-- Welcome Title -->
+            <h2 class="welcome-title">
+                Welcome GK Infotech to GST Common Portal
+            </h2>
+
+            <!-- Navigation Info Box -->
+            <div class="navigation-info">
+                You can navigate to your chosen page through navigation panel given below
+            </div>
+
+            <!-- Main Navigation Buttons -->
+            <div class="button-grid">
+                <a href="#" class="nav-button btn-return">
+                    RETURN DASHBOARD ❯
+                </a>
+                <a href="#" class="nav-button btn-challan">
+                    CREATE CHALLAN ❯
+                </a>
+                <a href="#" class="nav-button btn-notice">
+                    VIEW NOTICE(S) AND ORDER(S) ❯
+                </a>
+            </div>
+
+         <!-- Annual Return Section -->
+<div class="annual-return-section" style="margin-left: 10px; width: fit-content;">
+    <a href="#" class="nav-button btn-annual" style="font-size: 14px; padding: 6px 10px 6px 16px; width: auto; display: inline-flex; align-items: center; text-decoration: none;">
+        ANNUAL RETURN ❯
+    </a>
+</div>
+
+
+
+            <!-- Continue to Dashboard Section -->
+            <div class="continue-section">
+                <span class="continue-text">Else Go to</span>
+                <span style="margin: 0 5px;">≫</span>
+                <a href="/gst_ledger_dashboard1/" class="nav-button btn-continue">
+                    CONTINUE TO DASHBOARD ❯
+                </a>
+            </div>
+        </div>
+
+        <!-- Right Sidebar -->
+        <div class="sidebar">
+            <!-- View Profile -->
+            <div class="profile-section">
+                <a href="#" class="profile-link">
+                    View Profile <span class="arrow">⇉</span>
+                </a>
+            </div>
+
+            <hr class="divider">
+
+            <!-- Quick Links -->
+            <div>
+                <h3 class="quick-links-title">Quick Links</h3>
+                <ul class="quick-links-list">
+                    <li>
+                        <a href="#">Check Cash Balance</a>
+                    </li>
+                    <li>
+                        <a href="#">Liability ledger</a>
+                    </li>
+                    <li>
+                        <a href="#">Credit ledger</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+{% endblock %}

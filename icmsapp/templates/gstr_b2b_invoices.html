@@ -1,0 +1,115 @@
+{% extends 'gov.html' %}
+
+{% block title %}TRN Login{% endblock %}
+
+{% block content %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TRN Login</title>
+</head>
+<body>
+<div style="background-color: #f5f5f5; padding: 20px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+
+    <!-- Breadcrumb Navigation -->
+    <div style="background-color: #ffffff; padding: 12px 20px; margin-bottom: 20px; border-radius: 4px; border: 1px solid #dcdcdc; display: flex; justify-content: space-between; align-items: center;">
+        <div style="font-size: 14px; color: #666;">
+            <a href="#" style="color: #337ab7; text-decoration: none;">Dashboard</a> &gt;
+            <a href="#" style="color: #337ab7; text-decoration: none;">Returns</a> &gt;
+            <a href="#" style="color: #337ab7; text-decoration: none;">GSTR-1/IFF</a> &gt;
+            <span style="color: #333;">B2B</span>
+        </div>
+        <div style="font-size: 14px; color: #333;">
+            🌐 English
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div style="background-color: #ffffff; padding: 20px; border-radius: 4px; border: 1px solid #dcdcdc;">
+
+        <!-- Taxpayer Info -->
+        <div class="grid-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 30px; font-size: 14px; line-height: 1.6; margin-bottom: 20px;">
+            <div>
+                <div><strong>GSTIN</strong>: 32BACXM3031K1Z5</div>
+                <div><strong>FY</strong>: 2023-2024</div>
+            </div>
+            <div>
+                <div><strong>Legal Name</strong>: AKHIL MANOJ</div>
+                <div><strong>Return Period</strong>: September</div>
+            </div>
+            <div>
+                <div><strong>Trade Name</strong>: STC PVT. LTD</div>
+                <div><strong>Status</strong>: Not Filed</div>
+            </div>
+        </div>
+
+        <!-- Section Title -->
+        <div style="background-color: #17a2b8; color: #ffffff; padding: 12px 16px; font-weight: bold; font-size: 16px; display: flex; justify-content: space-between; align-items: center; border-radius: 4px 4px 0 0;">
+            <span>4A, 4B, 6B, 6C - B2B, SEZ, DE Invoices</span>
+            <div>
+                <button style="background: rgba(255,255,255,0.2); border: none; color: white; padding: 4px 8px; font-size: 12px; cursor: pointer; border-radius: 3px;">HELP ⓘ</button>
+                <button style="background: rgba(255,255,255,0.2); border: none; color: white; padding: 4px 8px; font-size: 12px; cursor: pointer; margin-left: 6px; border-radius: 3px;">↻</button>
+            </div>
+        </div>
+
+        <!-- Subheader -->
+        <div style="padding: 10px 16px; font-size: 14px; color: #31708f; background-color: #f9f9f9; border-bottom: 2px solid #17a2b8; font-weight: 500;">
+            Recipient wise count
+        </div>
+
+        <!-- Empty Invoice Message -->
+        <div style="background-color: #d9edf7; color: #31708f; padding: 20px; font-size: 14px; border: 1px solid #bce8f1; border-top: none;">
+            There are no invoices to be displayed.
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="button-container" style="display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+            <a href="/returns1/gstr1/" style="text-decoration: none;">
+                <button style="padding: 10px 20px; border: 1px solid #ccc; background-color: #ffffff; color: #333; font-size: 14px; cursor: pointer; border-radius: 4px;">BACK</button>
+            </a>
+
+            <a href="/gstinvoiceform/" style="text-decoration: none;">
+                <button style="padding: 10px 20px; background-color: #337ab7; color: white; border: none; font-size: 14px; cursor: pointer; border-radius: 4px;">ADD RECORD</button>
+            </a>
+
+            <a href="#import-ewb" style="text-decoration: none;">
+                <button style="padding: 10px 20px; background-color: #337ab7; color: white; border: none; font-size: 14px; cursor: pointer; border-radius: 4px;">IMPORT EWB DATA</button>
+            </a>
+        </div>
+
+    </div>
+</div>
+
+<style>
+/* Hover and focus styles */
+button:hover {
+    opacity: 0.9;
+    transition: opacity 0.2s ease;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Responsive Styling */
+@media (max-width: 768px) {
+    .grid-container {
+        grid-template-columns: 1fr !important;
+        gap: 15px !important;
+    }
+
+    .button-container {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .button-container a {
+        width: 100%;
+    }
+
+    .button-container button {
+        width: 100%;
+    }
+}
+</style>
+{% endblock %}

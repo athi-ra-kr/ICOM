@@ -1,0 +1,805 @@
+{% extends 'gov.html' %}
+{% block title %}B2B Invoice - Add Invoice{% endblock %}
+
+{% block content %}
+<div class="invoice-wrapper">
+    <style>
+        .invoice-wrapper * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .invoice-wrapper {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .invoice-wrapper .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 5px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .invoice-wrapper .header {
+            background: #20b2aa;
+            color: white;
+            padding: 15px 30px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .invoice-wrapper .form-content {
+            padding: 30px;
+        }
+
+        .invoice-wrapper .back-arrow {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: #20b2aa;
+            border-radius: 50%;
+            margin-bottom: 20px;
+            cursor: pointer;
+        }
+
+        .invoice-wrapper .back-arrow::before {
+            content: "←";
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .invoice-wrapper .mandatory-note {
+            text-align: right;
+            color: #666;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .invoice-wrapper .mandatory-note::before {
+            content: "●";
+            color: red;
+            margin-right: 5px;
+        }
+
+        .invoice-wrapper .checkbox-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .invoice-wrapper .checkbox-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 15px;
+        }
+
+        .invoice-wrapper .checkbox-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .invoice-wrapper .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 15px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            cursor: pointer;
+            flex: 1;
+            min-width: 280px;
+            max-width: 450px;
+        }
+
+        .invoice-wrapper .checkbox-item.checked {
+            border-color: #28a745;
+            background: #f8fff8;
+        }
+
+        .invoice-wrapper .checkbox-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            appearance: none;
+            border: 2px solid #ddd;
+            border-radius: 3px;
+            cursor: pointer;
+            position: relative;
+            background: white;
+        }
+
+        .invoice-wrapper .checkbox-item input[type="checkbox"]:checked {
+            background: #28a745;
+            border-color: #28a745;
+        }
+
+        .invoice-wrapper .checkbox-item input[type="checkbox"]:checked::before {
+            content: "✓";
+            position: absolute;
+            left: 2px;
+            top: -2px;
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .invoice-wrapper .checkbox-item label {
+            font-size: 14px;
+            color: #333;
+            cursor: pointer;
+            font-weight: normal;
+            user-select: none;
+        }
+
+        .invoice-wrapper .checkbox-row.row-3 .checkbox-item {
+            min-width: 100%;
+            max-width: 100%;
+        }
+
+        .invoice-wrapper .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .invoice-wrapper .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .invoice-wrapper .form-group label {
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .invoice-wrapper .required::after {
+            content: "*";
+            color: red;
+            margin-left: 3px;
+        }
+
+        .invoice-wrapper .form-group input,
+        .invoice-wrapper .form-group select {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            background: white;
+        }
+
+        .invoice-wrapper .form-group input:focus,
+        .invoice-wrapper .form-group select:focus {
+            outline: none;
+            border-color: #20b2aa;
+        }
+
+        .invoice-wrapper .form-group input:disabled,
+        .invoice-wrapper .form-group select:disabled {
+            background: #f8f9fa;
+            color: #6c757d;
+            cursor: not-allowed;
+        }
+
+        .invoice-wrapper .add-to-master-btn {
+            background: #3b5998;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .invoice-wrapper .add-to-master-btn:hover {
+            background: #2d4373;
+        }
+
+        .invoice-wrapper .gstin-message {
+            color: #666;
+            font-size: 12px;
+            margin-top: 15px;
+            padding: 15px;
+            background: #fff3cd;
+            border-radius: 4px;
+            border-left: 4px solid #ffc107;
+            display: none;
+        }
+
+        .invoice-wrapper .gstin-message.show {
+            display: block;
+        }
+
+        .invoice-wrapper .item-details {
+            margin-top: 30px;
+            padding: 20px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .invoice-wrapper .item-details.show {
+            display: block;
+        }
+
+        .invoice-wrapper .item-details h3 {
+            margin-bottom: 20px;
+            color: #333;
+            font-size: 16px;
+            font-weight: bold;
+            border-bottom: 2px solid #20b2aa;
+            padding-bottom: 5px;
+            display: inline-block;
+        }
+
+        .invoice-wrapper .tax-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            border: 1px solid #ddd;
+        }
+
+        .invoice-wrapper .tax-table th,
+        .invoice-wrapper .tax-table td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: center;
+            background: white;
+        }
+
+        .invoice-wrapper .tax-table th {
+            background: #f8f9fa;
+            font-weight: bold;
+            color: #333;
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+
+        .invoice-wrapper .tax-table tbody tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .invoice-wrapper .tax-table input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            text-align: center;
+            font-size: 13px;
+        }
+
+        .invoice-wrapper .tax-table input:focus {
+            outline: none;
+            border-color: #20b2aa;
+        }
+
+        .invoice-wrapper .rate-column {
+            background: #6c757d !important;
+            color: white !important;
+            font-weight: bold !important;
+            width: 80px;
+        }
+
+        .invoice-wrapper .action-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+        }
+
+        .invoice-wrapper .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .invoice-wrapper .btn-back {
+            background: #6c757d;
+            color: white;
+        }
+
+        .invoice-wrapper .btn-back:hover {
+            background: #545b62;
+        }
+
+        .invoice-wrapper .btn-save {
+            background: #3b5998;
+            color: white;
+        }
+
+        .invoice-wrapper .btn-save:hover {
+            background: #2d4373;
+        }
+
+        .invoice-wrapper .error-border {
+            border-color: #dc3545 !important;
+        }
+
+        .invoice-wrapper .success-border {
+            border-color: #28a745 !important;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .invoice-wrapper .form-content {
+                padding: 15px;
+            }
+
+            .invoice-wrapper .checkbox-row {
+                flex-direction: column;
+            }
+
+            .invoice-wrapper .checkbox-item {
+                min-width: 100%;
+                max-width: 100%;
+            }
+
+            .invoice-wrapper .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .invoice-wrapper .action-buttons {
+                flex-direction: column;
+            }
+
+            .invoice-wrapper .btn {
+                width: 100%;
+            }
+        }
+    </style>
+
+    <div class="container">
+        <div class="header">
+            B2B, SEZ, DE - Add Invoice
+        </div>
+
+        <div class="form-content">
+            <div class="back-arrow" onclick="goBack()"></div>
+
+            <div class="mandatory-note">indicates mandatory fields</div>
+
+            <div class="checkbox-section">
+                <div class="checkbox-row row-1">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="deemed-exports">
+                        <label for="deemed-exports">Deemed Exports</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="sez-payment">
+                        <label for="sez-payment">SEZ Supplies with payment</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="sez-without-payment">
+                        <label for="sez-without-payment">SEZ Supplies without payment</label>
+                    </div>
+                </div>
+
+                <div class="checkbox-row row-2">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="supply-attract">
+                        <label for="supply-attract">Supply attract reverse charge</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="intra-state">
+                        <label for="intra-state">Intra-state supplies attracting IGST</label>
+                    </div>
+                </div>
+
+                <div class="checkbox-row row-3">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="differential-tax">
+                        <label for="differential-tax">Is the supply eligible to taxed at a differential percentage (%) of the existing rate of tax, as notified by the Government?</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="recipient-gstin" class="required">Recipient GSTIN/UIN</label>
+                    <input type="text" id="recipient-gstin" placeholder="Search by recipient name as in master or enter GSTIN/UIN">
+                </div>
+                <div class="form-group">
+                    <label for="recipient-name" class="required">Recipient Name</label>
+                    <input type="text" id="recipient-name">
+                </div>
+                <div class="form-group">
+                    <label for="name-master">Name as in Master</label>
+                    <input type="text" id="name-master">
+                </div>
+            </div>
+
+            <div class="gstin-message" id="gstin-message">
+                GSTIN not present in master/ GSTIN is selected as supplier only.
+                <button class="add-to-master-btn">ADD TO MASTER</button>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="invoice-no" class="required">Invoice No.</label>
+                    <input type="text" id="invoice-no">
+                </div>
+                <div class="form-group">
+                    <label for="invoice-date" class="required">Invoice Date</label>
+                    <input type="date" id="invoice-date">
+                </div>
+                <div class="form-group">
+                    <label for="total-value" class="required">Total Invoice value(₹)</label>
+                    <input type="number" id="total-value" step="0.01">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="pos">POS</label>
+                    <select id="pos" disabled>
+                        <option value="32-Kerala">32-Kerala</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="supply-type">Supply Type</label>
+                    <input type="text" id="supply-type" value="Intra-State" readonly>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="source">Source</label>
+                    <input type="text" id="source" value="" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="irn">IRN</label>
+                    <input type="text" id="irn" value="" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="irn-date">IRN date</label>
+                    <input type="date" id="irn-date" value="" readonly>
+                </div>
+            </div>
+
+            <div class="item-details" id="item-details">
+                <h3>Item Details</h3>
+                <table class="tax-table">
+                    <thead>
+                        <tr>
+                            <th class="rate-column">Rate(%)</th>
+                            <th>Taxable value(₹) <span style="color: red;">*</span></th>
+                            <th colspan="3">Amount of Tax</th>
+                            <th>Cess (₹)</th>
+                        </tr>
+                        <tr>
+                            <th class="rate-column"></th>
+                            <th></th>
+                            <th>Central Tax (₹) <span style="color: red;">*</span></th>
+                            <th>State/UT Tax (₹) <span style="color: red;">*</span></th>
+                            <th>Cess (₹)</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="rate-column">0%</td>
+                            <td><input type="number" step="0.01" oninput="calculateTax(this, 0)"></td>
+                            <td><input type="number" step="0.01" readonly></td>
+                            <td><input type="number" step="0.01" readonly></td>
+                            <td><input type="number" step="0.01"></td>
+                            <td><input type="number" step="0.01"></td>
+                        </tr>
+                        <tr>
+                            <td class="rate-column">0.1%</td>
+                            <td><input type="number" step="0.01" oninput="calculateTax(this, 0.1)"></td>
+                            <td><input type="number" step="0.01" readonly></td>
+                            <td><input type="number" step="0.01" readonly></td>
+                            <td><input type="number" step="0.01"></td>
+                            <td><input type="number" step="0.01"></td>
+                        </tr>
+                        <tr>
+                            <td class="rate-column">0.25%</td>
+                            <td><input type="number" step="0.01" oninput="calculateTax(this, 0.25)"></td>
+                            <td><input type="number" step="0.01" readonly></td>
+                            <td><input type="number" step="0.01" readonly></td>
+                            <td><input type="number" step="0.01"></td>
+                            <td><input type="number" step="0.01"></td>
+                        </tr>
+                        <tr>
+                            <td class="rate-column">1%</td>
+                            <td><input type="number" step="0.01" oninput="calculateTax(this, 1)"></td>
+                            <td><input type="number" step="0.01" readonly></td>
+                            <td><input type="number" step="0.01" readonly></td>
+                            <td><input type="number" step="0.01"></td>
+                            <td><input type="number" step="0.01"></td>
+                        </tr>
+                        <tr>
+                            <td class="rate-column">1.5%</td>
+                            <td><input type="number" step="0.01" oninput="calculateTax(this, 1.5)"></td>
+                            <td><input type="number" step="0.01" readonly></td>
+                            <td><input type="number" step="0.01" readonly></td>
+                            <td><input type="number" step="0.01"></td>
+                            <td><input type="number" step="0.01"></td>
+                        </tr>
+                        <tr>
+                            <td class="rate-column">3%</td>
+                            <td><input type="number" step="0.01" oninput="calculateTax(this, 3)"></td>
+                            <td><input type="number" step="0.01" readonly></td>
+                            <td><input type="number" step="0.01" readonly></td>
+                            <td><input type="number" step="0.01"></td>
+                            <td><input type="number" step="0.01"></td>
+                        </tr>
+                        <tr>
+                            <td class="rate-column">5%</td>
+                            <td><input type="number" step="0.01" oninput="calculateTax(this, 5)"></td>
+                            <td><input type="number" step="0.01" readonly></td>
+                            <td><input type="number" step="0.01" readonly></td>
+                            <td><input type="number" step="0.01"></td>
+                            <td><input type="number" step="0.01"></td>
+                        </tr>
+                        <tr>
+                            <td class="rate-column">6%</td>
+                            <td><input type="number" step="0.01" oninput="calculateTax(this, 6)"></td>
+                            <td><input type="number" step="0.01" readonly></td>
+                            <td><input type="number" step="0.01" readonly></td>
+                            <td><input type="number" step="0.01"></td>
+                            <td><input type="number" step="0.01"></td>
+                        </tr>
+                        <tr>
+                            <td class="rate-column">7.5%</td>
+                            <td><input type="number" step="0.01" oninput="calculateTax(this, 7.5)"></td>
+                            <td><input type="number" step="0.01" readonly></td>
+                            <td><input type="number" step="0.01" readonly></td>
+                            <td><input type="number" step="0.01"></td>
+                            <td><input type="number" step="0.01"></td>
+                        </tr>
+                        <tr>
+                            <td class="rate-column">12%</td>
+                            <td><input type="number" step="0.01" oninput="calculateTax(this, 12)"></td>
+                            <td><input type="number" step="0.01" readonly></td>
+                            <td><input type="number" step="0.01" readonly></td>
+                            <td><input type="number" step="0.01"></td>
+                            <td><input type="number" step="0.01"></td>
+                        </tr>
+                        <tr>
+                            <td class="rate-column">18%</td>
+                            <td><input type="number" step="0.01" oninput="calculateTax(this, 18)"></td>
+                            <td><input type="number" step="0.01" readonly></td>
+                            <td><input type="number" step="0.01" readonly></td>
+                            <td><input type="number" step="0.01"></td>
+                            <td><input type="number" step="0.01"></td>
+                        </tr>
+                        <tr>
+                            <td class="rate-column">28%</td>
+                            <td><input type="number" step="0.01" oninput="calculateTax(this, 28)"></td>
+                            <td><input type="number" step="0.01" readonly></td>
+                            <td><input type="number" step="0.01" readonly></td>
+                            <td><input type="number" step="0.01"></td>
+                            <td><input type="number" step="0.01"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="action-buttons">
+                <button class="btn btn-back" onclick="goBack()">BACK</button>
+                <button class="btn btn-save" onclick="saveInvoice()">SAVE</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize checkbox interactions
+        document.addEventListener('DOMContentLoaded', function() {
+            const checkboxes = document.querySelectorAll('.invoice-wrapper input[type="checkbox"]');
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    const item = this.closest('.checkbox-item');
+                    if (this.checked) {
+                        item.classList.add('checked');
+                    } else {
+                        item.classList.remove('checked');
+                    }
+                });
+            });
+
+            // Set current date as default
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('invoice-date').value = today;
+        });
+
+        // Function to check if GSTIN and Name are filled to show the message
+        function checkGstinAndName() {
+            const recipientGstin = document.getElementById('recipient-gstin').value.trim();
+            const recipientName = document.getElementById('recipient-name').value.trim();
+            const gstinMessage = document.getElementById('gstin-message');
+
+            if (recipientGstin && recipientName) {
+                gstinMessage.classList.add('show');
+            } else {
+                gstinMessage.classList.remove('show');
+            }
+        }
+
+        // Function to check if all required fields are filled
+        function checkRequiredFields() {
+            const recipientGstin = document.getElementById('recipient-gstin').value.trim();
+            const recipientName = document.getElementById('recipient-name').value.trim();
+            const invoiceNo = document.getElementById('invoice-no').value.trim();
+            const invoiceDate = document.getElementById('invoice-date').value;
+            const totalValue = document.getElementById('total-value').value;
+
+            if (recipientGstin && recipientName && invoiceNo && invoiceDate && totalValue) {
+                document.getElementById('item-details').classList.add('show');
+            } else {
+                document.getElementById('item-details').classList.remove('show');
+            }
+        }
+
+        // Combined function to check both conditions
+        function checkFields() {
+            checkGstinAndName();
+            checkRequiredFields();
+        }
+
+        // Add event listeners to required fields
+        document.getElementById('recipient-gstin').addEventListener('input', checkFields);
+        document.getElementById('recipient-name').addEventListener('input', checkFields);
+        document.getElementById('invoice-no').addEventListener('input', checkRequiredFields);
+        document.getElementById('invoice-date').addEventListener('change', checkRequiredFields);
+        document.getElementById('total-value').addEventListener('input', checkRequiredFields);
+
+        // Function to calculate tax automatically
+        function calculateTax(taxableInput, rate) {
+            const taxableValue = parseFloat(taxableInput.value) || 0;
+            const row = taxableInput.closest('tr');
+            const centralTaxInput = row.cells[2].querySelector('input');
+            const stateTaxInput = row.cells[3].querySelector('input');
+
+            if (taxableValue > 0) {
+                const totalTax = (taxableValue * rate) / 100;
+                const centralTax = totalTax / 2;
+                const stateTax = totalTax / 2;
+
+                centralTaxInput.value = centralTax.toFixed(2);
+                stateTaxInput.value = stateTax.toFixed(2);
+            } else {
+                centralTaxInput.value = '';
+                stateTaxInput.value = '';
+            }
+        }
+
+        // Function to handle back button
+        function goBack() {
+            if (confirm('Are you sure you want to go back? Any unsaved changes will be lost.')) {
+                window.history.back();
+            }
+        }
+
+        // Function to save invoice
+        function saveInvoice() {
+            const requiredFields = [
+                'recipient-gstin',
+                'recipient-name',
+                'invoice-no',
+                'invoice-date',
+                'total-value'
+            ];
+
+            let isValid = true;
+            const invoiceData = {};
+
+            // Clear previous error styles
+            document.querySelectorAll('.invoice-wrapper .error-border').forEach(el => {
+                el.classList.remove('error-border');
+            });
+
+            requiredFields.forEach(fieldId => {
+                const field = document.getElementById(fieldId);
+                if (!field.value.trim()) {
+                    field.classList.add('error-border');
+                    isValid = false;
+                } else {
+                    field.classList.add('success-border');
+                    invoiceData[fieldId] = field.value;
+                }
+            });
+
+            if (isValid) {
+                // Collect all form data
+                invoiceData.checkboxes = getCheckboxData();
+                invoiceData.itemDetails = getItemDetailsData();
+                invoiceData.source = document.getElementById('source').value;
+                invoiceData.irn = document.getElementById('irn').value;
+                invoiceData.irnDate = document.getElementById('irn-date').value;
+                invoiceData.nameMaster = document.getElementById('name-master').value;
+                invoiceData.supplyType = document.getElementById('supply-type').value;
+                invoiceData.pos = document.getElementById('pos').value;
+
+                // Save to localStorage
+                let savedInvoices = JSON.parse(localStorage.getItem('savedInvoices') || '[]');
+                savedInvoices.push(invoiceData);
+                localStorage.setItem('savedInvoices', JSON.stringify(savedInvoices));
+
+                // Redirect to invoice listing page
+                window.location.href = '/invoice_listing/';
+            } else {
+                alert('Please fill in all required fields.');
+            }
+        }
+
+        // Function to collect checkbox data
+        function getCheckboxData() {
+            const checkboxes = {
+                deemedExports: document.getElementById('deemed-exports').checked,
+                sezPayment: document.getElementById('sez-payment').checked,
+                sezWithoutPayment: document.getElementById('sez-without-payment').checked,
+                supplyAttract: document.getElementById('supply-attract').checked,
+                intraState: document.getElementById('intra-state').checked,
+                differentialTax: document.getElementById('differential-tax').checked
+            };
+            return checkboxes;
+        }
+
+        // Function to collect item details data
+        function getItemDetailsData() {
+            const itemDetails = [];
+            const rows = document.querySelectorAll('.invoice-wrapper .tax-table tbody tr');
+
+            rows.forEach((row, index) => {
+                const rate = row.cells[0].textContent.trim();
+                const taxableValue = row.cells[1].querySelector('input').value;
+                const centralTax = row.cells[2].querySelector('input').value;
+                const stateTax = row.cells[3].querySelector('input').value;
+                const cess1 = row.cells[4].querySelector('input').value;
+                const cess2 = row.cells[5].querySelector('input').value;
+
+                if (taxableValue || centralTax || stateTax || cess1 || cess2) {
+                    itemDetails.push({
+                        rate: rate,
+                        taxableValue: taxableValue,
+                        centralTax: centralTax,
+                        stateTax: stateTax,
+                        cess1: cess1,
+                        cess2: cess2
+                    });
+                }
+            });
+
+            return itemDetails;
+        }
+
+        // Function to display saved data
+        function displaySavedData(data) {
+            console.log('=== SAVED INVOICE DATA ===');
+            console.log('GSTIN:', data['recipient-gstin']);
+            console.log('Recipient Name:', data['recipient-name']);
+            console.log('Invoice No:', data['invoice-no']);
+            console.log('Invoice Date:', data['invoice-date']);
+            console.log('Total Value:', data['total-value']);
+            console.log('POS:', data['pos']);
+            console.log('Checkboxes:', data.checkboxes);
+            console.log('Item Details:', data.itemDetails);
+            console.log('========================');
+        }
+    </script>
+</div>
+{% endblock %}

@@ -203,3 +203,55 @@ class Registration(models.Model):
 
     def __str__(self):
         return f"{self.trn} / {self.legal_name or 'Draft'}"
+    
+
+class CourseContent2(models.Model):
+    topic = models.ForeignKey('CourseTopic2', on_delete=models.CASCADE)
+    heading = models.CharField(max_length=255)
+    pdf_file = models.FileField(upload_to='course_pdfs/', blank=True, null=True)
+    video_url = models.URLField(blank=True, null=True)
+    task_info = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.topic.title} - Content"
+
+    def pdf_filename(self):
+        return os.path.basename(self.pdf_file.name)
+
+    def get_embed_url(self):
+        """
+        Converts a YouTube URL into its embeddable form.
+        Handles:
+        - https://www.youtube.com/watch?v=VIDEO_ID
+        - https://youtu.be/VIDEO_ID
+        - Returns original URL if not a YouTube video.
+        """
+        if not self.video_url:
+            return ""
+
+        parsed_url = urlparse(self.video_url)
+
+        if 'youtube.com' in parsed_url.netloc:
+            query = parse_qs(parsed_url.query)
+            video_id = query.get('v')
+            if video_id:
+                return f"https://www.youtube.com/embed/{video_id[0]}"
+
+        elif 'youtu.be' in parsed_url.netloc:
+            video_id = parsed_url.path.lstrip('/')
+            return f"https://www.youtube.com/embed/{video_id}"
+
+        return self.video_url  # fallback for non-YouTube URLs
+
+
+class CourseTopic2(models.Model):
+    title = models.CharField(max_length=255)
+    topic_type = models.CharField(
+        max_length=20,
+        choices=[("Reading", "Reading"), ("Video", "Video"), ("Task", "Task")]
+    )
+    order = models.PositiveIntegerField()
+
+    def __str__(self):
+        return self.title
+    
